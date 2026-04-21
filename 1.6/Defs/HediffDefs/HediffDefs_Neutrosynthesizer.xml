@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Neutrosynthesizer hediff. Installed on the Kidney body part (android kidney slot).
+
+    Neutro recovery: The hediff's Tick() method reduces VREA_NeutroLoss severity at
+    0.3/day per installed neutrosynthesizer. With both kidneys replaced, recovery
+    reaches 0.6/day — exceeding human blood recovery (0.5/day).
+
+    Gene mechanism: A companion gene (AAH_Neutrosynthesizer GeneDef) overrides
+    VREA_NeutroSynthesis via Biotech's exclusion tag system. With VREA_NeutroSynthesis
+    suppressed, the subroutine's 0.05/day recovery is replaced by the hediff's 0.3/day.
+
+    hediffClass: Hediff_Neutrosynthesizer manages the companion gene lifecycle
+    (add on install, remove on uninstall, self-heal on save migration) and drives
+    the neutro recovery tick.
+
+    spawnThingOnRemoved: Returns the item on surgical removal. NOTE: VREA's
+    RestorePart does NOT honor this field (see RecipeInstallAndroidPart patch).
+
+    Parent: VREA_AndroidBodyPartBase provides isBad:false, blue label color, and
+    countsAsAddedPartOrImplant for the android body part category.
+  -->
+  <HediffDef ParentName="VREA_AndroidBodyPartBase">
+    <defName>AAH_Neutrosynthesizer</defName>
+    <label>neutrosynthesizer</label>
+    <labelNoun>a neutrosynthesizer</labelNoun>
+    <description>An installed neutrosynthesizer. This archotech kidney actively synthesizes fresh neutroamine, restoring lost neutroamine far faster than the standard neutro synthesis subroutine.</description>
+    <descriptionHyperlinks>
+      <ThingDef>AAH_Neutrosynthesizer</ThingDef>
+    </descriptionHyperlinks>
+    <hediffClass>ArchotechAndroidHardware.Hediff_Neutrosynthesizer</hediffClass>
+    <spawnThingOnRemoved>AAH_Neutrosynthesizer</spawnThingOnRemoved>
+    <addedPartProps>
+      <solid>true</solid>
+    </addedPartProps>
+  </HediffDef>
+
+</Defs>

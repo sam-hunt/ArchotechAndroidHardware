@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Vanometric reactor body part item. This is the inventory item; the installed
+    state is represented by the AAH_VanometricReactor HediffDef.
+
+    Parent: VREA_BodyPartAndroidBase provides android category, Ultra tech level,
+    and the android body part graphic class.
+  -->
+  <ThingDef ParentName="VREA_BodyPartAndroidBase">
+    <defName>AAH_VanometricReactor</defName>
+    <label>vanometric reactor</label>
+    <description>A permanent android reactor built around an archotech vanometric power cell. Unlike standard android reactors that drain over time and must be replaced, this reactor provides unlimited power indefinitely.\n\nThe vanometric cell's quantum foam energy extraction has been miniaturized and adapted to interface directly with android power systems. Installing this reactor removes the android's power need entirely.</description>
+    <descriptionHyperlinks>
+      <RecipeDef>AAH_InstallVanometricReactor</RecipeDef>
+    </descriptionHyperlinks>
+    <techLevel>Archotech</techLevel>
+    <graphicData>
+      <texPath>Items/ArchotechAndroidPart</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>0.80</drawSize>
+    </graphicData>
+    <!-- Suppress parent's recipeMaker to prevent auto-generated crafting recipe.
+         The explicit RecipeDef in RecipeDefs/ uses allowMixingIngredients, which is
+         required for MinifiedThing ingredients like VanometricPowerCell. See the
+         crafting recipe comment in RecipeDefs_VanometricReactor.xml for details. -->
+    <recipeMaker Inherit="False" />
+    <!-- costList retained for market value calculation (not used for crafting;
+         the explicit RecipeDef defines its own ingredients list) -->
+    <costList>
+      <Plasteel>10</Plasteel>
+      <ComponentSpacer>2</ComponentSpacer>
+      <ArchiteCapsule>2</ArchiteCapsule>
+      <VanometricPowerCell>1</VanometricPowerCell>
+    </costList>
+    <statBases>
+      <Mass>3</Mass>
+    </statBases>
+    <comps>
+      <li Class="CompProperties_Glower">
+        <glowRadius>2</glowRadius>
+        <glowColor>(115, 220, 231, 0)</glowColor>
+      </li>
+    </comps>
+  </ThingDef>
+
+</Defs>

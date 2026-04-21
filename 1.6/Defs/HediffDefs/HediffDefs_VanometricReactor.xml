@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Vanometric reactor hediff. Installed on the Stomach body part (android reactor slot).
+
+    Power suppression uses two complementary mechanisms:
+    1. Companion gene (AAH_VanometricReactor GeneDef) overrides VREA_Power via Biotech's
+       exclusion tag system, preventing VREA_Power's enablesNeeds from creating the need.
+    2. disablesNeeds below removes any residual VREA_ReactorPower need instance.
+       Uses the same built-in mechanism as the Circadian Half-cycler (Royalty DLC).
+       Cache-based via HediffSet.CacheNeeds(), zero per-tick cost.
+
+    hediffClass: Hediff_VanometricReactor manages the companion gene lifecycle
+    (add on install, remove on uninstall, self-heal on save migration).
+
+    spawnThingOnRemoved: Returns the item on surgical removal. NOTE: VREA's
+    RestorePart does NOT honor this field (see RecipeInstallAndroidPart patch).
+
+    Parent: VREA_AndroidBodyPartBase provides isBad:false, blue label color, and
+    countsAsAddedPartOrImplant for the android body part category.
+  -->
+  <HediffDef ParentName="VREA_AndroidBodyPartBase">
+    <defName>AAH_VanometricReactor</defName>
+    <label>vanometric reactor</label>
+    <labelNoun>a vanometric reactor</labelNoun>
+    <description>An installed vanometric reactor. This archotech-powered reactor provides unlimited energy, eliminating the need for reactor replacement.</description>
+    <descriptionHyperlinks>
+      <ThingDef>AAH_VanometricReactor</ThingDef>
+    </descriptionHyperlinks>
+    <hediffClass>ArchotechAndroidHardware.Hediff_VanometricReactor</hediffClass>
+    <spawnThingOnRemoved>AAH_VanometricReactor</spawnThingOnRemoved>
+    <stages>
+      <li>
+        <disablesNeeds>
+          <li>VREA_ReactorPower</li>
+        </disablesNeeds>
+      </li>
+    </stages>
+    <addedPartProps>
+      <solid>true</solid>
+    </addedPartProps>
+  </HediffDef>
+
+</Defs>

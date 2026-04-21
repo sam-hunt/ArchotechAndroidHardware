@@ -1,0 +1,48 @@
+# Claude Code
+.claude
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# Build results
+**/bin/
+**/obj/
+*.cache
+*.zip
+
+# Debug symbols
+*.pdb
+
+# ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# Build artifacts
+*/Assemblies/*.dll
+*/Assemblies/*.pdb
+
+# RimWorld local testing
+*.rws
+*.rws.old
+
+# OS specific
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Backup files
+*~
+*.bak
+*.orig
+
+# Logs
+*.log
+
+# Research documentation (kept locally, not tracked)
+Docs/

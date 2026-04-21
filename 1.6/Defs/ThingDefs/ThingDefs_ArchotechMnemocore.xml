@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Archotech mnemocore body part item. This is the inventory item; the installed
+    state is represented by the AAH_ArchotechMnemocore HediffDef.
+
+    Parent: VREA_BodyPartAndroidBase provides android category, Ultra tech level,
+    and the android body part graphic class.
+  -->
+  <ThingDef ParentName="VREA_BodyPartAndroidBase">
+    <defName>AAH_ArchotechMnemocore</defName>
+    <label>archotech mnemocore</label>
+    <description>An archotech brain implant created by cannibalizing and adapting a persona core to fundamentally rearchitect an android's memory processing. Standard androids rely on finite hard drive space that gradually fills and requires periodic reformatting. The mnemocore replaces this architecture with self-organizing archotech substrate that never accumulates cruft.\n\nOnce installed, the android's memory need is eliminated entirely, RAM subroutines become unnecessary, and memory degradation ceases.</description>
+    <descriptionHyperlinks>
+      <RecipeDef>AAH_InstallArchotechMnemocore</RecipeDef>
+    </descriptionHyperlinks>
+    <techLevel>Archotech</techLevel>
+    <graphicData>
+      <texPath>Items/ArchotechAndroidPart</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>0.80</drawSize>
+    </graphicData>
+    <!-- Suppress parent's recipeMaker to prevent auto-generated crafting recipe.
+         The explicit RecipeDef in RecipeDefs/ uses allowMixingIngredients for
+         consistency with the other hardware recipes. See the crafting recipe
+         comment in RecipeDefs_ArchotechMnemocore.xml for details. -->
+    <recipeMaker Inherit="False" />
+    <!-- costList retained for market value calculation (not used for crafting;
+         the explicit RecipeDef defines its own ingredients list) -->
+    <costList>
+      <Plasteel>10</Plasteel>
+      <ComponentSpacer>3</ComponentSpacer>
+      <ArchiteCapsule>2</ArchiteCapsule>
+      <AIPersonaCore>1</AIPersonaCore>
+    </costList>
+    <statBases>
+      <Mass>1</Mass>
+    </statBases>
+  </ThingDef>
+
+</Defs>

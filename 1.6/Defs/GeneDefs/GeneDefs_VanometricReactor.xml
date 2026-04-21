@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Companion gene for the vanometric reactor hediff. NOT player-assignable.
+    Managed entirely by Hediff_VanometricReactor (added on install, removed on uninstall).
+
+    Purpose: Overrides VREA's Power hardware component (VREA_Power) via Biotech's
+    gene exclusion tag system. The shared AAH_AndroidPower tag causes Biotech to
+    suppress VREA_Power while this gene is active. With VREA_Power suppressed, its
+    enablesNeeds for VREA_ReactorPower doesn't fire, so the android has no power need.
+    The VREA_GenePatches.xml XPath patch adds this exclusion tag to VREA_Power.
+
+    canGenerateInGeneSet: false prevents this from appearing in xenotype creation.
+    biostatArc > 0 is required for the archite gene background (see modExtensions).
+
+    Background rendering: Uses VEF's GeneExtension.backgroundPathArchite instead of
+    the standard endogenes/xenogenes background path. VEF's transpiler in
+    GeneUIUtility.DrawGene selects this archite background when biostatArc > 0.
+
+    Display: VREA's custom gene inspector hides non-AndroidGeneDef genes.
+    The GeneUIUtility_RecacheGenes patch injects this gene into the display list.
+  -->
+  <GeneDef>
+    <defName>AAH_VanometricReactor</defName>
+    <label>vanometric reactor</label>
+    <description>Androids with this hardware have a permanent archotech reactor that provides unlimited power. The reactor never needs to be replaced.</description>
+    <iconPath>UI/Icons/Genes/Hardware/Gene_VanometricReactor</iconPath>
+    <displayCategory>AAH_Hardware</displayCategory>
+    <displayOrderInCategory>3</displayOrderInCategory>
+    <canGenerateInGeneSet>false</canGenerateInGeneSet>
+    <biostatArc>2</biostatArc>
+    <biostatCpx>6</biostatCpx>
+    <exclusionTags>
+      <li>AAH_AndroidPower</li>
+    </exclusionTags>
+    <modExtensions>
+      <li Class="VEF.Genes.GeneExtension">
+        <backgroundPathArchite>UI/Icons/Genes/GeneBackground_ArchotechHardware</backgroundPathArchite>
+      </li>
+    </modExtensions>
+  </GeneDef>
+
+</Defs>

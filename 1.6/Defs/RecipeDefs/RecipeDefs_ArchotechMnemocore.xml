@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Crafting recipe (explicit, not auto-generated from costList/recipeMaker).
+
+    Why explicit: The parent def (VREA_BodyPartAndroidBase) includes recipeMaker which
+    auto-generates a crafting recipe. We suppress it via <recipeMaker Inherit="False" />
+    in the ThingDef for consistency with the other hardware recipes, which require the
+    AllowMix path for MinifiedThing ingredients.
+
+    allowMixingIngredients included for pattern consistency across all AAA recipes,
+    even though this recipe's ingredients (AIPersonaCore, ArchiteCapsule,
+    ComponentSpacer, Plasteel) are not MinifiedThings.
+  -->
+  <RecipeDef>
+    <defName>AAH_MakeArchotechMnemocore</defName>
+    <label>craft archotech mnemocore</label>
+    <description>Craft an archotech mnemocore from a persona core and advanced components.</description>
+    <jobString>Crafting archotech mnemocore.</jobString>
+    <allowMixingIngredients>true</allowMixingIngredients>
+    <workAmount>30000</workAmount>
+    <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+    <workSkill>Crafting</workSkill>
+    <effectWorking>Smith</effectWorking>
+    <soundWorking>Recipe_Smith</soundWorking>
+    <skillRequirements>
+      <Crafting>12</Crafting>
+    </skillRequirements>
+    <unfinishedThingDef>VREA_UnfinishedHealthItemAndroid</unfinishedThingDef>
+    <researchPrerequisite>VREA_AndroidTech</researchPrerequisite>
+    <recipeUsers>
+      <li>VREA_AndroidPartWorkbench</li>
+    </recipeUsers>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Plasteel</li>
+          </thingDefs>
+        </filter>
+        <count>10</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>ComponentSpacer</li>
+          </thingDefs>
+        </filter>
+        <count>3</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>ArchiteCapsule</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>AIPersonaCore</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
+    </ingredients>
+    <fixedIngredientFilter>
+      <thingDefs>
+        <li>Plasteel</li>
+        <li>ComponentSpacer</li>
+        <li>ArchiteCapsule</li>
+        <li>AIPersonaCore</li>
+      </thingDefs>
+    </fixedIngredientFilter>
+    <products>
+      <AAH_ArchotechMnemocore>1</AAH_ArchotechMnemocore>
+    </products>
+  </RecipeDef>
+
+  <!--
+    Surgery installation recipe. Targets the Brain body part as an implant.
+
+    Parent: VREA_SurgeryInstallBodyPartAndroidBase provides ButcherMechanoid surgery
+    effect, Crafting skill, and Human recipeUsers (androids use the Human body def).
+
+    workerClass override: Uses Recipe_InstallImplant instead of VREA's
+    Recipe_InstallAndroidPart. The implant worker adds the hediff without calling
+    RestorePart(), so existing brain hediffs (other implants, etc.) are preserved.
+    This is the correct behavior for a brain implant (vs. a body part replacement
+    like the vanometric reactor on Stomach).
+  -->
+  <RecipeDef ParentName="VREA_SurgeryInstallBodyPartAndroidBase">
+    <defName>AAH_InstallArchotechMnemocore</defName>
+    <label>install archotech mnemocore</label>
+    <description>Install an archotech mnemocore in the brain, rearchitecting the android's memory systems and eliminating the need for reformatting.</description>
+    <descriptionHyperlinks>
+      <ThingDef>AAH_ArchotechMnemocore</ThingDef>
+      <HediffDef>AAH_ArchotechMnemocore</HediffDef>
+    </descriptionHyperlinks>
+    <jobString>Installing archotech mnemocore.</jobString>
+    <workerClass>Recipe_InstallImplant</workerClass>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>AAH_ArchotechMnemocore</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
+    </ingredients>
+    <fixedIngredientFilter>
+      <thingDefs>
+        <li>AAH_ArchotechMnemocore</li>
+      </thingDefs>
+    </fixedIngredientFilter>
+    <appliedOnFixedBodyParts>
+      <li>Brain</li>
+    </appliedOnFixedBodyParts>
+    <addsHediff>AAH_ArchotechMnemocore</addsHediff>
+    <uiIconThing>AAH_ArchotechMnemocore</uiIconThing>
+  </RecipeDef>
+
+  <!--
+    Surgery removal recipe. Follows VREA's android surgery conventions: Crafting skill
+    (not Medicine), no medicine ingredients, ButcherMechanoid effect. Androids are
+    non-biological, so medical supplies and skills are irrelevant.
+
+    Parent: VREA_SurgeryAndroid provides ButcherMechanoid effect, Crafting work skill,
+    and mechanoid machining sounds. We add Recipe_RemoveImplant worker, Human recipeUsers
+    (android body def), and removesHediff. No ingredients needed.
+    The hediff's spawnThingOnRemoved handles ejecting the item.
+  -->
+  <RecipeDef ParentName="VREA_SurgeryAndroid">
+    <defName>AAH_RemoveArchotechMnemocore</defName>
+    <label>remove archotech mnemocore</label>
+    <description>Remove the archotech mnemocore. The android will revert to its standard memory processing, requiring periodic reformatting.</description>
+    <descriptionHyperlinks>
+      <ThingDef>AAH_ArchotechMnemocore</ThingDef>
+      <HediffDef>AAH_ArchotechMnemocore</HediffDef>
+    </descriptionHyperlinks>
+    <workerClass>Recipe_RemoveImplant</workerClass>
+    <jobString>Removing archotech mnemocore.</jobString>
+    <workAmount>2000</workAmount>
+    <removesHediff>AAH_ArchotechMnemocore</removesHediff>
+    <recipeUsers>
+      <li>Human</li>
+    </recipeUsers>
+  </RecipeDef>
+
+</Defs>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Crafting recipe (explicit, not auto-generated from costList/recipeMaker).
+
+    Why explicit: The parent def (VREA_BodyPartAndroidBase) includes recipeMaker which
+    auto-generates a crafting recipe. We suppress it via <recipeMaker Inherit="False" />
+    in the ThingDef because the auto-generated recipe uses the NoMix ingredient search,
+    which cannot find MinifiedThing ingredients like the VanometricPowerCell.
+
+    Why allowMixingIngredients: The default NoMix path groups things by thing.def and
+    calls ThingFilter.Allows(ThingDef), which does NOT unwrap MinifiedThings. Buildings
+    like VanometricPowerCell are stored as MinifiedThings on the map. The AllowMix path
+    instead calls ThingFilter.Allows(Thing), which calls GetInnerIfMinified() and
+    correctly matches the minified VanometricPowerCell against the filter.
+  -->
+  <RecipeDef>
+    <defName>AAH_MakeVanometricReactor</defName>
+    <label>craft vanometric reactor</label>
+    <description>Craft a vanometric reactor from a vanometric power cell and advanced components.</description>
+    <jobString>Crafting vanometric reactor.</jobString>
+    <allowMixingIngredients>true</allowMixingIngredients>
+    <workAmount>26000</workAmount>
+    <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+    <workSkill>Crafting</workSkill>
+    <effectWorking>Smith</effectWorking>
+    <soundWorking>Recipe_Smith</soundWorking>
+    <skillRequirements>
+      <Crafting>12</Crafting>
+    </skillRequirements>
+    <unfinishedThingDef>VREA_UnfinishedHealthItemAndroid</unfinishedThingDef>
+    <researchPrerequisite>VREA_AndroidTech</researchPrerequisite>
+    <recipeUsers>
+      <li>VREA_AndroidPartWorkbench</li>
+    </recipeUsers>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Plasteel</li>
+          </thingDefs>
+        </filter>
+        <count>10</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>ComponentSpacer</li>
+          </thingDefs>
+        </filter>
+        <count>2</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>ArchiteCapsule</li>
+          </thingDefs>
+        </filter>
+        <count>2</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>VanometricPowerCell</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
+    </ingredients>
+    <fixedIngredientFilter>
+      <thingDefs>
+        <li>Plasteel</li>
+        <li>ComponentSpacer</li>
+        <li>ArchiteCapsule</li>
+        <li>VanometricPowerCell</li>
+      </thingDefs>
+    </fixedIngredientFilter>
+    <products>
+      <AAH_VanometricReactor>1</AAH_VanometricReactor>
+    </products>
+  </RecipeDef>
+
+  <!--
+    Surgery installation recipe. Targets the Stomach body part (android reactor slot).
+
+    Parent: VREA_SurgeryInstallBodyPartAndroidBase provides the Recipe_InstallAndroidPart
+    worker, ButcherMechanoid surgery effect, and Crafting 5 skill requirement.
+
+    Note: VREA's Recipe_InstallAndroidPart.ApplyOnPawn calls RestorePart() on the target
+    body part before installing. This is what triggers the RecipeInstallAndroidPart patch
+    to pre-eject our spawnThingOnRemoved item and handle gene cleanup.
+  -->
+  <RecipeDef ParentName="VREA_SurgeryInstallBodyPartAndroidBase">
+    <defName>AAH_InstallVanometricReactor</defName>
+    <label>install vanometric reactor</label>
+    <description>Install a vanometric reactor, permanently powering this android.</description>
+    <descriptionHyperlinks>
+      <ThingDef>AAH_VanometricReactor</ThingDef>
+      <HediffDef>AAH_VanometricReactor</HediffDef>
+    </descriptionHyperlinks>
+    <jobString>Installing vanometric reactor.</jobString>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>AAH_VanometricReactor</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
+    </ingredients>
+    <fixedIngredientFilter>
+      <thingDefs>
+        <li>AAH_VanometricReactor</li>
+      </thingDefs>
+    </fixedIngredientFilter>
+    <appliedOnFixedBodyParts>
+      <li>Stomach</li>
+    </appliedOnFixedBodyParts>
+    <addsHediff>AAH_VanometricReactor</addsHediff>
+    <uiIconThing>AAH_VanometricReactor</uiIconThing>
+  </RecipeDef>
+
+</Defs>

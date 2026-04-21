@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Companion gene for the archotech mnemocore hediff. NOT player-assignable.
+    Managed entirely by Hediff_ArchotechMnemocore (added on install, removed on uninstall).
+
+    Purpose: Overrides VREA's memory-related genes via Biotech's gene exclusion tag
+    system. Three exclusion tags suppress three categories of VREA genes:
+      - AAH_AndroidMemory: overrides VREA_MemoryProcessing (hardware gene that
+        enables the VREA_MemorySpace need). Patched via VREA_GenePatches.xml.
+      - AndroidRAM: overrides VREA_FastRAM and VREA_SlowRAM (RAM subroutines).
+        Uses VREA's own existing exclusion tag — no XPath patch needed.
+      - AAH_AndroidMemoryDecay: overrides VREA_MemoryDecay (skill decay subroutine).
+        Patched via VREA_GenePatches.xml.
+
+    canGenerateInGeneSet: false prevents this from appearing in xenotype creation.
+    biostatArc > 0 is required for the archite gene background (see modExtensions).
+
+    Background rendering: Uses VEF's GeneExtension.backgroundPathArchite instead of
+    the standard endogenes/xenogenes background path. VEF's transpiler in
+    GeneUIUtility.DrawGene selects this archite background when biostatArc > 0.
+
+    Display: VREA's custom gene inspector hides non-AndroidGeneDef genes.
+    The GeneUIUtility_RecacheGenes patch injects this gene into the display list.
+  -->
+  <GeneDef>
+    <defName>AAH_ArchotechMnemocore</defName>
+    <label>archotech mnemocore</label>
+    <description>Androids with this hardware have an archotech mnemocore that provides self-organizing, effectively infinite memory storage. Reformatting is unnecessary and memory never degrades.</description>
+    <iconPath>UI/Icons/Genes/Hardware/Gene_ArchotechMnemocore</iconPath>
+    <displayCategory>AAH_Hardware</displayCategory>
+    <displayOrderInCategory>9</displayOrderInCategory>
+    <canGenerateInGeneSet>false</canGenerateInGeneSet>
+    <biostatArc>2</biostatArc>
+    <biostatCpx>6</biostatCpx>
+    <exclusionTags>
+      <li>AAH_AndroidMemory</li>
+      <li>AndroidRAM</li>
+      <li>AAH_AndroidMemoryDecay</li>
+    </exclusionTags>
+    <modExtensions>
+      <li Class="VEF.Genes.GeneExtension">
+        <backgroundPathArchite>UI/Icons/Genes/GeneBackground_ArchotechHardware</backgroundPathArchite>
+      </li>
+    </modExtensions>
+  </GeneDef>
+
+</Defs>

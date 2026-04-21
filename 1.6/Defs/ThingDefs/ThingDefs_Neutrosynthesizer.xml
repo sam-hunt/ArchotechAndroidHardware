@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Neutrosynthesizer body part item. This is the inventory item; the installed
+    state is represented by the AAH_Neutrosynthesizer HediffDef.
+
+    Parent: VREA_BodyPartAndroidBase provides android category, Ultra tech level,
+    and the android body part graphic class.
+  -->
+  <ThingDef ParentName="VREA_BodyPartAndroidBase">
+    <defName>AAH_Neutrosynthesizer</defName>
+    <label>neutrosynthesizer</label>
+    <description>An archotech android kidney built around a miniaturized infinite chemreactor. Unlike standard neutrofilters that merely recycle spent neutroamine, this organ actively synthesizes fresh neutroamine from raw chemical feedstock, restoring lost neutroamine at a rate far exceeding the base neutro synthesis subroutine.\n\nInstalling two neutrosynthesizers allows an android to recover from neutro loss faster than a human recovers from blood loss.</description>
+    <descriptionHyperlinks>
+      <RecipeDef>AAH_InstallNeutrosynthesizer</RecipeDef>
+    </descriptionHyperlinks>
+    <techLevel>Archotech</techLevel>
+    <graphicData>
+      <texPath>Items/ArchotechAndroidPart</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>0.80</drawSize>
+    </graphicData>
+    <!-- Suppress parent's recipeMaker to prevent auto-generated crafting recipe.
+         The explicit RecipeDef in RecipeDefs/ uses allowMixingIngredients, which is
+         required for MinifiedThing ingredients like InfiniteChemreactor. See the
+         crafting recipe comment in RecipeDefs_Neutrosynthesizer.xml for details. -->
+    <recipeMaker Inherit="False" />
+    <!-- costList retained for market value calculation (not used for crafting;
+         the explicit RecipeDef defines its own ingredients list) -->
+    <costList>
+      <Plasteel>5</Plasteel>
+      <ComponentSpacer>1</ComponentSpacer>
+      <ArchiteCapsule>1</ArchiteCapsule>
+      <InfiniteChemreactor>1</InfiniteChemreactor>
+      <Neutroamine>30</Neutroamine>
+    </costList>
+    <statBases>
+      <Mass>1</Mass>
+    </statBases>
+  </ThingDef>
+
+</Defs>

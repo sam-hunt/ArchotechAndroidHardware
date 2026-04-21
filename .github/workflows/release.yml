@@ -1,0 +1,46 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Build
+        run: dotnet build ArchotechAndroidHardware.sln -c Release
+
+      - name: Package mod
+        run: |
+          set -e
+          VERSION=${GITHUB_REF_NAME}
+          mkdir -p release/ArchotechAndroidHardware/About
+          mkdir -p release/ArchotechAndroidHardware/1.6/Assemblies
+          mkdir -p release/ArchotechAndroidHardware/1.6/Defs
+          cp About/About.xml release/ArchotechAndroidHardware/About/
+          [ -f About/ModIcon.png ] && cp About/ModIcon.png release/ArchotechAndroidHardware/About/ || true
+          [ -f About/Preview.png ] && cp About/Preview.png release/ArchotechAndroidHardware/About/ || true
+          cp LoadFolders.xml release/ArchotechAndroidHardware/
+          cp 1.6/Assemblies/ArchotechAndroidHardware.dll release/ArchotechAndroidHardware/1.6/Assemblies/
+          cp -r 1.6/Defs/* release/ArchotechAndroidHardware/1.6/Defs/
+          [ -d Textures ] && cp -r Textures release/ArchotechAndroidHardware/ || true
+          cd release && zip -r ../ArchotechAndroidHardware-${VERSION}.zip ArchotechAndroidHardware
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ArchotechAndroidHardware-${{ github.ref_name }}.zip
+          generate_release_notes: true
+          prerelease: ${{ contains(github.ref_name, 'beta') || contains(github.ref_name, 'alpha') || contains(github.ref_name, '-rc') }}

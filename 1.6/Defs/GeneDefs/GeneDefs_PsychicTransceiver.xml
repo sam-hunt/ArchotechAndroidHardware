@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Companion gene for the psychic transceiver hediff. NOT player-assignable.
+    Managed entirely by Hediff_PsychicTransceiver (added on install, removed on uninstall).
+
+    Purpose: Overrides the android's inherent psychic insensitivity. VREA encodes
+    this machine-nature trait as the VREA_PsychicallyDeaf gene (PsychicSensitivity
+    factor of zero). The shared AAH_AndroidPsychic exclusion tag causes Biotech to
+    suppress VREA_PsychicallyDeaf while this gene is active, removing the zero factor
+    and allowing the hediff's +20% PsychicSensitivity stat offset to take effect.
+    The VREA_GenePatches.xml XPath patch adds this exclusion tag to VREA_PsychicallyDeaf.
+
+    canGenerateInGeneSet: false prevents this from appearing in xenotype creation.
+    biostatArc > 0 is required for the archite gene background (see modExtensions).
+
+    Background rendering: Uses VEF's GeneExtension.backgroundPathArchite instead of
+    the standard endogenes/xenogenes background path. VEF's transpiler in
+    GeneUIUtility.DrawGene selects this archite background when biostatArc > 0.
+
+    Icon: References the vanilla Biotech psy-sensitive gene icon directly from the
+    game's asset bundle. No custom texture needed.
+
+    Display: VREA's custom gene inspector hides non-AndroidGeneDef genes.
+    The GeneUIUtility_RecacheGenes patch injects this gene into the display list.
+  -->
+  <GeneDef>
+    <defName>AAH_PsychicTransceiver</defName>
+    <label>psychic transceiver</label>
+    <description>Androids with this hardware are sensitive to psychic energy and influence, despite their synthetic nature.</description>
+    <iconPath>UI/Icons/Genes/Gene_EnhancedPsychicAbility</iconPath>
+    <displayCategory>AAH_Hardware</displayCategory>
+    <displayOrderInCategory>5</displayOrderInCategory>
+    <canGenerateInGeneSet>false</canGenerateInGeneSet>
+    <biostatArc>1</biostatArc>
+    <biostatCpx>4</biostatCpx>
+    <exclusionTags>
+      <li>AAH_AndroidPsychic</li>
+    </exclusionTags>
+    <modExtensions>
+      <li Class="VEF.Genes.GeneExtension">
+        <backgroundPathArchite>UI/Icons/Genes/GeneBackground_ArchotechHardware</backgroundPathArchite>
+      </li>
+    </modExtensions>
+  </GeneDef>
+
+</Defs>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+
+  <!--
+    Add the AAH_AndroidPower exclusion tag to VREA's Power hardware gene (VREA_Power).
+    This enables the standard Biotech gene override system: when our companion gene
+    (AAH_VanometricReactor GeneDef) is added as a xenogene, Biotech sees both genes
+    share the AAH_AndroidPower tag and suppresses VREA_Power. With VREA_Power
+    suppressed, its enablesNeeds for VREA_ReactorPower doesn't fire.
+
+    This is standard Biotech API usage (not a VREA workaround). We define our own
+    tag (AAH_AndroidPower) rather than relying on any tags VREA may add in the future.
+  -->
+  <Operation Class="PatchOperationAdd">
+    <xpath>/Defs/VREAndroids.AndroidGeneDef[defName="VREA_Power"]</xpath>
+    <value>
+      <exclusionTags>
+        <li>AAH_AndroidPower</li>
+      </exclusionTags>
+    </value>
+  </Operation>
+
+  <!--
+    Add the AAH_AndroidPsychic exclusion tag to VREA's PsychicallyDeaf gene.
+    VREA encodes the android's inherent psychic insensitivity as this gene
+    (PsychicSensitivity factor of zero). When our companion gene
+    (AAH_PsychicTransceiver GeneDef) is added as a xenogene, Biotech sees both
+    genes share the AAH_AndroidPsychic tag and suppresses VREA_PsychicallyDeaf.
+    With the zero factor removed, the hediff's +20% offset takes effect.
+  -->
+  <Operation Class="PatchOperationAdd">
+    <xpath>/Defs/VREAndroids.AndroidGeneDef[defName="VREA_PsychicallyDeaf"]</xpath>
+    <value>
+      <exclusionTags>
+        <li>AAH_AndroidPsychic</li>
+      </exclusionTags>
+    </value>
+  </Operation>
+
+  <!--
+    Add the AAH_AndroidMemory exclusion tag to VREA's MemoryProcessing hardware gene.
+    VREA_MemoryProcessing enables the VREA_MemorySpace need. When our companion gene
+    (AAH_ArchotechMnemocore GeneDef) is added as a xenogene, Biotech sees both genes
+    share the AAH_AndroidMemory tag and suppresses VREA_MemoryProcessing. With
+    VREA_MemoryProcessing suppressed, its enablesNeeds for VREA_MemorySpace doesn't
+    fire, so the android has no memory need.
+  -->
+  <Operation Class="PatchOperationAdd">
+    <xpath>/Defs/VREAndroids.AndroidGeneDef[defName="VREA_MemoryProcessing"]</xpath>
+    <value>
+      <exclusionTags>
+        <li>AAH_AndroidMemory</li>
+      </exclusionTags>
+    </value>
+  </Operation>
+
+  <!--
+    Add the AAH_AndroidMemoryDecay exclusion tag to VREA's MemoryDecay subroutine.
+    VREA_MemoryDecay causes skill decay (1 level every 15 days). When our companion
+    gene (AAH_ArchotechMnemocore GeneDef) is added as a xenogene, Biotech sees both
+    genes share the AAH_AndroidMemoryDecay tag and suppresses VREA_MemoryDecay.
+    The archotech mnemocore's superior substrate prevents any memory degradation.
+  -->
+  <Operation Class="PatchOperationAdd">
+    <xpath>/Defs/VREAndroids.AndroidGeneDef[defName="VREA_MemoryDecay"]</xpath>
+    <value>
+      <exclusionTags>
+        <li>AAH_AndroidMemoryDecay</li>
+      </exclusionTags>
+    </value>
+  </Operation>
+
+  <!--
+    Add the AAH_AndroidNeutro exclusion tag to VREA's NeutroSynthesis subroutine.
+    VREA_NeutroSynthesis provides slow neutroamine recovery (0.05/day). When our
+    companion gene (AAH_Neutrosynthesizer GeneDef) is added as a xenogene, Biotech
+    sees both genes share the AAH_AndroidNeutro tag and suppresses VREA_NeutroSynthesis.
+    The hediff's Tick() then provides the faster 0.3/day recovery instead.
+  -->
+  <Operation Class="PatchOperationAdd">
+    <xpath>/Defs/VREAndroids.AndroidGeneDef[defName="VREA_NeutroSynthesis"]</xpath>
+    <value>
+      <exclusionTags>
+        <li>AAH_AndroidNeutro</li>
+      </exclusionTags>
+    </value>
+  </Operation>
+
+</Patch>

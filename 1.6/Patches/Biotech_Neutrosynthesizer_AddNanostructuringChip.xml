@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+
+  <!--
+    Biotech DLC alternative ingredient: NanostructuringChip can substitute for
+    InfiniteChemreactor in the neutrosynthesizer crafting recipe (count 1,
+    either item satisfies the slot).
+
+    The recipe already sets allowMixingIngredients=true. InfiniteChemreactor is
+    a minifiable building; NanostructuringChip is a regular item. Both match
+    under the AllowMix filter path (ThingFilter.Allows(Thing) unwraps minified
+    things and falls through to the ThingDef check for non-minified items).
+
+    Biotech is already a hard requirement of this mod (and of VREA), so this
+    gate is defensive — it documents intent and protects against future
+    reuse/repackaging where Biotech might not be guaranteed.
+  -->
+  <Operation Class="PatchOperationFindMod">
+    <mods>
+      <li>Biotech</li>
+    </mods>
+    <match Class="PatchOperationSequence">
+      <operations>
+        <li Class="PatchOperationAdd">
+          <xpath>/Defs/RecipeDef[defName="AAH_MakeNeutrosynthesizer"]/ingredients/li[filter/thingDefs/li="InfiniteChemreactor"]/filter/thingDefs</xpath>
+          <value>
+            <li>NanostructuringChip</li>
+          </value>
+        </li>
+        <li Class="PatchOperationAdd">
+          <xpath>/Defs/RecipeDef[defName="AAH_MakeNeutrosynthesizer"]/fixedIngredientFilter/thingDefs</xpath>
+          <value>
+            <li>NanostructuringChip</li>
+          </value>
+        </li>
+      </operations>
+    </match>
+  </Operation>
+
+</Patch>

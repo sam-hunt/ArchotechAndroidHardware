@@ -1,0 +1,70 @@
+# EditorConfig for Vanometric Android Reactor RimWorld Mod
+# https://editorconfig.org
+
+root = true
+
+# All files - use LF line endings (Unix-style, works everywhere)
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# C# files
+[*.cs]
+indent_style = space
+indent_size = 4
+tab_width = 4
+
+# Naming conventions - PascalCase for public members per project standards
+# Note: Fields are excluded because RimWorld convention uses camelCase for
+# serialized fields (Scribe_Values.Look) to match save file XML element names
+dotnet_naming_rule.public_members_must_be_capitalized.severity = warning
+dotnet_naming_rule.public_members_must_be_capitalized.symbols = public_symbols
+dotnet_naming_rule.public_members_must_be_capitalized.style = first_word_upper_case_style
+
+dotnet_naming_symbols.public_symbols.applicable_kinds = property,method,event,delegate
+dotnet_naming_symbols.public_symbols.applicable_accessibilities = public,internal,protected,protected_internal
+
+dotnet_naming_style.first_word_upper_case_style.capitalization = pascal_case
+
+# Code style preferences
+csharp_prefer_braces = false:none
+csharp_prefer_simple_using_statement = false:suggestion
+csharp_style_namespace_declarations = file_scoped:suggestion
+
+# Organize usings
+dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = false
+
+# XML documentation
+dotnet_style_prefer_auto_properties = true:suggestion
+dotnet_style_explicit_tuple_names = true:warning
+
+# Code quality
+dotnet_code_quality_unused_parameters = all:suggestion
+
+# XML files (Defs, About.xml, Patches)
+[*.xml]
+indent_style = space
+indent_size = 2
+
+# Markdown files
+[*.md]
+indent_style = space
+indent_size = 2
+trim_trailing_whitespace = false
+
+# Project files
+[*.csproj]
+indent_style = space
+indent_size = 2
+
+# YAML files
+[*.{yml,yaml}]
+indent_style = space
+indent_size = 2
+
+# Shell scripts (WSL/Linux only)
+[*.sh]
+end_of_line = lf

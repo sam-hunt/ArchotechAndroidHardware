@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    displayPriorityInXenotype sorts gene categories in Pawn_GeneTracker.GenesInOrder
+    (descending). When two xenogenes share an exclusionTag, the one whose category
+    has the higher priority wins the override. VREA_Subroutine is set to 9999, so
+    this must exceed 9999 for our archotech hardware genes (all of which live in
+    this category) to override VREA subroutine genes like VREA_PsychicallyDeaf.
+  -->
+  <GeneCategoryDef>
+    <defName>AAH_Hardware</defName>
+    <label>archotech hardware</label>
+    <displayPriorityInXenotype>10000</displayPriorityInXenotype>
+  </GeneCategoryDef>
+
+</Defs>

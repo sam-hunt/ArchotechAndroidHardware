@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Crafting recipe (explicit, not auto-generated from costList/recipeMaker).
+
+    Why explicit: The parent def (VREA_BodyPartAndroidBase) includes recipeMaker which
+    auto-generates a crafting recipe. We suppress it via <recipeMaker Inherit="False" />
+    in the ThingDef because the auto-generated recipe uses the NoMix ingredient search,
+    which cannot find MinifiedThing ingredients like the PsychicEmanator.
+
+    Why allowMixingIngredients: The default NoMix path groups things by thing.def and
+    calls ThingFilter.Allows(ThingDef), which does NOT unwrap MinifiedThings. Buildings
+    like PsychicEmanator are stored as MinifiedThings on the map. The AllowMix path
+    instead calls ThingFilter.Allows(Thing), which calls GetInnerIfMinified() and
+    correctly matches the minified PsychicEmanator against the filter.
+  -->
+  <RecipeDef>
+    <defName>AAH_MakePsychicTransceiver</defName>
+    <label>craft psychic transceiver</label>
+    <description>Craft a psychic transceiver from a psychic emanator and advanced components.</description>
+    <jobString>Crafting psychic transceiver.</jobString>
+    <allowMixingIngredients>true</allowMixingIngredients>
+    <workAmount>26000</workAmount>
+    <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+    <workSkill>Crafting</workSkill>
+    <effectWorking>Smith</effectWorking>
+    <soundWorking>Recipe_Smith</soundWorking>
+    <skillRequirements>
+      <Crafting>12</Crafting>
+    </skillRequirements>
+    <unfinishedThingDef>VREA_UnfinishedHealthItemAndroid</unfinishedThingDef>
+    <researchPrerequisite>VREA_AndroidTech</researchPrerequisite>
+    <recipeUsers>
+      <li>VREA_AndroidPartWorkbench</li>
+    </recipeUsers>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Plasteel</li>
+          </thingDefs>
+        </filter>
+        <count>10</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>ComponentSpacer</li>
+          </thingDefs>
+        </filter>
+        <count>2</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>ArchiteCapsule</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>PsychicEmanator</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
+    </ingredients>
+    <fixedIngredientFilter>
+      <thingDefs>
+        <li>Plasteel</li>
+        <li>ComponentSpacer</li>
+        <li>ArchiteCapsule</li>
+        <li>PsychicEmanator</li>
+      </thingDefs>
+    </fixedIngredientFilter>
+    <products>
+      <AAH_PsychicTransceiver>1</AAH_PsychicTransceiver>
+    </products>
+  </RecipeDef>
+
+  <!--
+    Surgery installation recipe. Targets the Brain body part as an implant.
+
+    Parent: VREA_SurgeryInstallBodyPartAndroidBase provides ButcherMechanoid surgery
+    effect, Crafting skill, and Human recipeUsers (androids use the Human body def).
+
+    workerClass override: Uses Recipe_InstallImplant instead of VREA's
+    Recipe_InstallAndroidPart. The implant worker adds the hediff without calling
+    RestorePart(), so existing brain hediffs (other implants, etc.) are preserved.
+    This is the correct behavior for a brain implant (vs. a body part replacement
+    like the vanometric reactor on Stomach).
+  -->
+  <RecipeDef ParentName="VREA_SurgeryInstallBodyPartAndroidBase">
+    <defName>AAH_InstallPsychicTransceiver</defName>
+    <label>install psychic transceiver</label>
+    <description>Install a psychic transceiver in the brain, granting an android psychic sensitivity.</description>
+    <descriptionHyperlinks>
+      <ThingDef>AAH_PsychicTransceiver</ThingDef>
+      <HediffDef>AAH_PsychicTransceiver</HediffDef>
+    </descriptionHyperlinks>
+    <jobString>Installing psychic transceiver.</jobString>
+    <workerClass>Recipe_InstallImplant</workerClass>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>AAH_PsychicTransceiver</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
+    </ingredients>
+    <fixedIngredientFilter>
+      <thingDefs>
+        <li>AAH_PsychicTransceiver</li>
+      </thingDefs>
+    </fixedIngredientFilter>
+    <appliedOnFixedBodyParts>
+      <li>Brain</li>
+    </appliedOnFixedBodyParts>
+    <addsHediff>AAH_PsychicTransceiver</addsHediff>
+    <uiIconThing>AAH_PsychicTransceiver</uiIconThing>
+  </RecipeDef>
+
+  <!--
+    Surgery removal recipe. Follows VREA's android surgery conventions: Crafting skill
+    (not Medicine), no medicine ingredients, ButcherMechanoid effect. Androids are
+    non-biological, so medical supplies and skills are irrelevant.
+
+    Parent: VREA_SurgeryAndroid provides ButcherMechanoid effect, Crafting work skill,
+    and mechanoid machining sounds. We add Recipe_RemoveImplant worker, Human recipeUsers
+    (android body def), and removesHediff. No ingredients needed.
+    The hediff's spawnThingOnRemoved handles ejecting the item.
+  -->
+  <RecipeDef ParentName="VREA_SurgeryAndroid">
+    <defName>AAH_RemovePsychicTransceiver</defName>
+    <label>remove psychic transceiver</label>
+    <description>Remove the psychic transceiver. The android will revert to its natural psychic insensitivity.</description>
+    <descriptionHyperlinks>
+      <ThingDef>AAH_PsychicTransceiver</ThingDef>
+      <HediffDef>AAH_PsychicTransceiver</HediffDef>
+    </descriptionHyperlinks>
+    <workerClass>Recipe_RemoveImplant</workerClass>
+    <jobString>Removing psychic transceiver.</jobString>
+    <workAmount>2000</workAmount>
+    <removesHediff>AAH_PsychicTransceiver</removesHediff>
+    <recipeUsers>
+      <li>Human</li>
+    </recipeUsers>
+  </RecipeDef>
+
+</Defs>

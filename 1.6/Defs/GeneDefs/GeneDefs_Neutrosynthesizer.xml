@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Companion gene for the neutrosynthesizer hediff. NOT player-assignable.
+    Managed entirely by Hediff_Neutrosynthesizer (added on install, removed on uninstall).
+
+    Purpose: Overrides VREA's neutro synthesis subroutine (VREA_NeutroSynthesis) via
+    Biotech's gene exclusion tag system. The shared AAH_AndroidNeutro tag causes Biotech
+    to suppress VREA_NeutroSynthesis while this gene is active. With the subroutine
+    suppressed, its slow 0.05/day recovery is replaced by the hediff's 0.3/day per kidney.
+    The VREA_GenePatches.xml XPath patch adds this exclusion tag to VREA_NeutroSynthesis.
+
+    canGenerateInGeneSet: false prevents this from appearing in xenotype creation.
+    biostatArc > 0 is required for the archite gene background (see modExtensions).
+
+    Background rendering: Uses VEF's GeneExtension.backgroundPathArchite instead of
+    the standard endogenes/xenogenes background path. VEF's transpiler in
+    GeneUIUtility.DrawGene selects this archite background when biostatArc > 0.
+
+    Display: VREA's custom gene inspector hides non-AndroidGeneDef genes.
+    The GeneUIUtility_RecacheGenes patch injects this gene into the display list.
+  -->
+  <GeneDef>
+    <defName>AAH_Neutrosynthesizer</defName>
+    <label>super neutro synthesis</label>
+    <description>Androids with this hardware have archotech kidneys that actively synthesize fresh neutroamine, restoring lost neutroamine at a greatly accelerated rate.</description>
+    <iconPath>UI/Icons/Genes/Hardware/Gene_SuperNeutroSynthesis</iconPath>
+    <displayCategory>AAH_Hardware</displayCategory>
+    <displayOrderInCategory>7</displayOrderInCategory>
+    <canGenerateInGeneSet>false</canGenerateInGeneSet>
+    <biostatArc>1</biostatArc>
+    <biostatCpx>4</biostatCpx>
+    <exclusionTags>
+      <li>AAH_AndroidNeutro</li>
+    </exclusionTags>
+    <modExtensions>
+      <li Class="VEF.Genes.GeneExtension">
+        <backgroundPathArchite>UI/Icons/Genes/GeneBackground_ArchotechHardware</backgroundPathArchite>
+      </li>
+    </modExtensions>
+  </GeneDef>
+
+</Defs>

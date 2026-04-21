@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+
+  <!--
+    Royalty DLC alternative ingredient: UnstablePowerCell can substitute for
+    VanometricPowerCell in the vanometric reactor crafting recipe (count 1,
+    either item satisfies the slot).
+
+    The recipe already sets allowMixingIngredients=true, so the filter path
+    calls ThingFilter.Allows(Thing) and unwraps MinifiedThings — both power
+    cells are minifiable buildings, so a single filter entry handles both.
+
+    Gated via PatchOperationFindMod because ThingFilter.ResolveReferences()
+    throws on unknown thingDefs if Royalty is not installed.
+  -->
+  <Operation Class="PatchOperationFindMod">
+    <mods>
+      <li>Royalty</li>
+    </mods>
+    <match Class="PatchOperationSequence">
+      <operations>
+        <li Class="PatchOperationAdd">
+          <xpath>/Defs/RecipeDef[defName="AAH_MakeVanometricReactor"]/ingredients/li[filter/thingDefs/li="VanometricPowerCell"]/filter/thingDefs</xpath>
+          <value>
+            <li>UnstablePowerCell</li>
+          </value>
+        </li>
+        <li Class="PatchOperationAdd">
+          <xpath>/Defs/RecipeDef[defName="AAH_MakeVanometricReactor"]/fixedIngredientFilter/thingDefs</xpath>
+          <value>
+            <li>UnstablePowerCell</li>
+          </value>
+        </li>
+      </operations>
+    </match>
+  </Operation>
+
+</Patch>

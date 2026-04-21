@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Crafting recipe (explicit, not auto-generated from costList/recipeMaker).
+
+    Why explicit: The parent def (VREA_BodyPartAndroidBase) includes recipeMaker which
+    auto-generates a crafting recipe. We suppress it via <recipeMaker Inherit="False" />
+    in the ThingDef because the auto-generated recipe uses the NoMix ingredient search,
+    which cannot find MinifiedThing ingredients like the InfiniteChemreactor.
+
+    Why allowMixingIngredients: The default NoMix path groups things by thing.def and
+    calls ThingFilter.Allows(ThingDef), which does NOT unwrap MinifiedThings. Buildings
+    like InfiniteChemreactor are stored as MinifiedThings on the map. The AllowMix path
+    instead calls ThingFilter.Allows(Thing), which calls GetInnerIfMinified() and
+    correctly matches the minified InfiniteChemreactor against the filter.
+  -->
+  <RecipeDef>
+    <defName>AAH_MakeNeutrosynthesizer</defName>
+    <label>craft neutrosynthesizer</label>
+    <description>Craft a neutrosynthesizer from advanced components and a modified infinite chemreactor or nano structuring chip.</description>
+    <jobString>Crafting neutrosynthesizer.</jobString>
+    <allowMixingIngredients>true</allowMixingIngredients>
+    <workAmount>26000</workAmount>
+    <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+    <workSkill>Crafting</workSkill>
+    <effectWorking>Smith</effectWorking>
+    <soundWorking>Recipe_Smith</soundWorking>
+    <skillRequirements>
+      <Crafting>12</Crafting>
+    </skillRequirements>
+    <unfinishedThingDef>VREA_UnfinishedHealthItemAndroid</unfinishedThingDef>
+    <researchPrerequisite>VREA_AndroidTech</researchPrerequisite>
+    <recipeUsers>
+      <li>VREA_AndroidPartWorkbench</li>
+    </recipeUsers>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Plasteel</li>
+          </thingDefs>
+        </filter>
+        <count>5</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>ComponentSpacer</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>ArchiteCapsule</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>InfiniteChemreactor</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Neutroamine</li>
+          </thingDefs>
+        </filter>
+        <count>30</count>
+      </li>
+    </ingredients>
+    <fixedIngredientFilter>
+      <thingDefs>
+        <li>Plasteel</li>
+        <li>ComponentSpacer</li>
+        <li>ArchiteCapsule</li>
+        <li>InfiniteChemreactor</li>
+        <li>Neutroamine</li>
+      </thingDefs>
+    </fixedIngredientFilter>
+    <products>
+      <AAH_Neutrosynthesizer>1</AAH_Neutrosynthesizer>
+    </products>
+  </RecipeDef>
+
+  <!--
+    Surgery installation recipe. Targets the Kidney body part (android kidney slot).
+
+    Parent: VREA_SurgeryInstallBodyPartAndroidBase provides the Recipe_InstallAndroidPart
+    worker, ButcherMechanoid surgery effect, and Crafting 5 skill requirement.
+
+    Note: VREA's Recipe_InstallAndroidPart.ApplyOnPawn calls RestorePart() on the target
+    body part before installing. This is what triggers the RecipeInstallAndroidPart patch
+    to pre-eject our spawnThingOnRemoved item and handle gene cleanup.
+  -->
+  <RecipeDef ParentName="VREA_SurgeryInstallBodyPartAndroidBase">
+    <defName>AAH_InstallNeutrosynthesizer</defName>
+    <label>install neutrosynthesizer</label>
+    <description>Install a neutrosynthesizer, replacing an android kidney with an archotech organ that actively synthesizes neutroamine.</description>
+    <descriptionHyperlinks>
+      <ThingDef>AAH_Neutrosynthesizer</ThingDef>
+      <HediffDef>AAH_Neutrosynthesizer</HediffDef>
+    </descriptionHyperlinks>
+    <jobString>Installing neutrosynthesizer.</jobString>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>AAH_Neutrosynthesizer</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
+    </ingredients>
+    <fixedIngredientFilter>
+      <thingDefs>
+        <li>AAH_Neutrosynthesizer</li>
+      </thingDefs>
+    </fixedIngredientFilter>
+    <appliedOnFixedBodyParts>
+      <li>Kidney</li>
+    </appliedOnFixedBodyParts>
+    <addsHediff>AAH_Neutrosynthesizer</addsHediff>
+    <uiIconThing>AAH_Neutrosynthesizer</uiIconThing>
+  </RecipeDef>
+
+  <!--
+    Surgery removal recipe. Follows VREA's android surgery conventions: Crafting skill
+    (not Medicine), no medicine ingredients, ButcherMechanoid effect. Androids are
+    non-biological, so medical supplies and skills are irrelevant.
+
+    Parent: VREA_SurgeryAndroid provides ButcherMechanoid effect, Crafting work skill,
+    and mechanoid machining sounds. We add Recipe_RemoveImplant worker, Human recipeUsers
+    (android body def), and removesHediff. No ingredients needed.
+    The hediff's spawnThingOnRemoved handles ejecting the item.
+  -->
+  <RecipeDef ParentName="VREA_SurgeryAndroid">
+    <defName>AAH_RemoveNeutrosynthesizer</defName>
+    <label>remove neutrosynthesizer</label>
+    <description>Remove the neutrosynthesizer. The android will lose its accelerated neutroamine synthesis.</description>
+    <descriptionHyperlinks>
+      <ThingDef>AAH_Neutrosynthesizer</ThingDef>
+      <HediffDef>AAH_Neutrosynthesizer</HediffDef>
+    </descriptionHyperlinks>
+    <workerClass>Recipe_RemoveImplant</workerClass>
+    <jobString>Removing neutrosynthesizer.</jobString>
+    <workAmount>2000</workAmount>
+    <removesHediff>AAH_Neutrosynthesizer</removesHediff>
+    <recipeUsers>
+      <li>Human</li>
+    </recipeUsers>
+  </RecipeDef>
+
+</Defs>

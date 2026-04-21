@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Archotech mnemocore hediff. Installed on the Brain body part as an implant.
+
+    Memory suppression uses two complementary mechanisms:
+    1. Companion gene (AAH_ArchotechMnemocore GeneDef) overrides VREA_MemoryProcessing
+       via Biotech's exclusion tag system, preventing VREA_MemoryProcessing's
+       enablesNeeds from creating the memory need. It also overrides VREA_FastRAM,
+       VREA_SlowRAM (via AndroidRAM tag), and VREA_MemoryDecay (via
+       AAH_AndroidMemoryDecay tag).
+    2. disablesNeeds below removes any residual VREA_MemorySpace need instance.
+       Uses the same built-in mechanism as the Circadian Half-cycler (Royalty DLC).
+       Cache-based via HediffSet.CacheNeeds(), zero per-tick cost.
+
+    hediffClass: Hediff_ArchotechMnemocore manages the companion gene lifecycle
+    (add on install, remove on uninstall, self-heal on save migration).
+
+    spawnThingOnRemoved: Returns the item on surgical removal. NOTE: VREA's
+    RestorePart does NOT honor this field (see RecipeInstallAndroidPart patch).
+
+    Parent: VREA_AndroidBodyPartBase provides isBad:false, blue label color, and
+    countsAsAddedPartOrImplant for the android body part category.
+  -->
+  <HediffDef ParentName="VREA_AndroidBodyPartBase">
+    <defName>AAH_ArchotechMnemocore</defName>
+    <label>archotech mnemocore</label>
+    <labelNoun>an archotech mnemocore</labelNoun>
+    <description>An installed archotech mnemocore. This neural module has rearchitected the android's memory systems at the substrate level, providing self-organizing storage that never requires reformatting. Memory degradation has ceased entirely.</description>
+    <descriptionHyperlinks>
+      <ThingDef>AAH_ArchotechMnemocore</ThingDef>
+    </descriptionHyperlinks>
+    <hediffClass>ArchotechAndroidHardware.Hediff_ArchotechMnemocore</hediffClass>
+    <spawnThingOnRemoved>AAH_ArchotechMnemocore</spawnThingOnRemoved>
+    <stages>
+      <li>
+        <disablesNeeds>
+          <li>VREA_MemorySpace</li>
+        </disablesNeeds>
+      </li>
+    </stages>
+  </HediffDef>
+
+</Defs>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<loadFolders>
+  <!--
+    LoadFolders.xml - Tells RimWorld which folders to load based on game version.
+
+    This mod requires RimWorld 1.6+.
+    Version-specific content (Defs) lives in the 1.6/ folder.
+    The root "/" loads About/ and other shared metadata, rather than everything,
+    since RimWorld only looks for well-known folders within these directories
+  -->
+  <v1.6>
+    <li>/</li>
+    <li>1.6</li>
+  </v1.6>
+</loadFolders>
