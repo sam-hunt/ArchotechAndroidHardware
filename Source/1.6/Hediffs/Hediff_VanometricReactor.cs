@@ -17,7 +17,7 @@ namespace ArchotechAndroidHardware;
 ///   Install  (PostAdd)         -> adds companion gene as xenogene
 ///   Runtime                    -> hediff's disablesNeeds suppresses VREA_ReactorPower
 ///   Removal  (PostRemoved)     -> removes companion gene, destroys reactor body part
-///   Load     (PostLoadInit)    -> self-heals gene for saves predating the gene system
+///   Load     (PostLoadInit)    -> re-asserts gene presence if missing (invariant defense)
 ///
 /// Note: extends Hediff_AddedPart (not VREA's Hediff_AndroidReactor) because we
 /// don't need VREA's reactor drain logic. This type mismatch is what triggers
@@ -56,9 +56,9 @@ public class Hediff_VanometricReactor : Hediff_AddedPart
     public override void ExposeData()
     {
         base.ExposeData();
-        // Save migration: ensures gene exists for saves created before the gene system.
-        // Without this, loading an old save would leave the hediff without its companion
-        // gene, so VREA_Power would remain active alongside the vanometric reactor.
+        // Invariant: this hediff requires its companion gene to function correctly.
+        // Re-assert presence after load in case another mod has modified gene state —
+        // VREA's novel use of genes for hardware state might confuse gene-manipulating mods.
         if (Scribe.mode == LoadSaveMode.PostLoadInit)
             AddGeneIfMissing();
     }

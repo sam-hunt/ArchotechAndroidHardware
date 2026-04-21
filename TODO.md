@@ -12,7 +12,6 @@
 
 ## Cleanup
 
-- Self-heal migration mentions in comments
 - DefOf pattern for def references
 - Update About.xml
 - check for debug logs

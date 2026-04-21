@@ -13,7 +13,7 @@
     suppressed, the subroutine's 0.05/day recovery is replaced by the hediff's 0.3/day.
 
     hediffClass: Hediff_Neutrosynthesizer manages the companion gene lifecycle
-    (add on install, remove on uninstall, self-heal on save migration) and drives
+    (add on install, remove on uninstall, restore on load if missing) and drives
     the neutro recovery tick.
 
     spawnThingOnRemoved: Returns the item on surgical removal. NOTE: VREA's

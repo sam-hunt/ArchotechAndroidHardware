@@ -12,7 +12,7 @@
        Cache-based via HediffSet.CacheNeeds(), zero per-tick cost.
 
     hediffClass: Hediff_VanometricReactor manages the companion gene lifecycle
-    (add on install, remove on uninstall, self-heal on save migration).
+    (add on install, remove on uninstall, restore on load if missing).
 
     spawnThingOnRemoved: Returns the item on surgical removal. NOTE: VREA's
     RestorePart does NOT honor this field (see RecipeInstallAndroidPart patch).

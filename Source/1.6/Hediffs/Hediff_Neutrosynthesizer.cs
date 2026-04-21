@@ -21,7 +21,7 @@ namespace ArchotechAndroidHardware;
 ///   Install  (PostAdd)         -> adds companion gene as xenogene
 ///   Runtime  (Tick)            -> reduces VREA_NeutroLoss severity
 ///   Removal  (PostRemoved)     -> removes companion gene, destroys kidney body part
-///   Load     (PostLoadInit)    -> self-heals gene for saves predating the gene system
+///   Load     (PostLoadInit)    -> re-asserts gene presence if missing (invariant defense)
 ///
 /// Note: extends Hediff_AddedPart because this is a kidney replacement (like VREA's
 /// neutrofilter). On removal, the kidney slot becomes missing.
@@ -73,7 +73,9 @@ public class Hediff_Neutrosynthesizer : Hediff_AddedPart
     public override void ExposeData()
     {
         base.ExposeData();
-        // Save migration: ensures gene exists for saves created before the gene system.
+        // Invariant: this hediff requires its companion gene to function correctly.
+        // Re-assert presence after load in case another mod has modified gene state —
+        // VREA's novel use of genes for hardware state might confuse gene-manipulating mods.
         if (Scribe.mode == LoadSaveMode.PostLoadInit)
             AddGeneIfMissing();
     }

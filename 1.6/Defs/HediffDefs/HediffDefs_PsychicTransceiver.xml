@@ -11,7 +11,7 @@
     factor and allowing the hediff's +0.20 stat offset to take effect.
 
     hediffClass: Hediff_PsychicTransceiver manages the companion gene lifecycle
-    (add on install, remove on uninstall, self-heal on save migration).
+    (add on install, remove on uninstall, restore on load if missing).
 
     spawnThingOnRemoved: Returns the item on surgical removal. NOTE: VREA's
     RestorePart does NOT honor this field (see RecipeInstallAndroidPart patch).
