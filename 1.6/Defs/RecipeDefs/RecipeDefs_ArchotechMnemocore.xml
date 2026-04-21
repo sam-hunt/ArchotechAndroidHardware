@@ -28,7 +28,7 @@
       <Crafting>12</Crafting>
     </skillRequirements>
     <unfinishedThingDef>VREA_UnfinishedHealthItemAndroid</unfinishedThingDef>
-    <researchPrerequisite>VREA_AndroidTech</researchPrerequisite>
+    <researchPrerequisite>AAH_ArchotechAndroidtech</researchPrerequisite>
     <recipeUsers>
       <li>VREA_AndroidPartWorkbench</li>
     </recipeUsers>
