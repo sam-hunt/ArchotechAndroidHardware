@@ -16,6 +16,9 @@
       <RecipeDef>AAH_InstallVanometricReactor</RecipeDef>
     </descriptionHyperlinks>
     <techLevel>Archotech</techLevel>
+    <thingCategories Inherit="False">
+      <li>AAH_BodyPartsAndroidArchotech</li>
+    </thingCategories>
     <graphicData>
       <texPath>Items/ArchotechAndroidPart</texPath>
       <graphicClass>Graphic_Single</graphicClass>

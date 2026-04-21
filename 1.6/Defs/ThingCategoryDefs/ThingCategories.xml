@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Subcategory of VREA's "android body parts" so our archotech-tier parts sort
+    separately from the vanilla VREA list in storage/bill filters. Selecting the
+    parent category still includes these via the category hierarchy.
+  -->
+  <ThingCategoryDef>
+    <defName>AAH_BodyPartsAndroidArchotech</defName>
+    <label>archotech</label>
+    <parent>VREA_BodyPartsAndroid</parent>
+  </ThingCategoryDef>
+
+</Defs>
