@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Thanatic reactor body part item. This is the inventory item; the installed
+    state is represented by the AAH_ThanaticReactor HediffDef.
+
+    thingClass: ArchotechAndroidHardware.ThanaticReactorThing stores a
+    `storedEnergy` float [0,1] that persists across install/eject cycles,
+    making the reactor transferable between android pawns without losing
+    its current charge.
+
+    Parent: VREA_BodyPartAndroidBase provides android category, Ultra tech level,
+    and the android body part graphic class.
+  -->
+  <ThingDef ParentName="VREA_BodyPartAndroidBase">
+    <defName>AAH_ThanaticReactor</defName>
+    <label>thanatic reactor</label>
+    <description>An archotech android reactor driven by an extracted Archotech Violence Generator core. Unlike conventional reactors, it draws sustenance from the echoes of violent death — each humanlike kill its host delivers pours energy back into its cell, and brief overflows bleed into an overcharge state that supercharges combat reflexes.\n\nWithout a steady supply of kills the reactor drains faster than a standard android reactor and its host will expire when it runs dry. In that terminal moment, the reactor strips one final charge from the pawn's own death before ejecting, intact, to await its next host.</description>
+    <descriptionHyperlinks>
+      <RecipeDef>AAH_InstallThanaticReactor</RecipeDef>
+    </descriptionHyperlinks>
+    <thingClass>ArchotechAndroidHardware.ThanaticReactorThing</thingClass>
+    <techLevel>Archotech</techLevel>
+    <thingCategories Inherit="False">
+      <li>AAH_BodyPartsAndroidArchotech</li>
+    </thingCategories>
+    <graphicData>
+      <texPath>Items/DarkArchotechAndroidPart</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>0.80</drawSize>
+    </graphicData>
+    <!-- Suppress parent's recipeMaker — explicit RecipeDef with allowMixingIngredients
+         is required for the minified VPE_ArchotechViolenceGenerator ingredient.
+         See comment in RecipeDefs_ThanaticReactor.xml for details. -->
+    <recipeMaker Inherit="False" />
+    <!-- costList retained for market value calculation; crafting ingredients
+         are defined in the explicit RecipeDef. -->
+    <costList>
+      <Plasteel>10</Plasteel>
+      <ComponentSpacer>2</ComponentSpacer>
+      <ArchiteCapsule>1</ArchiteCapsule>
+      <VPE_ArchotechViolenceGenerator MayRequire="VanillaExpanded.VFEPower">1</VPE_ArchotechViolenceGenerator>
+    </costList>
+    <statBases>
+      <Mass>3</Mass>
+    </statBases>
+    <comps>
+      <li Class="CompProperties_Glower">
+        <glowRadius>2</glowRadius>
+        <glowColor>(220, 40, 40, 0)</glowColor>
+      </li>
+    </comps>
+  </ThingDef>
+
+</Defs>

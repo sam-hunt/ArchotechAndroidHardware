@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Battle-log event rule pack used by Hediff_ThanaticReactor.Notify_KilledPawn
+    to append a victim-perspective entry when a Thanatic Reactor refills on a
+    humanlike kill. Consumed via BattleLogEntry_Event (subject = victim,
+    initiator = android). Gives players a visible explanation for the
+    immediate dessication of the corpse on the next tick.
+
+    Grammar slots follow vanilla Event_* convention (SUBJECT / INITIATOR with
+    _definite / _possessive suffixes); see Core/RulePackDefs/RulePacks_Event.xml.
+  -->
+  <RulePackDef>
+    <defName>AAH_Event_ThanaticDrain</defName>
+    <rulePack>
+      <rulesStrings>
+        <li>r_logentry->[SUBJECT_definite] was stripped of [SUBJECT_possessive] residual psychic energy by [INITIATOR_definite]'s thanatic reactor.</li>
+        <li>r_logentry->[INITIATOR_definite]'s thanatic reactor drained [SUBJECT_definite] of [SUBJECT_possessive] remaining psychic reserves.</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+</Defs>

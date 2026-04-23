@@ -26,10 +26,12 @@ namespace ArchotechAndroidHardware.VREAPatches;
 /// AddOrRemoveNeedsAsAppropriate (called during gene removal and PostRemoved)
 /// may evaluate against an outdated hediff list.
 ///
-/// Fix: The Prefix ejects spawnThingOnRemoved items and removes companion genes
-/// early for AAH_-prefixed hediffs. The Postfix cleans up any orphaned genes
-/// (safety net for edge cases) and forces a final needs recalculation after all
-/// hediff and gene changes have settled.
+/// Fix: The Prefix delegates ejection to <see cref="AAHPartEjector"/> (which
+/// dispatches to <see cref="ICustomAAHEjection"/> for state-preserving hediffs
+/// like Thanatic Reactor, or falls through to spawnThingOnRemoved otherwise)
+/// and removes companion genes early for AAH_-prefixed hediffs. The Postfix
+/// cleans up any orphaned genes (safety net for edge cases) and forces a final
+/// needs recalculation after all hediff and gene changes have settled.
 ///
 /// Lifecycle context: Active during part replacement surgery (installation phase).
 /// Only triggers when a new part is installed on the same body part slot.
@@ -74,11 +76,7 @@ public static class RecipeInstallAndroidPart_ApplyOnPawn_Patch
 
             hasOurHediff = true;
 
-            if (hediff.def.spawnThingOnRemoved != null)
-            {
-                var thing = ThingMaker.MakeThing(hediff.def.spawnThingOnRemoved);
-                GenPlace.TryPlaceThing(thing, pawn.PositionHeld, pawn.MapHeld, ThingPlaceMode.Near);
-            }
+            AAHPartEjector.Eject(hediff, pawn);
         }
 
         if (!hasOurHediff)

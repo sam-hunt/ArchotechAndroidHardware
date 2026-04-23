@@ -18,8 +18,10 @@
     the standard endogenes/xenogenes background path. VEF's transpiler in
     GeneUIUtility.DrawGene selects this archite background when biostatArc > 0.
 
-    Display: VREA's custom gene inspector hides non-AndroidGeneDef genes.
-    The GeneUIUtility_RecacheGenes patch injects this gene into the display list.
+    Display: VREA's custom gene inspector only shows genes its Utils.IsAndroidGene
+    check recognises. The Utils_IsAndroidGene patch extends that check to all
+    AAH_Hardware-category genes, which also relabels biostatMet as "Power
+    efficiency" and rolls it into the inspector's Power efficiency total.
   -->
   <GeneDef>
     <defName>AAH_Neutrosynthesizer</defName>

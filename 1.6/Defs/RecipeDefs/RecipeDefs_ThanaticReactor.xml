@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Crafting recipe (explicit, not auto-generated from costList/recipeMaker).
+
+    Why explicit: The parent def (VREA_BodyPartAndroidBase) includes recipeMaker which
+    auto-generates a crafting recipe. We suppress it via <recipeMaker Inherit="False" />
+    in the ThingDef because the auto-generated recipe uses the NoMix ingredient search,
+    which cannot find MinifiedThing ingredients like the VPE_ArchotechViolenceGenerator.
+
+    Why allowMixingIngredients: see comment in RecipeDefs_VanometricReactor.xml — the
+    AllowMix path calls ThingFilter.Allows(Thing) which unwraps minified buildings,
+    whereas the NoMix path only does def-level matching.
+
+    MayRequire on the RecipeDef: without Vanilla Expanded Power installed the recipe
+    doesn't load (the Violence Generator doesn't exist), but the hediff, ThingDef, and
+    install surgery remain functional — so transferred saves or dev-spawned reactors
+    continue to work without VPE.
+  -->
+  <RecipeDef MayRequire="VanillaExpanded.VFEPower">
+    <defName>AAH_MakeThanaticReactor</defName>
+    <label>craft thanatic reactor</label>
+    <description>Craft a thanatic reactor from an archotech violence generator and advanced components.</description>
+    <jobString>Crafting thanatic reactor.</jobString>
+    <allowMixingIngredients>true</allowMixingIngredients>
+    <workAmount>26000</workAmount>
+    <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+    <workSkill>Crafting</workSkill>
+    <effectWorking>Smith</effectWorking>
+    <soundWorking>Recipe_Smith</soundWorking>
+    <skillRequirements>
+      <Crafting>12</Crafting>
+    </skillRequirements>
+    <unfinishedThingDef>VREA_UnfinishedHealthItemAndroid</unfinishedThingDef>
+    <researchPrerequisite>AAH_ArchotechAndroidtech</researchPrerequisite>
+    <recipeUsers>
+      <li>VREA_AndroidPartWorkbench</li>
+    </recipeUsers>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Plasteel</li>
+          </thingDefs>
+        </filter>
+        <count>10</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>ComponentSpacer</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>ArchiteCapsule</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>VPE_ArchotechViolenceGenerator</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
+    </ingredients>
+    <fixedIngredientFilter>
+      <thingDefs>
+        <li>Plasteel</li>
+        <li>ComponentSpacer</li>
+        <li>ArchiteCapsule</li>
+        <li>VPE_ArchotechViolenceGenerator</li>
+      </thingDefs>
+    </fixedIngredientFilter>
+    <products>
+      <AAH_ThanaticReactor>1</AAH_ThanaticReactor>
+    </products>
+  </RecipeDef>
+
+  <!--
+    Surgery installation recipe. Targets the Stomach body part (android reactor slot),
+    matching AAH_InstallVanometricReactor and VREA's native reactor install.
+
+    No standalone removal recipe (mirrors Vanometric Reactor): transferability between
+    androids is achieved via replacement surgery — installing a new reactor ejects the
+    old one with its current energy preserved, via Hediff_ThanaticReactor.EjectCustom
+    dispatched through AAHPartEjector.
+
+    The install flow writes the ingredient item's storedEnergy onto the freshly-added
+    Hediff_ThanaticReactor — see ThanaticReactorInstallEnergyTransfer patch.
+  -->
+  <RecipeDef ParentName="VREA_SurgeryInstallBodyPartAndroidBase">
+    <defName>AAH_InstallThanaticReactor</defName>
+    <label>install thanatic reactor</label>
+    <description>Install a thanatic reactor, replacing the android's existing reactor. Fed by humanlike kills; the android dies when the charge runs out.</description>
+    <descriptionHyperlinks>
+      <ThingDef>AAH_ThanaticReactor</ThingDef>
+      <HediffDef>AAH_ThanaticReactor</HediffDef>
+    </descriptionHyperlinks>
+    <jobString>Installing thanatic reactor.</jobString>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>AAH_ThanaticReactor</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
+    </ingredients>
+    <fixedIngredientFilter>
+      <thingDefs>
+        <li>AAH_ThanaticReactor</li>
+      </thingDefs>
+    </fixedIngredientFilter>
+    <appliedOnFixedBodyParts>
+      <li>Stomach</li>
+    </appliedOnFixedBodyParts>
+    <addsHediff>AAH_ThanaticReactor</addsHediff>
+    <uiIconThing>AAH_ThanaticReactor</uiIconThing>
+  </RecipeDef>
+
+</Defs>

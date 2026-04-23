@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Damage def used only as a death-reason carrier when a Thanatic Reactor
+    drains to zero and kills its host. Hediff_ThanaticReactor.TriggerDeath
+    passes a DamageInfo built from this def into Pawn.Kill, which routes the
+    deathMessage through HealthUtility.GetDiedLetterText into the standard
+    colonist-death letter.
+
+    externalViolence is false: this is an internal power-failure death, so
+    vanilla treats it like frostbite / decayed-organ rather than combat and
+    skips the death scream / violence audits.
+
+    workerClass is base DamageWorker because we never apply the damage — we
+    only construct the DamageInfo for the letter-text lookup.
+  -->
+  <DamageDef>
+    <defName>AAH_ThanaticDepletion</defName>
+    <label>thanatic depletion</label>
+    <workerClass>DamageWorker</workerClass>
+    <externalViolence>false</externalViolence>
+    <canInterruptJobs>false</canInterruptJobs>
+    <deathMessage>{0}'s thanatic reactor stripped {PAWN_objective} of {PAWN_possessive} last power reserves.</deathMessage>
+  </DamageDef>
+
+</Defs>

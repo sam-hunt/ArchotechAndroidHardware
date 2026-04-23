@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using HarmonyLib;
 using RimWorld;
 using Verse;
@@ -5,21 +7,28 @@ using Verse;
 namespace ArchotechAndroidHardware.VREAPatches;
 
 /// <summary>
-/// VREA workaround: restores standard downed logic for androids with our reactor.
+/// VREA workaround: restores standard downed logic for androids with any AAH_
+/// reactor replacement (Vanometric, Thanatic, …).
 ///
 /// Problem: VREA's prefix on ShouldBeDowned checks for Hediff_AndroidReactor via
-/// OfType&lt;Hediff_AndroidReactor&gt;(). Our hediff extends Hediff_AddedPart (not their
-/// type), so VREA finds no reactor and forces the android permanently downed. We
-/// use Hediff_AddedPart instead of Hediff_AndroidReactor because we don't need
-/// VREA's reactor drain mechanics -- our reactor provides unlimited power.
+/// OfType&lt;Hediff_AndroidReactor&gt;(). Our reactor hediffs extend Hediff_AddedPart
+/// (not VREA's type), so VREA finds no reactor and forces the android permanently
+/// downed. We use Hediff_AddedPart instead of Hediff_AndroidReactor because (a)
+/// we keep the mod reflection-only (no VREAndroids.dll compile-time dep) and (b)
+/// Vanometric has no drain at all while Thanatic's drain math is reimplemented.
 ///
-/// Fix: This postfix runs after VREA's prefix has set __result = true (downed).
-/// It checks if the pawn has our hediff and, if so, re-evaluates using the
-/// standard capacity-based check (CanBeAwake + CapableOf Moving), which is the
-/// same logic VREA uses in its own else branch for reactor-equipped androids.
+/// Fix: After VREA's prefix sets __result = true (downed), check whether the
+/// pawn has any known AAH_ reactor hediff. If so, re-evaluate using the standard
+/// capacity-based check (CanBeAwake + CapableOf Moving), matching VREA's own
+/// else branch for reactor-equipped androids.
+///
+/// Note on Thanatic specifically: when Thanatic's Energy reaches 0, the hediff's
+/// TickInterval calls pawn.Kill() directly — the pawn dies rather than gets
+/// downed. This patch ensures the pawn stays upright while Energy > 0; the
+/// death transition happens in Hediff_ThanaticReactor, not here.
 ///
 /// Lifecycle context: Active at runtime for every ShouldBeDowned evaluation
-/// on a pawn with the vanometric reactor.
+/// on a pawn with any AAH_ reactor hediff installed.
 ///
 /// Removable if: VREA checks for reactor presence by def, tag, or interface
 /// rather than hardcoding the Hediff_AndroidReactor type in OfType&lt;&gt;.
@@ -27,21 +36,37 @@ namespace ArchotechAndroidHardware.VREAPatches;
 [HarmonyPatch(typeof(Pawn_HealthTracker), nameof(Pawn_HealthTracker.ShouldBeDowned))]
 public static class PawnHealthTracker_ShouldBeDowned_Postfix
 {
-    private static HediffDef _vanometricReactor;
-    private static HediffDef VanometricReactor =>
-        _vanometricReactor ??= DefDatabase<HediffDef>.GetNamed("AAH_VanometricReactor", errorOnFail: false);
+    private static readonly string[] ReactorHediffDefNames =
+    {
+        "AAH_VanometricReactor",
+        "AAH_ThanaticReactor",
+    };
+
+    private static HediffDef[] _reactorHediffs;
+    private static HediffDef[] ReactorHediffs => _reactorHediffs ??= ReactorHediffDefNames
+        .Select(n => DefDatabase<HediffDef>.GetNamed(n, errorOnFail: false))
+        .Where(d => d != null)
+        .ToArray();
 
     [HarmonyPostfix]
     public static void Postfix(ref bool __result, Pawn_HealthTracker __instance, Pawn ___pawn)
     {
-        if (!__result)
-            return;
+        if (!__result) return;
+        if (___pawn?.health?.hediffSet == null) return;
 
-        if (VanometricReactor == null)
-            return;
+        var defs = ReactorHediffs;
+        if (defs.Length == 0) return;
 
-        if (___pawn?.health?.hediffSet?.HasHediff(VanometricReactor) != true)
-            return;
+        bool hasAahReactor = false;
+        for (int i = 0; i < defs.Length; i++)
+        {
+            if (___pawn.health.hediffSet.HasHediff(defs[i]))
+            {
+                hasAahReactor = true;
+                break;
+            }
+        }
+        if (!hasAahReactor) return;
 
         // Override VREA's "no reactor found -> downed" decision with the standard
         // capacity-based check. This matches VREA's own else branch for androids that

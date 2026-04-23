@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Companion gene for the thanatic reactor hediff. NOT player-assignable.
+    Managed entirely by Hediff_ThanaticReactor (added on install, removed on uninstall).
+
+    Purpose (dual role):
+      1. Consistency with every other AAH hardware part — each installed part has
+         a companion gene so it renders in VREA's gene inspector with the archite
+         background and participates in the AAH_Hardware display category.
+      2. biostatMet -4 drives accelerated drain through VREA's
+         PowerEfficiencyToPowerDrainFactorCurve, which maps the pawn's summed
+         gene biostatMet to a drain factor (anchors we've observed: met 0 →
+         1.0×, met -20 → 6.0×; the curve's exact shape in between is VREA's,
+         so the effective multiplier at met -4 isn't one we can state
+         precisely here). The Thanatic hediff does no drain scaling of its
+         own — tuning knob is the gene's biostatMet value; tune here if the
+         realised drain rate feels off in play.
+
+    Unlike other AAH hardware genes this one declares no exclusionTag: the
+    Thanatic reactor doesn't suppress a VREA counterpart gene — VREA_Power must
+    stay active so the ReactorPower need is enabled and the charge bar visible.
+
+    canGenerateInGeneSet: false prevents this from appearing in xenotype creation.
+    biostatArc > 0 is required for the archite gene background (see modExtensions).
+
+    Background rendering: Uses VEF's GeneExtension.backgroundPathArchite instead of
+    the standard endogenes/xenogenes background path. VEF's transpiler in
+    GeneUIUtility.DrawGene selects this archite background when biostatArc > 0.
+
+    Display: VREA's custom gene inspector only shows genes its Utils.IsAndroidGene
+    check recognises. The Utils_IsAndroidGene patch extends that check to all
+    AAH_Hardware-category genes, which also relabels biostatMet as "Power
+    efficiency" and rolls it into the inspector's Power efficiency total.
+  -->
+  <GeneDef>
+    <defName>AAH_ThanaticReactor</defName>
+    <label>thanatic reactor</label>
+    <description>Androids with this hardware run an archotech reactor that draws power from the psychic echoes of violence. It drains faster than a standard reactor and is recharged by the deaths of humanlikes at the host's hand. If it ever runs dry, the host dies.</description>
+    <iconPath>UI/Icons/Genes/Hardware/Gene_ThanaticReactor</iconPath>
+    <displayCategory>AAH_Hardware</displayCategory>
+    <displayOrderInCategory>4</displayOrderInCategory>
+    <canGenerateInGeneSet>false</canGenerateInGeneSet>
+    <biostatArc>2</biostatArc>
+    <biostatCpx>6</biostatCpx>
+    <biostatMet>-4</biostatMet>
+    <modExtensions>
+      <li Class="VEF.Genes.GeneExtension">
+        <backgroundPathArchite>UI/Icons/Genes/GeneBackground_ArchotechHardware</backgroundPathArchite>
+      </li>
+    </modExtensions>
+  </GeneDef>
+
+</Defs>
