@@ -167,7 +167,7 @@
   <HediffDef>
     <defName>AAH_ReactorEjectionInjury</defName>
     <label>reactor ejection</label>
-    <description>Placeholder injury: used only as Hediff_MissingPart.lastInjury so the reactor slot reads "ejected" on the corpse rather than the default "destroyed".</description>
+    <description>The reactor module ejected from its housing as its host expired, leaving the bay open.</description>
     <hediffClass>Hediff_Injury</hediffClass>
     <injuryProps>
       <painPerSeverity>0</painPerSeverity>
