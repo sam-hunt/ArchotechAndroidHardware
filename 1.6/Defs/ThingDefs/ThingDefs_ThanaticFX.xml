@@ -10,7 +10,7 @@
     needsMaintenance and set real fade/solid/fade values per derived def).
   -->
   <ThingDef ParentName="MoteBase" Name="AAH_ThanaticAuraBase" Abstract="True">
-    <thingClass>MoteAttached</thingClass>
+    <thingClass>ArchotechAndroidHardware.Mote_ThanaticSilhouetteAura</thingClass>
     <altitudeLayer>MoteOverhead</altitudeLayer>
     <graphicData>
       <graphicClass>Graphic_PawnBodySilhouette</graphicClass>

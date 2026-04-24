@@ -182,7 +182,7 @@ public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection
 
         LogDrainEvent(victim);
 
-        SpawnAura(AuraShortMoteDef, victim);
+        SpawnDirectionalVictimAura(victim, pawn);
         SpawnStreamController(pawn, victim);
 
         // First-kill-wins: if another kill arrives before the source aura has
@@ -265,6 +265,52 @@ public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection
         if (moteDef == null || target == null || !target.Spawned || target.MapHeld == null)
             return;
         MoteMaker.MakeAttachedOverlay(target, moteDef, Vector3.zero);
+    }
+
+    // MoteMultiplyAddScroll samples in world space (via _pawnCenterWorld),
+    // so scroll-speed vectors are world-space directions, not UV-space —
+    // mesh rotation doesn't factor in. Visual pattern motion is opposite to
+    // the scroll vector (sample drift +x → pattern appears to move -x), so
+    // to produce visual flow in world direction `W` we set scroll = -W*speed.
+    //
+    // Magnitudes: cloud layers get 0.15 (matches the vanilla texA/texB XML,
+    // which is the only part of Mote_ResurrectAbility that actually reaches
+    // the shader). Speckle layer gets 0.5 to match the shader's compiled-in
+    // _DetailScrollSpeed default magnitude — the vanilla XML override for
+    // this param is a no-op (wrong case; see DrawWorker patch), so the
+    // shader's own (0.5, 0.5) default is what vanilla speckles actually run
+    // at, and we match that intensity.
+    private const float CloudScrollSpeed = 0.15f;
+    private const float DetailScrollSpeed = 0.5f;
+
+    private static void SpawnDirectionalVictimAura(Pawn victim, Pawn source)
+    {
+        var moteDef = AuraShortMoteDef;
+        if (moteDef == null || victim == null || source == null) return;
+        if (!victim.Spawned || victim.MapHeld == null) return;
+
+        var mote = (Mote_ThanaticSilhouetteAura)ThingMaker.MakeThing(moteDef);
+        mote.exactPosition = victim.DrawPos;
+        mote.Attach(victim);
+
+        // Clouds: world-north visual flow (rising-smoke read).
+        var worldNorth = new Vector2(0f, 1f);
+        mote.texAScroll = -worldNorth * CloudScrollSpeed;
+        mote.texBScroll = -worldNorth * CloudScrollSpeed;
+
+        // Speckles: world-direction toward source (drawn-out-toward-killer
+        // read). Baked once at spawn — the direction stays fixed at kill-time
+        // geometry even if the android walks during the 2s aura.
+        var toSource = source.DrawPos - victim.DrawPos;
+        var toSourceDir = new Vector2(toSource.x, toSource.z);
+        if (toSourceDir.sqrMagnitude < 1e-6f)
+            toSourceDir = worldNorth;
+        toSourceDir.Normalize();
+        mote.detailScroll = -toSourceDir * DetailScrollSpeed;
+
+        mote.overrideScroll = true;
+
+        GenSpawn.Spawn(mote, victim.PositionHeld, victim.MapHeld);
     }
 
     private static void SpawnStreamController(Pawn source, Pawn victim)
