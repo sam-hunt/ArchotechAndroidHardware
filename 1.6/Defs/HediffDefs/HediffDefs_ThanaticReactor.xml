@@ -45,6 +45,42 @@
     <addedPartProps>
       <solid>true</solid>
     </addedPartProps>
+    <!-- Chest overlay — see HediffDefs_VanometricReactor.xml for the layering /
+         glow-texture rationale. Red tint here to match the thanatic / death motif. -->
+    <renderNodeProperties>
+      <li>
+        <workerClass>PawnRenderNodeWorker_AttachmentBody</workerClass>
+        <texPath>Things/Pawn/Humanlike/BodyAttachments/AAH_ThanaticReactor_Chest</texPath>
+        <parentTagDef>Body</parentTagDef>
+        <baseLayer>35</baseLayer>
+        <drawSize>0.2</drawSize>
+        <visibleFacing><li>South</li></visibleFacing>
+        <rotDrawMode>Fresh</rotDrawMode>
+        <drawData>
+          <scaleOffsetByBodySize>true</scaleOffsetByBodySize>
+          <defaultData>
+            <offset>(0, 0, 0)</offset>
+          </defaultData>
+        </drawData>
+      </li>
+      <li>
+        <workerClass>PawnRenderNodeWorker_AttachmentBody</workerClass>
+        <texPath>Things/Mote/FireGlow</texPath>
+        <shaderTypeDef>MoteGlow</shaderTypeDef>
+        <color>(1, 0.25, 0.2, 1)</color>
+        <parentTagDef>Body</parentTagDef>
+        <baseLayer>36</baseLayer>
+        <drawSize>0.6</drawSize>
+        <visibleFacing><li>South</li></visibleFacing>
+        <rotDrawMode>Fresh</rotDrawMode>
+        <drawData>
+          <scaleOffsetByBodySize>true</scaleOffsetByBodySize>
+          <defaultData>
+            <offset>(0, 0, 0)</offset>
+          </defaultData>
+        </drawData>
+      </li>
+    </renderNodeProperties>
   </HediffDef>
 
   <!--

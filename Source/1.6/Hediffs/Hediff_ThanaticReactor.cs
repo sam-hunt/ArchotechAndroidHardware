@@ -45,6 +45,20 @@ public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection
     private float curEnergy = 1f;
     private bool dying;
 
+    // Ticks remaining until the delayed source-pawn aura fires after a kill.
+    // Negative = inactive. First-kill-wins: subsequent kills within the window
+    // don't reset the timer (see Notify_KilledPawn).
+    private int sourceAuraRemainingTicks = -1;
+
+    // Ticks remaining in the drain-death countdown. Energy has reached zero;
+    // the death aura is playing; ExecuteDeath fires when this hits zero.
+    // Negative = not in dying state (redundant with `dying` but avoids relying
+    // on a single bool for countdown control-flow).
+    private int dyingTicksRemaining = -1;
+
+    private const int SourceAuraDelayTicks = 60;   // 1.0s
+    private const int DyingCountdownTicks = 300;    // 5.0s
+
     private static GeneDef _thanaticGene;
     private static GeneDef ThanaticGene =>
         _thanaticGene ??= DefDatabase<GeneDef>.GetNamed("AAH_ThanaticReactor", errorOnFail: false);
@@ -64,6 +78,15 @@ public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection
     private static HediffDef EjectionInjuryDef =>
         _ejectionInjuryDefCache ??= DefDatabase<HediffDef>.GetNamed("AAH_ReactorEjectionInjury", errorOnFail: false);
 
+    private static ThingDef AuraShortMoteDef =>
+        _auraShortMoteDefCache ??= DefDatabase<ThingDef>.GetNamed("AAH_ThanaticAura", errorOnFail: false);
+
+    private static ThingDef AuraLongMoteDef =>
+        _auraLongMoteDefCache ??= DefDatabase<ThingDef>.GetNamed("AAH_ThanaticAuraLong", errorOnFail: false);
+
+    private static ThingDef StreamControllerDef =>
+        _streamControllerDefCache ??= DefDatabase<ThingDef>.GetNamed("AAH_ThanaticStreamController", errorOnFail: false);
+
     // Transient dessication queue: Notify_KilledPawn fires inside Pawn.Kill
     // before the victim's Corpse is spawned, so we poll for the Corpse in
     // subsequent TickIntervals. Not serialized — any pending dessications are
@@ -81,6 +104,9 @@ public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection
     private static RulePackDef _drainEventRulePackCache;
     private static HediffDef _depletionCulpritDefCache;
     private static HediffDef _ejectionInjuryDefCache;
+    private static ThingDef _auraShortMoteDefCache;
+    private static ThingDef _auraLongMoteDefCache;
+    private static ThingDef _streamControllerDefCache;
 
     public float Energy
     {
@@ -104,14 +130,29 @@ public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection
     public override void TickInterval(int delta)
     {
         base.TickInterval(delta);
-        if (pawn == null || pawn.Dead || dying) return;
+        if (pawn == null || pawn.Dead) return;
+
+        // FX timers respond to arbitrary delta granularity so the 1-second
+        // source-aura offset isn't quantized to the 60-tick drain cadence.
+        TickSourceAuraDelay(delta);
+
+        if (dying)
+        {
+            TickDyingCountdown(delta);
+            // Drain and kill checks are frozen during the death countdown, but
+            // any prior-kill dessication polling should still wind down.
+            if (Gen.IsHashIntervalTick(pawn, 60, delta))
+                ProcessDessicationQueue();
+            return;
+        }
+
         if (!Gen.IsHashIntervalTick(pawn, 60, delta)) return;
 
         DrainEnergy();
         ProcessDessicationQueue();
 
-        if (curEnergy <= 0f && !pawn.Dead)
-            TriggerDeath();
+        if (curEnergy <= 0f)
+            EnterDyingState();
     }
 
     public override void Notify_KilledPawn(Pawn victim, DamageInfo? dinfo)
@@ -140,6 +181,15 @@ public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection
         }
 
         LogDrainEvent(victim);
+
+        SpawnAura(AuraShortMoteDef, victim);
+        SpawnStreamController(pawn, victim);
+
+        // First-kill-wins: if another kill arrives before the source aura has
+        // fired, don't reset the countdown — otherwise chain-kills could
+        // indefinitely defer the source aura.
+        if (sourceAuraRemainingTicks < 0)
+            sourceAuraRemainingTicks = SourceAuraDelayTicks;
     }
 
     public void EjectCustom(Pawn pawn, IntVec3 position, Map map)
@@ -168,6 +218,8 @@ public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection
         base.ExposeData();
         Scribe_Values.Look(ref curEnergy, "curEnergy", 1f);
         Scribe_Values.Look(ref dying, "dying");
+        Scribe_Values.Look(ref sourceAuraRemainingTicks, "sourceAuraRemainingTicks", -1);
+        Scribe_Values.Look(ref dyingTicksRemaining, "dyingTicksRemaining", -1);
         // Invariant: this hediff requires its companion gene to drive the drain
         // rate via biostatMet. Re-assert presence after load in case an external
         // mod has stripped it.
@@ -188,6 +240,42 @@ public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection
         var gene = pawn.genes.GenesListForReading.FirstOrDefault(g => g.def == ThanaticGene);
         if (gene != null)
             pawn.genes.RemoveGene(gene);
+    }
+
+    private void TickSourceAuraDelay(int delta)
+    {
+        if (sourceAuraRemainingTicks < 0) return;
+        sourceAuraRemainingTicks -= delta;
+        if (sourceAuraRemainingTicks > 0) return;
+        sourceAuraRemainingTicks = -1;
+        if (pawn != null && !pawn.Dead && pawn.Spawned)
+            SpawnAura(AuraShortMoteDef, pawn);
+    }
+
+    private void TickDyingCountdown(int delta)
+    {
+        if (dyingTicksRemaining <= 0) return;
+        dyingTicksRemaining -= delta;
+        if (dyingTicksRemaining <= 0)
+            ExecuteDeath();
+    }
+
+    private static void SpawnAura(ThingDef moteDef, Pawn target)
+    {
+        if (moteDef == null || target == null || !target.Spawned || target.MapHeld == null)
+            return;
+        MoteMaker.MakeAttachedOverlay(target, moteDef, Vector3.zero);
+    }
+
+    private static void SpawnStreamController(Pawn source, Pawn victim)
+    {
+        if (StreamControllerDef == null || source == null || victim == null) return;
+        var map = victim.MapHeld;
+        if (map == null) return;
+        var controller = (ThanaticStreamController)ThingMaker.MakeThing(StreamControllerDef);
+        controller.sourcePawn = source;
+        controller.victim = victim;
+        GenSpawn.Spawn(controller, victim.PositionHeld, map);
     }
 
     private void DrainEnergy()
@@ -223,9 +311,22 @@ public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection
         }
     }
 
-    private void TriggerDeath()
+    // Enter the dramatized death countdown. The red aura starts playing on the
+    // still-alive pawn; ExecuteDeath runs the actual Kill sequence once the
+    // countdown expires. Splitting the phases this way means the aura attaches
+    // cleanly to the live Pawn (no corpse-shift concerns) and the pawn stays
+    // upright through the full window because PawnHealthTracker_ShouldBeDowned
+    // already keeps AAH reactor pawns standing regardless of energy level.
+    private void EnterDyingState()
     {
         dying = true;
+        dyingTicksRemaining = DyingCountdownTicks;
+        SpawnAura(AuraLongMoteDef, pawn);
+    }
+
+    private void ExecuteDeath()
+    {
+        dyingTicksRemaining = 0;
         var settings = ArchotechAndroidHardwareMod.Settings;
         float refillOnDeath = settings?.thanaticRefillAmount ?? 0.35f;
 

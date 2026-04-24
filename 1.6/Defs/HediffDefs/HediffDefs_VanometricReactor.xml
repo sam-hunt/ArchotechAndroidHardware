@@ -40,6 +40,67 @@
     <addedPartProps>
       <solid>true</solid>
     </addedPartProps>
+    <!--
+      Chest overlay. Two render nodes: the chip (authored texture) and a tinted
+      glow halo. `Things/Mote/FireGlow` is a vanilla asset-bundle texture (soft
+      radial gradient) — don't expect to find it in Textures/ on disk. MoteGlow
+      shader + <color> gives us any-color emissive glow without bespoke art.
+
+      baseLayer 35/36 sits between apparel root (20) and firefoam (40), so the
+      overlay draws over apparel. visibleFacing=South only; the chip is centred
+      on the chest and would be obscured by the pawn in the other three facings.
+    -->
+    <renderNodeProperties>
+      <li>
+        <workerClass>PawnRenderNodeWorker_AttachmentBody</workerClass>
+        <texPath>Things/Pawn/Humanlike/BodyAttachments/AAH_VanometricReactor_Chest</texPath>
+        <parentTagDef>Body</parentTagDef>
+        <baseLayer>35</baseLayer>
+        <drawSize>0.2</drawSize>
+        <visibleFacing><li>South</li></visibleFacing>
+        <rotDrawMode>Fresh</rotDrawMode>
+        <drawData>
+          <scaleOffsetByBodySize>true</scaleOffsetByBodySize>
+          <defaultData>
+            <offset>(0, 0, 0)</offset>
+          </defaultData>
+        </drawData>
+      </li>
+      <li>
+        <workerClass>PawnRenderNodeWorker_AttachmentBody</workerClass>
+        <texPath>Things/Mote/FireGlow</texPath>
+        <shaderTypeDef>MoteGlow</shaderTypeDef>
+        <color>(0.1, 0.95, 1, 1)</color>
+        <parentTagDef>Body</parentTagDef>
+        <baseLayer>36</baseLayer>
+        <drawSize>0.5</drawSize>
+        <visibleFacing><li>South</li></visibleFacing>
+        <rotDrawMode>Fresh</rotDrawMode>
+        <drawData>
+          <scaleOffsetByBodySize>true</scaleOffsetByBodySize>
+          <defaultData>
+            <offset>(0, 0, 0)</offset>
+          </defaultData>
+        </drawData>
+      </li>
+      <li>
+        <workerClass>PawnRenderNodeWorker_AttachmentBody</workerClass>
+        <texPath>Things/Mote/FireGlow</texPath>
+        <shaderTypeDef>MoteGlow</shaderTypeDef>
+        <color>(0.1, 0.95, 1, 1)</color>
+        <parentTagDef>Body</parentTagDef>
+        <baseLayer>37</baseLayer>
+        <drawSize>0.28</drawSize>
+        <visibleFacing><li>South</li></visibleFacing>
+        <rotDrawMode>Fresh</rotDrawMode>
+        <drawData>
+          <scaleOffsetByBodySize>true</scaleOffsetByBodySize>
+          <defaultData>
+            <offset>(0, 0, 0)</offset>
+          </defaultData>
+        </drawData>
+      </li>
+    </renderNodeProperties>
   </HediffDef>
 
 </Defs>
