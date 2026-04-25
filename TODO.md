@@ -4,11 +4,11 @@
 
 - Thanatic reactor market value
 - Thanatic overcharge doesn't match high on go-juice
+- Only fire thanatic drain on psychically sensitive targets
 - New scenario "Magus of the Abyss", a sole android with a thanatic reactor. otherwise with similarities to both the rich explorer, and the VREA starting scenario
-- Thanatic reactor victim absorbed mote effect (deadlife-like effect?)
-- Thanatic reactor killer recharge mote effect (recolored resurrector serum-like effect?)
-- Render nodes to display archotech reactors on pawn chests, mnemocore/pcores on face temples?
-- Add Persona Core upgrade part (increase consciosness +10%, increase threshold to awaken?), render node?
+- Split crafting recipe for thanatic reactor to "salvage from vpe violence generator" and "rig from anomaly shards"
+- Refine reactor body attachment textures
+- Add Persona Core upgrade part (increase consciosness +10%, increase threshold to awaken?)
 - Add powerfocus chip to vanometric reactor recipe, consider whether there's too many distinct ingredients
 - more exclusion tags for conflicting subroutines
 - With Anomaly DLC, Shard can be used to awaken androids?
@@ -24,6 +24,6 @@
 
 ## Cleanup
 
-- Ensure thanatic reactor body part thing has glow, same as
-- DefOf pattern for def references
-- Update About.xml
+- Review def descriptions copy
+- DefOf pattern for def references?
+- Update About.xml with all features

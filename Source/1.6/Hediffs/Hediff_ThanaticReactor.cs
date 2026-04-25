@@ -249,7 +249,7 @@ public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection
         if (sourceAuraRemainingTicks > 0) return;
         sourceAuraRemainingTicks = -1;
         if (pawn != null && !pawn.Dead && pawn.Spawned)
-            SpawnAura(AuraShortMoteDef, pawn);
+            SpawnDirectionalSourceAura(pawn);
     }
 
     private void TickDyingCountdown(int delta)
@@ -258,13 +258,6 @@ public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection
         dyingTicksRemaining -= delta;
         if (dyingTicksRemaining <= 0)
             ExecuteDeath();
-    }
-
-    private static void SpawnAura(ThingDef moteDef, Pawn target)
-    {
-        if (moteDef == null || target == null || !target.Spawned || target.MapHeld == null)
-            return;
-        MoteMaker.MakeAttachedOverlay(target, moteDef, Vector3.zero);
     }
 
     // MoteMultiplyAddScroll samples in world space (via _pawnCenterWorld),
@@ -283,34 +276,66 @@ public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection
     private const float CloudScrollSpeed = 0.15f;
     private const float DetailScrollSpeed = 0.5f;
 
+    private static readonly Vector2 WorldNorth = new(0f, 1f);
+    private static readonly Vector2 WorldSouth = new(0f, -1f);
+
+    // Victim aura: clouds rise as smoke, speckles peel off toward the killer.
+    // The speckle direction is baked to kill-time geometry — if the android
+    // moves during the 2s aura window, the speckles keep pointing at where
+    // the android was at moment-of-kill, which reads as "the drain was
+    // locked in at that instant".
     private static void SpawnDirectionalVictimAura(Pawn victim, Pawn source)
     {
-        var moteDef = AuraShortMoteDef;
-        if (moteDef == null || victim == null || source == null) return;
-        if (!victim.Spawned || victim.MapHeld == null) return;
-
-        var mote = (Mote_ThanaticSilhouetteAura)ThingMaker.MakeThing(moteDef);
-        mote.exactPosition = victim.DrawPos;
-        mote.Attach(victim);
-
-        // Clouds: world-north visual flow (rising-smoke read).
-        var worldNorth = new Vector2(0f, 1f);
-        mote.texAScroll = -worldNorth * CloudScrollSpeed;
-        mote.texBScroll = -worldNorth * CloudScrollSpeed;
-
-        // Speckles: world-direction toward source (drawn-out-toward-killer
-        // read). Baked once at spawn — the direction stays fixed at kill-time
-        // geometry even if the android walks during the 2s aura.
+        if (victim == null || source == null) return;
         var toSource = source.DrawPos - victim.DrawPos;
         var toSourceDir = new Vector2(toSource.x, toSource.z);
         if (toSourceDir.sqrMagnitude < 1e-6f)
-            toSourceDir = worldNorth;
+            toSourceDir = WorldNorth;
         toSourceDir.Normalize();
-        mote.detailScroll = -toSourceDir * DetailScrollSpeed;
 
+        SpawnDirectionalAura(AuraShortMoteDef, victim,
+            texAScroll: -WorldNorth * CloudScrollSpeed,
+            texBScroll: -WorldNorth * CloudScrollSpeed,
+            detailScroll: -toSourceDir * DetailScrollSpeed);
+    }
+
+    // Source aura: all three layers flow world-north, reinforcing the "reactor
+    // is being powered up" read. Uniform upward motion contrasts with the
+    // victim's speckles-pulled-sideways directionality.
+    private static void SpawnDirectionalSourceAura(Pawn source)
+    {
+        SpawnDirectionalAura(AuraShortMoteDef, source,
+            texAScroll: -WorldNorth * CloudScrollSpeed,
+            texBScroll: -WorldNorth * CloudScrollSpeed,
+            detailScroll: -WorldNorth * DetailScrollSpeed);
+    }
+
+    // Dying aura: all three layers flow world-south, the inverse of the
+    // source powered-up aura. Reads as "reactor draining to nothing" — the
+    // downward smoke and speckle motion mirrors the upward source aura so
+    // the two moments read as narrative opposites.
+    private static void SpawnDirectionalDyingAura(Pawn pawn)
+    {
+        SpawnDirectionalAura(AuraLongMoteDef, pawn,
+            texAScroll: -WorldSouth * CloudScrollSpeed,
+            texBScroll: -WorldSouth * CloudScrollSpeed,
+            detailScroll: -WorldSouth * DetailScrollSpeed);
+    }
+
+    private static void SpawnDirectionalAura(ThingDef moteDef, Pawn target,
+        Vector2 texAScroll, Vector2 texBScroll, Vector2 detailScroll)
+    {
+        if (moteDef == null || target == null) return;
+        if (!target.Spawned || target.MapHeld == null) return;
+
+        var mote = (Mote_ThanaticSilhouetteAura)ThingMaker.MakeThing(moteDef);
+        mote.exactPosition = target.DrawPos;
+        mote.Attach(target);
+        mote.texAScroll = texAScroll;
+        mote.texBScroll = texBScroll;
+        mote.detailScroll = detailScroll;
         mote.overrideScroll = true;
-
-        GenSpawn.Spawn(mote, victim.PositionHeld, victim.MapHeld);
+        GenSpawn.Spawn(mote, target.PositionHeld, target.MapHeld);
     }
 
     private static void SpawnStreamController(Pawn source, Pawn victim)
@@ -367,7 +392,7 @@ public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection
     {
         dying = true;
         dyingTicksRemaining = DyingCountdownTicks;
-        SpawnAura(AuraLongMoteDef, pawn);
+        SpawnDirectionalDyingAura(pawn);
     }
 
     private void ExecuteDeath()

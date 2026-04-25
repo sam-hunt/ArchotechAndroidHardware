@@ -9,9 +9,9 @@ namespace ArchotechAndroidHardware;
 /// locked at spawn — this mote recomputes its steering each tick, so it
 /// tracks the android even as it moves.
 ///
-/// Self-destructs on: reaching the target (within ArrivalRadius), losing
-/// its target with no corpse fallback, or the def's natural fade+solid+fade
-/// lifespan expiring (safety net so stragglers never linger).
+/// Self-destructs on reaching the target, losing its target with no corpse
+/// fallback, or the def's natural fade+solid+fade lifespan expiring (safety
+/// net so stragglers never linger).
 ///
 /// Spawned in batches by <see cref="ThanaticStreamController"/>.
 /// </summary>
@@ -20,16 +20,13 @@ public class Mote_ThanaticDrainParticle : Mote
     public Pawn homingTarget;
     public Vector3 velocity;
 
-    // Steering model: velocity is Lerped toward the ideal "straight at the
-    // target" vector each tick. This gives tight homing with no orbital
-    // overshoot — accel-and-cap steering (our earlier model) tended to let
-    // momentum carry particles past the target, causing visible circling.
-    // SteerRate is the per-tick Lerp factor: higher = snappier turns / less
-    // lateral travel. ArrivalRadius terminates the particle inside the
-    // target's body so it doesn't cross through and loop.
+    // Steering model: direction is Lerped toward "straight at the target"
+    // each tick at SteerRate. ArrivalRadius=0 means the only arrival
+    // condition is the overshoot landing — the particle reaches the target
+    // exactly, then destroys.
     private const float SteerRate = 0.20f;
     private const float MaxSpeed = 0.18f;
-    private const float ArrivalRadius = 0.55f;
+    private const float ArrivalRadius = 0f;
 
     protected override void Tick()
     {
@@ -42,13 +39,23 @@ public class Mote_ThanaticDrainParticle : Mote
         }
         var toTarget = targetPos.Value - exactPosition;
         toTarget.y = 0f;
-        if (toTarget.sqrMagnitude < ArrivalRadius * ArrivalRadius)
+        float dist = toTarget.magnitude;
+        if (dist < ArrivalRadius)
         {
             Destroy();
             return;
         }
         var desiredVelocity = toTarget.normalized * MaxSpeed;
         velocity = Vector3.Lerp(velocity, desiredVelocity, SteerRate);
+        // If this step would land on or past the target, snap exactly to
+        // it (so the final frame hits the torso center) and destroy.
+        float stepLen = velocity.magnitude;
+        if (stepLen >= dist)
+        {
+            exactPosition = targetPos.Value;
+            Destroy();
+            return;
+        }
         exactPosition += velocity;
         // Point the sprite along the direction of travel so non-round
         // textures (e.g. SparkThrown) read as streaking, not tumbling.

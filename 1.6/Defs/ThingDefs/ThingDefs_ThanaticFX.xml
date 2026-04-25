@@ -32,13 +32,13 @@
     </graphicData>
   </ThingDef>
 
-  <!-- 2.0s total: used for the per-kill victim + source auras -->
+  <!-- 2.25s total: used for the per-kill victim + source auras -->
   <ThingDef ParentName="AAH_ThanaticAuraBase">
     <defName>AAH_ThanaticAura</defName>
     <mote>
-      <fadeInTime>0.3</fadeInTime>
-      <solidTime>1.4</solidTime>
-      <fadeOutTime>0.3</fadeOutTime>
+      <fadeInTime>0.225</fadeInTime>
+      <solidTime>1.8</solidTime>
+      <fadeOutTime>0.225</fadeOutTime>
     </mote>
   </ThingDef>
 
@@ -72,7 +72,7 @@
     <mote>
       <fadeInTime>0.1</fadeInTime>
       <solidTime>3.0</solidTime>
-      <fadeOutTime>0.25</fadeOutTime>
+      <fadeOutTime>0</fadeOutTime>
     </mote>
   </ThingDef>
 
