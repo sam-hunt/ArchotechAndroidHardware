@@ -26,7 +26,7 @@
   <GeneDef>
     <defName>AAH_VanometricReactor</defName>
     <label>vanometric reactor</label>
-    <description>Androids with this hardware have a permanent archotech reactor that provides unlimited power. The reactor never needs to be replaced.</description>
+    <description>Androids with this hardware have an adapted archotech reactor that extracts unlimited power from fluctuations in quantum foam. The reactor never needs to be replaced.</description>
     <iconPath>UI/Icons/Genes/Hardware/Gene_VanometricReactor</iconPath>
     <displayCategory>AAH_Hardware</displayCategory>
     <displayOrderInCategory>3</displayOrderInCategory>

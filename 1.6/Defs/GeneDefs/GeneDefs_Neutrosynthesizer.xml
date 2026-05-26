@@ -26,7 +26,7 @@
   <GeneDef>
     <defName>AAH_Neutrosynthesizer</defName>
     <label>super neutro synthesis</label>
-    <description>Androids with this hardware have archotech kidneys that actively synthesize fresh neutroamine, restoring lost neutroamine at a greatly accelerated rate.</description>
+    <description>Androids with this hardware can actively synthesize non-trivial quantities of neutroamine, restoring lost internal supplies at a greatly accelerated rate.</description>
     <iconPath>UI/Icons/Genes/Hardware/Gene_SuperNeutroSynthesis</iconPath>
     <displayCategory>AAH_Hardware</displayCategory>
     <displayOrderInCategory>7</displayOrderInCategory>

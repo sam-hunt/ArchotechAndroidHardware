@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Companion gene for the grav reactor hediff. NOT player-assignable.
+    Managed entirely by Hediff_GravReactor (added on install, removed on uninstall).
+
+    Like Thanatic (and unlike Vanometric / Mnemocore / Neutrosynthesizer), this
+    gene declares no exclusionTag — the grav reactor doesn't suppress a VREA
+    counterpart gene. VREA_Power must stay active so the ReactorPower need is
+    enabled and the charge bar visible.
+
+    biostatMet 0: baseline drain via VREA's PowerEfficiencyToPowerDrainFactorCurve.
+    The grav reactor doesn't accelerate drain (unlike Thanatic, biostatMet -4)
+    and doesn't suppress the need (unlike Vanometric). Tuning lever: lower this
+    value to accelerate drain if a fresh charge feels too long-lasting between
+    launches.
+
+    biostatArc 1 (vs. the archotech reactors' 2): the brief positions Grav as
+    ultratech, a step below archotech. Kept > 0 so the archite gene background
+    still renders via VEF — visual consistency with other AAH hardware genes.
+
+    Odyssey-gated alongside the rest of the slice — if the gene loaded without
+    the hediff, the Utils_IsAndroidGene postfix would surface it in the gene
+    inspector with no functional backing.
+
+    Display: VREA's custom gene inspector only shows genes its Utils.IsAndroidGene
+    check recognises. The Utils_IsAndroidGene patch extends that check to all
+    AAH_Hardware-category genes, which also relabels biostatMet as "Power
+    efficiency" and rolls it into the inspector's Power efficiency total.
+  -->
+  <GeneDef MayRequire="Ludeon.RimWorld.Odyssey">
+    <defName>AAH_GravReactor</defName>
+    <label>grav reactor</label>
+    <description>Androids with this hardware have an ultratech reactor that draws power from gravitational waves. It is recharged whenever the host participates in a gravship launch.</description>
+    <iconPath>UI/Icons/Genes/Hardware/Gene_GravReactor</iconPath>
+    <displayCategory>AAH_Hardware</displayCategory>
+    <displayOrderInCategory>2</displayOrderInCategory>
+    <canGenerateInGeneSet>false</canGenerateInGeneSet>
+    <biostatArc>1</biostatArc>
+    <biostatCpx>4</biostatCpx>
+    <biostatMet>0</biostatMet>
+    <modExtensions>
+      <li Class="VEF.Genes.GeneExtension">
+        <backgroundPathArchite>UI/Icons/Genes/GeneBackground_ArchotechHardware</backgroundPathArchite>
+      </li>
+    </modExtensions>
+  </GeneDef>
+
+</Defs>

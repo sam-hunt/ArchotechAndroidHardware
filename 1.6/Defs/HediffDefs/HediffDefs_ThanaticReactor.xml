@@ -39,14 +39,21 @@
       <ThingDef>AAH_ThanaticReactor</ThingDef>
     </descriptionHyperlinks>
     <hediffClass>ArchotechAndroidHardware.Hediff_ThanaticReactor</hediffClass>
+    <!-- Surfaces the "extract reactor" gizmo on the android's corpse via
+         Hediff_ThanaticReactor.GetGizmos. Pawn_HealthTracker.GetGizmos filters
+         out hediffs without this flag once the pawn is dead. -->
+    <showGizmosOnCorpse>true</showGizmosOnCorpse>
     <stages>
       <li />
     </stages>
     <addedPartProps>
       <solid>true</solid>
     </addedPartProps>
-    <!-- Chest overlay — see HediffDefs_VanometricReactor.xml for the layering /
-         glow-texture rationale. Red tint here to match the thanatic / death motif. -->
+    <!-- Chest overlay — see HediffDefs_VanometricReactor.xml for the layering
+         rationale. The emissive core glow lives in Mote_AAHReactorGlow,
+         maintained by ReactorGlowMote.Maintain from Hediff_ThanaticReactor.
+         Red tint (1, 0.25, 0.2) for the thanatic / death motif is applied
+         in code via Mote.instanceColor. -->
     <renderNodeProperties>
       <li>
         <workerClass>PawnRenderNodeWorker_AttachmentBody</workerClass>
@@ -54,24 +61,9 @@
         <parentTagDef>Body</parentTagDef>
         <baseLayer>35</baseLayer>
         <drawSize>0.2</drawSize>
-        <visibleFacing><li>South</li></visibleFacing>
-        <rotDrawMode>Fresh</rotDrawMode>
-        <drawData>
-          <scaleOffsetByBodySize>true</scaleOffsetByBodySize>
-          <defaultData>
-            <offset>(0, 0, 0)</offset>
-          </defaultData>
-        </drawData>
-      </li>
-      <li>
-        <workerClass>PawnRenderNodeWorker_AttachmentBody</workerClass>
-        <texPath>Things/Mote/FireGlow</texPath>
-        <shaderTypeDef>MoteGlow</shaderTypeDef>
-        <color>(1, 0.25, 0.2, 1)</color>
-        <parentTagDef>Body</parentTagDef>
-        <baseLayer>36</baseLayer>
-        <drawSize>0.6</drawSize>
-        <visibleFacing><li>South</li></visibleFacing>
+        <visibleFacing>
+          <li>South</li>
+        </visibleFacing>
         <rotDrawMode>Fresh</rotDrawMode>
         <drawData>
           <scaleOffsetByBodySize>true</scaleOffsetByBodySize>

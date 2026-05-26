@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Designation marker for "extract thanatic reactor from android corpse".
+    Mirrors the vanilla Ideology ExtractSkull pattern: a per-corpse designation
+    placed via the corpse's gizmo (Hediff_ThanaticReactor.GetGizmos, gated by
+    showGizmosOnCorpse on the hediff def) or via the right-click float menu
+    (FloatMenuOptionProvider_ExtractThanaticReactor). WorkGiver_ExtractThanaticReactor
+    scans for these designations and dispatches the extraction job.
+
+    Rendered at AltitudeLayer.MetaOverlays as a single MeshPool.plane10 quad
+    (1x1 cell) using ShaderDatabase.MetaOverlay — alpha is read from the PNG;
+    no compositing with the corpse texture.
+  -->
+  <DesignationDef>
+    <defName>AAH_ExtractThanaticReactor</defName>
+    <texturePath>Designations/AAH_ExtractThanaticReactor</texturePath>
+    <targetType>Thing</targetType>
+  </DesignationDef>
+
+  <JobDef>
+    <defName>AAH_ExtractThanaticReactor</defName>
+    <driverClass>ArchotechAndroidHardware.JobDriver_ExtractThanaticReactor</driverClass>
+    <reportString>extracting thanatic reactor from TargetA.</reportString>
+    <casualInterruptible>false</casualInterruptible>
+    <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+  </JobDef>
+
+  <WorkGiverDef>
+    <defName>AAH_ExtractThanaticReactor</defName>
+    <label>extract thanatic reactor</label>
+    <giverClass>ArchotechAndroidHardware.WorkGiver_ExtractThanaticReactor</giverClass>
+    <workType>BasicWorker</workType>
+    <verb>extract</verb>
+    <gerund>extracting thanatic reactor from</gerund>
+    <priorityInType>20</priorityInType>
+    <requiredCapacities>
+      <li>Manipulation</li>
+    </requiredCapacities>
+    <canBeDoneByMechs>false</canBeDoneByMechs>
+  </WorkGiverDef>
+
+</Defs>

@@ -26,7 +26,7 @@
       <li>AAH_BodyPartsAndroidArchotech</li>
     </thingCategories>
     <graphicData>
-      <texPath>Items/DarkArchotechAndroidPart</texPath>
+      <texPath>Items/AAH_AndroidPart_ArchotechDark</texPath>
       <graphicClass>Graphic_Single</graphicClass>
       <drawSize>0.80</drawSize>
     </graphicData>

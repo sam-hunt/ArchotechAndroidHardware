@@ -1,5 +1,6 @@
 using System.Linq;
 using RimWorld;
+using UnityEngine;
 using Verse;
 
 namespace ArchotechAndroidHardware;
@@ -29,10 +30,31 @@ public class Hediff_VanometricReactor : Hediff_AddedPart
     private static GeneDef VanometricPowerGene =>
         _vanometricPowerGene ??= DefDatabase<GeneDef>.GetNamed("AAH_VanometricReactor", errorOnFail: false);
 
+    // Lime-green glow sampled directly from the core disk of
+    // AAH_VanometricReactor_Chest.png (RGB 222,223,66 — every pixel of the
+    // 40px core is identical). The mote texture is white, so this tint
+    // becomes the perceived glow colour via MoteGlow's SrcAlpha × One additive
+    // blend. The Mote reference is not serialised — it's transient and gets
+    // recreated on the first post-load tick.
+    private static readonly Color GlowTint = new(0.871f, 0.875f, 0.259f);
+    private Mote glowMote;
+
     public override void PostAdd(DamageInfo? dinfo)
     {
         base.PostAdd(dinfo);
         AddGeneIfMissing();
+    }
+
+    // Tick (not TickInterval): in 1.6 Thing.DoTick gates TickInterval behind
+    // UpdateRateTicks, which scales up when the pawn is offscreen. With the
+    // mote's solidTime=600, an offscreen pawn's TickInterval can fire less
+    // often than the maintenance deadline and the mote despawns. Hediff.Tick
+    // runs every game tick regardless of update rate — same cadence noctol's
+    // CompTick uses for its eye glow.
+    public override void Tick()
+    {
+        base.Tick();
+        ReactorGlowMote.Maintain(pawn, ref glowMote, GlowTint, brightness: 1f);
     }
 
     public override void PostRemoved()

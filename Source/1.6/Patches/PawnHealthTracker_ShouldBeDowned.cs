@@ -40,6 +40,7 @@ public static class PawnHealthTracker_ShouldBeDowned_Postfix
     {
         "AAH_VanometricReactor",
         "AAH_ThanaticReactor",
+        "AAH_GravReactor",
     };
 
     private static HediffDef[] _reactorHediffs;

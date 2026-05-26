@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+
+  <!--
+    Adds a chest body attachment + companion glow mote to VREA's stock reactor
+    (VREA_Reactor HediffDef) so plain androids visually match the AAH exotic
+    reactor variants (Vanometric / Grav / Thanatic). Without this, the exotic
+    reactors stand out so heavily that a stock android looks visually broken
+    next to one with hardware installed.
+
+    Why patch VREA_Reactor directly rather than ship our own override hediff:
+    the goal is purely visual — VREA's drain logic, depletion behaviour, and
+    install recipes stay untouched. Adding the render node + a tick-driven
+    glow comp is the smallest possible footprint.
+
+    VREA does not ship a renderNodeProperties or comps node on this def, so
+    both operations are pure Adds (no replace risk).
+
+    Render node: see HediffDefs_VanometricReactor.xml for the layering
+    rationale (baseLayer=35 above apparel, south-only facing because the
+    chest sprite is centred and would clip in other facings, etc.).
+
+    Glow: shared Mote_AAHReactorGlow def, maintained per-tick by
+    ArchotechAndroidHardware.HediffComp_BasicReactorGlow via CompPostTick.
+    Tint is white (untinted) to read as "stock reactor" — the exotic variants
+    each use a colour matched to their chest core (lime / cyan / red), so
+    reusing one of those tints here would imply functional parity.
+  -->
+  <Operation Class="PatchOperationAdd">
+    <xpath>Defs/HediffDef[defName="VREA_Reactor"]</xpath>
+    <value>
+      <renderNodeProperties>
+        <li>
+          <workerClass>PawnRenderNodeWorker_AttachmentBody</workerClass>
+          <texPath>Things/Pawn/Humanlike/BodyAttachments/AAH_BasicReactor_Chest</texPath>
+          <parentTagDef>Body</parentTagDef>
+          <baseLayer>35</baseLayer>
+          <drawSize>0.2</drawSize>
+          <visibleFacing>
+            <li>South</li>
+          </visibleFacing>
+          <rotDrawMode>Fresh</rotDrawMode>
+          <drawData>
+            <scaleOffsetByBodySize>true</scaleOffsetByBodySize>
+            <defaultData>
+              <offset>(0, 0, 0)</offset>
+            </defaultData>
+          </drawData>
+        </li>
+      </renderNodeProperties>
+      <comps>
+        <li Class="HediffCompProperties">
+          <compClass>ArchotechAndroidHardware.HediffComp_BasicReactorGlow</compClass>
+        </li>
+      </comps>
+    </value>
+  </Operation>
+
+</Patch>

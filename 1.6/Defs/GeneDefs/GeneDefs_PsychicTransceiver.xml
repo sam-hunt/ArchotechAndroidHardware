@@ -31,7 +31,8 @@
     <defName>AAH_PsychicTransceiver</defName>
     <label>psychic transceiver</label>
     <description>Androids with this hardware are sensitive to psychic energy and influence, despite their synthetic nature.</description>
-    <iconPath>UI/Icons/Genes/Gene_EnhancedPsychicAbility</iconPath>
+    <iconPath>UI/Icons/Genes/Hardware/Gene_PsychicTransceiver</iconPath>
+    <!-- <iconPath>UI/Icons/Genes/Gene_EnhancedPsychicAbility</iconPath> -->
     <displayCategory>AAH_Hardware</displayCategory>
     <displayOrderInCategory>5</displayOrderInCategory>
     <canGenerateInGeneSet>false</canGenerateInGeneSet>

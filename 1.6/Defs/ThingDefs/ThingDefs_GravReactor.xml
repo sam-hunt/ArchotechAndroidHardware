@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Grav reactor body part item. This is the inventory item; the installed state
+    is represented by the AAH_GravReactor HediffDef.
+
+    Entirely Odyssey-gated via MayRequire="Ludeon.RimWorld.Odyssey". Without
+    Odyssey the gameplay mechanic (recharge on gravship launch) has no source of
+    refills, so the whole feature is unavailable — unlike Thanatic, whose
+    refill mechanic (humanlike kills) works without its optional dependency.
+
+    Parent: VREA_BodyPartAndroidBase. Unlike Vanometric/Thanatic, we don't
+    override the parent's techLevel — the reactor is ultratech, matching the
+    parent's default. The brief explicitly frames Grav as a step below the
+    archotech reactors.
+
+    storedEnergy: the reactor item's current charge is preserved by
+    GravReactorThing (thingClass below). The install flow reads it onto the
+    freshly-added hediff via the GravReactorInstallEnergyTransfer patch.
+  -->
+  <ThingDef ParentName="VREA_BodyPartAndroidBase" MayRequire="Ludeon.RimWorld.Odyssey">
+    <defName>AAH_GravReactor</defName>
+    <label>grav reactor</label>
+    <description>An ultratech android reactor adapted from gravship engine technology. Instead of burning through a finite charge like a standard reactor, it draws power from gravitational waves — recharged in full whenever its host participates in a gravship launch.\n\nUseless to a colony that never leaves the rim: with no launches, the reactor drains exactly like any other and the android shuts down. Indispensable to a colony that lives on the move.</description>
+    <descriptionHyperlinks>
+      <RecipeDef>AAH_InstallGravReactor</RecipeDef>
+    </descriptionHyperlinks>
+    <thingClass>ArchotechAndroidHardware.GravReactorThing</thingClass>
+    <thingCategories Inherit="False">
+      <li>AAH_BodyPartsAndroidArchotech</li>
+    </thingCategories>
+    <!-- No graphicData override: the grav reactor is ultratech, not archotech,
+         so we inherit VREA_BodyPartAndroidBase's default Items/HealthItemAndroid
+         (the blue ultratech android part icon). Vanometric / Mnemocore /
+         Neutrosynthesizer / Psychic Transceiver override to
+         Items/AAH_AndroidPart_Archotech (green-yellow archotech); Thanatic
+         uses the Items/AAH_AndroidPart_ArchotechDark variant (dark grey + red).
+         This one stays on VREA's blue. -->
+    <!-- Suppress parent's recipeMaker. The explicit RecipeDef uses
+         allowMixingIngredients so it can locate minified Gravcore stacks /
+         survive the AllowMix unwrap path used by ingredient resolution.
+         See RecipeDefs_VanometricReactor.xml for the deeper rationale. -->
+    <recipeMaker Inherit="False" />
+    <!-- costList retained for market value calculation and to satisfy the
+         RimWorld def validator (a recipeMaker — even an empty one resolved
+         via Inherit="False" — requires either a costList or costStuffCount).
+         Not used for crafting; the explicit RecipeDef defines its own
+         ingredients. Same posture as Vanometric / Thanatic. -->
+    <costList>
+      <Plasteel>10</Plasteel>
+      <ComponentSpacer>2</ComponentSpacer>
+      <GravcorePowerCell>1</GravcorePowerCell>
+    </costList>
+    <statBases>
+      <Mass>3</Mass>
+      <MarketValue>2400</MarketValue>
+    </statBases>
+    <comps>
+      <li Class="CompProperties_Glower">
+        <glowRadius>2</glowRadius>
+        <!-- Glower colour matches the chest core's RGB (0, 182, 239), the
+             same bright cyan-blue the reactor mote uses. -->
+        <glowColor>(0, 182, 239, 0)</glowColor>
+      </li>
+    </comps>
+  </ThingDef>
+
+</Defs>

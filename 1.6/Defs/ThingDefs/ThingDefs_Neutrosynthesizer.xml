@@ -20,7 +20,7 @@
       <li>AAH_BodyPartsAndroidArchotech</li>
     </thingCategories>
     <graphicData>
-      <texPath>Items/ArchotechAndroidPart</texPath>
+      <texPath>Items/AAH_AndroidPart_Archotech</texPath>
       <graphicClass>Graphic_Single</graphicClass>
       <drawSize>0.80</drawSize>
     </graphicData>

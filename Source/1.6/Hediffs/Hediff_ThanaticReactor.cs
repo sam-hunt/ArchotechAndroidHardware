@@ -40,10 +40,15 @@ namespace ArchotechAndroidHardware;
 /// remove on uninstall, re-assert on post-load-init in case external mods
 /// stripped it.
 /// </summary>
-public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection
+public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection, IAAHReactorEnergy
 {
     private float curEnergy = 1f;
     private bool dying;
+
+    // Red glow mirroring the colour the previous FireGlow render nodes used.
+    // Transient — recreated on the first post-load tick by ReactorGlowMote.
+    private static readonly Color GlowTint = new(1f, 0.25f, 0.2f);
+    private Mote glowMote;
 
     // Ticks remaining until the delayed source-pawn aura fires after a kill.
     // Negative = inactive. First-kill-wins: subsequent kills within the window
@@ -87,6 +92,9 @@ public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection
     private static ThingDef StreamControllerDef =>
         _streamControllerDefCache ??= DefDatabase<ThingDef>.GetNamed("AAH_ThanaticStreamController", errorOnFail: false);
 
+    private static DesignationDef ExtractDesignationDef =>
+        _extractDesignationDefCache ??= DefDatabase<DesignationDef>.GetNamed("AAH_ExtractThanaticReactor", errorOnFail: false);
+
     // Transient dessication queue: Notify_KilledPawn fires inside Pawn.Kill
     // before the victim's Corpse is spawned, so we poll for the Corpse in
     // subsequent TickIntervals. Not serialized — any pending dessications are
@@ -107,6 +115,7 @@ public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection
     private static ThingDef _auraShortMoteDefCache;
     private static ThingDef _auraLongMoteDefCache;
     private static ThingDef _streamControllerDefCache;
+    private static DesignationDef _extractDesignationDefCache;
 
     public float Energy
     {
@@ -125,6 +134,19 @@ public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection
         if (curEnergy <= 0f)
             curEnergy = 1f;
         AddGeneIfMissing();
+    }
+
+    // Tick (not TickInterval): in 1.6 Thing.DoTick batches TickInterval at
+    // UpdateRateTicks cadence, which can exceed the mote's solidTime=600 for
+    // offscreen pawns and cause the mote to despawn between maintenance calls.
+    // Hediff.Tick runs every game tick regardless of distance — same cadence
+    // noctol's CompTick uses for its eye glow. The drain math stays in
+    // TickInterval because it legitimately wants delta-batching.
+    public override void Tick()
+    {
+        base.Tick();
+        if (pawn == null || pawn.Dead) return;
+        ReactorGlowMote.Maintain(pawn, ref glowMote, GlowTint, brightness: 1f);
     }
 
     public override void TickInterval(int delta)
@@ -195,6 +217,71 @@ public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection
     public void EjectCustom(Pawn pawn, IntVec3 position, Map map)
     {
         SpawnReactorItem(position, map, curEnergy);
+    }
+
+    /// <summary>
+    /// Player-driven extraction from an android corpse. Mirrors the post-death
+    /// flow in <see cref="ExecuteDeath"/>: spawns the reactor item carrying the
+    /// hediff's current energy, then removes the hediff with the same
+    /// "ejected" missing-body-part labeling. Called from
+    /// <see cref="JobDriver_ExtractThanaticReactor"/>.
+    /// </summary>
+    public void ExtractFromCorpse(Corpse corpse)
+    {
+        if (corpse == null || corpse.Destroyed) return;
+        var innerPawn = corpse.InnerPawn;
+        if (innerPawn == null) return;
+        var map = corpse.MapHeld;
+        if (map == null) return;
+
+        var bodyPart = Part;
+        SpawnReactorItem(corpse.PositionHeld, map, curEnergy);
+        CleanUpCorpseHediffs(innerPawn, bodyPart);
+    }
+
+    public override IEnumerable<Gizmo> GetGizmos()
+    {
+        var baseGizmos = base.GetGizmos();
+        if (baseGizmos != null)
+            foreach (var g in baseGizmos) yield return g;
+
+        if (pawn == null || !pawn.Dead) yield break;
+        var corpse = pawn.Corpse;
+        if (corpse == null || !corpse.Spawned || corpse.Destroyed) yield break;
+        var map = corpse.Map;
+        if (map == null) yield break;
+        var designationDef = ExtractDesignationDef;
+        if (designationDef == null) yield break;
+
+        var existing = map.designationManager.DesignationOn(corpse, designationDef);
+        if (existing == null)
+        {
+            yield return new Command_Action
+            {
+                defaultLabel = "Extract thanatic reactor",
+                defaultDesc = "Mark this android corpse to have its thanatic reactor extracted. The reactor item will be recovered with its current charge intact.",
+                icon = ContentFinder<Texture2D>.Get("UI/Commands/AAH_ExtractThanaticReactor"),
+                action = delegate
+                {
+                    if (map.designationManager.DesignationOn(corpse, designationDef) == null)
+                        map.designationManager.AddDesignation(new Designation(corpse, designationDef));
+                }
+            };
+        }
+        else
+        {
+            yield return new Command_Action
+            {
+                defaultLabel = "Cancel reactor extraction",
+                defaultDesc = "Remove the thanatic reactor extraction designation from this corpse.",
+                icon = ContentFinder<Texture2D>.Get("UI/Designators/Cancel"),
+                action = delegate
+                {
+                    var d = map.designationManager.DesignationOn(corpse, designationDef);
+                    if (d != null) map.designationManager.RemoveDesignation(d);
+                }
+            };
+        }
     }
 
     public override void PostRemoved()

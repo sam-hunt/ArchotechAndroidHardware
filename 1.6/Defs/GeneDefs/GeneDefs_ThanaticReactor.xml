@@ -37,7 +37,7 @@
   <GeneDef>
     <defName>AAH_ThanaticReactor</defName>
     <label>thanatic reactor</label>
-    <description>Androids with this hardware run an archotech reactor that draws power from the psychic echoes of violence. It drains faster than a standard reactor and is recharged by the deaths of humanlikes at the host's hand. If it ever runs dry, the host dies.</description>
+    <description>Androids with this hardware have an archotech reactor that draws power from the psychic echoes of violence. It is recharged when the android kills another humanlike. If it ever runs dry, it extracts a final charge from its host, killing them.</description>
     <iconPath>UI/Icons/Genes/Hardware/Gene_ThanaticReactor</iconPath>
     <displayCategory>AAH_Hardware</displayCategory>
     <displayOrderInCategory>4</displayOrderInCategory>

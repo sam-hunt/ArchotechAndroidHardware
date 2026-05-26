@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Shared reactor core glow mote. Attached per-pawn by ReactorGlowMote.Maintain
+    from each reactor hediff's TickInterval. One mote def serves all reactor
+    variants; per-reactor colour is supplied via Mote.instanceColor in code.
+
+    altitudeLayer=Darkness puts this above the unnatural-darkness section-layer
+    mesh (same trick CompNoctolEyes uses for noctol eye glow). In normal
+    lighting it just renders as an additive overlay above the pawn at the same
+    visual position as the chest body attachment.
+
+    drawSize=0.36 is empirically tuned to match the chest core on a reference
+    pawn. The pure-math derivation (canvas-ratio doubling: 0.15 × 2 = 0.30)
+    undershot because PawnRenderNodeWorker_AttachmentBody composes additional
+    scale factors beyond bodyGraphicScale (chest-specific drawData scale, root
+    pawn graphic scale, etc.) that we don't replicate. Tune by eye against
+    the chest core if you swap textures. ReactorGlowMote.Maintain multiplies
+    by the pawn's bodyGraphicScale average so the glow still tracks body-type
+    variation (Thin/Fat/Hulk).
+
+    solidTime=600 (10s) is well beyond the 1-tick maintenance cadence; the
+    Maintain() call in the hediff tick path keeps the mote indefinitely alive.
+
+    Graphic_Mote (not Graphic_Single) is load-bearing: Graphic_Single inherits
+    Graphic.DrawWorker which never reads Mote.instanceColor. Graphic_Mote
+    overrides DrawWorker to push instanceColor (including alpha) into a
+    material property block, which is how per-reactor colour tinting and
+    south-only alpha gating actually reach the shader. Picking the wrong
+    class here makes both the per-reactor tint and the visibility-by-facing
+    behaviour silently no-op.
+
+    renderQueue=4000 sits in Unity's transparent queue, ahead of the darkness
+    overlay's mesh queue so the glow draws over it.
+  -->
+  <ThingDef ParentName="MoteBase">
+    <defName>Mote_AAHReactorGlow</defName>
+    <thingClass>MoteAttached</thingClass>
+    <altitudeLayer>Darkness</altitudeLayer>
+    <mote>
+      <needsMaintenance>True</needsMaintenance>
+      <solidTime>600</solidTime>
+    </mote>
+    <graphicData>
+      <renderQueue>4000</renderQueue>
+      <graphicClass>Graphic_Mote</graphicClass>
+      <shaderType>MoteGlow</shaderType>
+      <texPath>Things/Mote/AAHReactorGlow</texPath>
+      <drawSize>(0.55, 0.55)</drawSize>
+    </graphicData>
+  </ThingDef>
+
+</Defs>

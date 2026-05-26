@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Crafting recipe (explicit, not auto-generated from costList/recipeMaker).
+
+    Why explicit + allowMixingIngredients: see RecipeDefs_VanometricReactor.xml —
+    the AllowMix path calls ThingFilter.Allows(Thing) which unwraps
+    minified ingredients. GravcorePowerCell is a minifiable building (inherits
+    minifiedDef=MinifiedThing through GravshipComponentBase), so it's stored
+    on the map as a MinifiedThing and the AllowMix unwrap is load-bearing —
+    same situation as VanometricPowerCell.
+
+    MayRequire on the RecipeDef: GravcorePowerCell comes from Odyssey. Without
+    Odyssey loaded, the entire grav reactor slice is gated off, so the recipe's
+    MayRequire is technically redundant with the surrounding XML gates — but
+    it's harmless and self-documenting at the recipe-as-text level.
+  -->
+  <RecipeDef MayRequire="Ludeon.RimWorld.Odyssey">
+    <defName>AAH_MakeGravReactor</defName>
+    <label>craft grav reactor</label>
+    <description>Craft a grav reactor from a gravcore power cell and advanced components.</description>
+    <jobString>Crafting grav reactor.</jobString>
+    <allowMixingIngredients>true</allowMixingIngredients>
+    <workAmount>22000</workAmount>
+    <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+    <workSkill>Crafting</workSkill>
+    <effectWorking>Smith</effectWorking>
+    <soundWorking>Recipe_Smith</soundWorking>
+    <skillRequirements>
+      <Crafting>10</Crafting>
+    </skillRequirements>
+    <unfinishedThingDef>VREA_UnfinishedHealthItemAndroid</unfinishedThingDef>
+    <!-- Gated behind BOTH research projects (multi-prerequisite recipe).
+         Both must be completed before the recipe unlocks; the vanilla
+         research UI auto-generates a cross-reference on each project's
+         tooltip ("Unlocks with [other project]: …"). AdvancedGravtech is
+         Odyssey-only, but the surrounding RecipeDef's
+         MayRequire="Ludeon.RimWorld.Odyssey" already gates the whole
+         record off when Odyssey isn't loaded, so the reference is safe. -->
+    <researchPrerequisites>
+      <li>AAH_ArchotechAndroidtech</li>
+      <li>AdvancedGravtech</li>
+    </researchPrerequisites>
+    <recipeUsers>
+      <li>VREA_AndroidPartWorkbench</li>
+    </recipeUsers>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Plasteel</li>
+          </thingDefs>
+        </filter>
+        <count>10</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>ComponentSpacer</li>
+          </thingDefs>
+        </filter>
+        <count>2</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>GravcorePowerCell</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
+    </ingredients>
+    <fixedIngredientFilter>
+      <thingDefs>
+        <li>Plasteel</li>
+        <li>ComponentSpacer</li>
+        <li>GravcorePowerCell</li>
+      </thingDefs>
+    </fixedIngredientFilter>
+    <products>
+      <AAH_GravReactor>1</AAH_GravReactor>
+    </products>
+  </RecipeDef>
+
+  <!--
+    Surgery installation recipe. Targets the Stomach body part (android reactor
+    slot), matching every other AAH reactor.
+
+    No standalone removal recipe (mirrors Vanometric / Thanatic): transferability
+    between androids is achieved via replacement surgery — installing a new
+    reactor ejects the old one with its current energy preserved, via
+    Hediff_GravReactor.EjectCustom dispatched through AAHPartEjector.
+
+    The install flow writes the ingredient item's storedEnergy onto the freshly
+    added Hediff_GravReactor — see GravReactorInstallEnergyTransfer patch.
+  -->
+  <RecipeDef ParentName="VREA_SurgeryInstallBodyPartAndroidBase" MayRequire="Ludeon.RimWorld.Odyssey">
+    <defName>AAH_InstallGravReactor</defName>
+    <label>install grav reactor</label>
+    <description>Install a grav reactor, replacing the android's existing reactor. Recharged in full whenever the host participates in a gravship launch.</description>
+    <descriptionHyperlinks>
+      <ThingDef>AAH_GravReactor</ThingDef>
+      <HediffDef>AAH_GravReactor</HediffDef>
+    </descriptionHyperlinks>
+    <jobString>Installing grav reactor.</jobString>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>AAH_GravReactor</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
+    </ingredients>
+    <fixedIngredientFilter>
+      <thingDefs>
+        <li>AAH_GravReactor</li>
+      </thingDefs>
+    </fixedIngredientFilter>
+    <appliedOnFixedBodyParts>
+      <li>Stomach</li>
+    </appliedOnFixedBodyParts>
+    <addsHediff>AAH_GravReactor</addsHediff>
+    <uiIconThing>AAH_GravReactor</uiIconThing>
+  </RecipeDef>
+
+</Defs>
