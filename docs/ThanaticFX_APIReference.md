@@ -420,7 +420,7 @@ with cell occupants.
 
 ## 10. Files in this mod
 
-- `1.6/Defs/ThingDefs/ThingDefs_ThanaticFX.xml` — aura motes, drain
+- `1.6/Defs/ThingDefs/ThingDefs_ThanaticDeathFX.xml` — aura motes, drain
   particle, stream controller.
 - `Source/1.6/Motes/Mote_ThanaticDrainParticle.cs` — homing mote.
 - `Source/1.6/Things/ThanaticStreamController.cs` — ethereal emitter.

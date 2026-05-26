@@ -48,11 +48,36 @@ public class Hediff_GravReactor : Hediff_AddedPart, ICustomAAHEjection, IAAHReac
     private static readonly Color GlowTint = new(0f, 0.714f, 0.937f);
     private Mote glowMote;
 
+    // Pending charge-aura spawn: armed by Notify_RechargedByLaunch when a
+    // gravship landing refills this reactor, fired by the next Tick once the
+    // host pawn is settled on the destination map. Deferred (rather than
+    // spawned inline at the landing-postfix callsite) because pawns aren't
+    // guaranteed to be Spawned at that moment — the gravship machinery
+    // places them into the destination map as part of the landing sequence,
+    // not before InitiateLanding returns. Negative = inactive. Counts down
+    // each tick as a safety net so a never-spawning pawn doesn't leak the
+    // flag across the rest of the save.
+    private int chargeAuraPendingTicks = -1;
+    private const int ChargeAuraPendingTimeoutTicks = 600;   // 10s safety net
+
+    // Scroll magnitudes mirror Hediff_ThanaticReactor's source aura: cloud
+    // layers at 0.15 (matches vanilla texA/texB intensity), speckle layer
+    // at 0.5 (matches the MoteMultiplyAddScroll shader's compiled-in
+    // _DetailScrollSpeed default; the vanilla XML lowercase override is a
+    // no-op — see Graphic_PawnBodySilhouette_DrawWorker_Patch).
+    private const float CloudScrollSpeed = 0.15f;
+    private const float DetailScrollSpeed = 0.5f;
+    private static readonly Vector2 ChargeWorldNorth = new(0f, 1f);
+
     private static GeneDef _gravGene;
     private static GeneDef GravGene =>
         _gravGene ??= DefDatabase<GeneDef>.GetNamed("AAH_GravReactor", errorOnFail: false);
 
     private static ThingDef _thingDefCache;
+
+    private static ThingDef _chargeAuraMoteDefCache;
+    private static ThingDef ChargeAuraMoteDef =>
+        _chargeAuraMoteDefCache ??= DefDatabase<ThingDef>.GetNamed("AAH_GravChargeAura", errorOnFail: false);
 
     private static SimpleCurve _drainCurveCache;
     private static bool _drainCurveResolved;
@@ -90,6 +115,7 @@ public class Hediff_GravReactor : Hediff_AddedPart, ICustomAAHEjection, IAAHReac
         base.Tick();
         if (pawn == null || pawn.Dead) return;
         ReactorGlowMote.Maintain(pawn, ref glowMote, GlowTint, brightness: 1f);
+        TickChargeAuraPending();
     }
 
     public override void TickInterval(int delta)
@@ -105,6 +131,19 @@ public class Hediff_GravReactor : Hediff_AddedPart, ICustomAAHEjection, IAAHReac
     public void EjectCustom(Pawn pawn, IntVec3 position, Map map)
     {
         SpawnReactorItem(position, map, curEnergy);
+    }
+
+    /// <summary>
+    /// Recharge entry point for the gravship-landing patch. Refills the reactor
+    /// and arms the cyan charging aura, which fires on the next Tick once the
+    /// host pawn is back on a map. Coalescing two landings within the same
+    /// ~10s window is fine — the second call just resets the pending timer to
+    /// the full window; the aura plays once when the pawn next ticks-while-spawned.
+    /// </summary>
+    public void Notify_RechargedByLaunch()
+    {
+        Energy = 1f;
+        chargeAuraPendingTicks = ChargeAuraPendingTimeoutTicks;
     }
 
     public override void PostRemoved()
@@ -127,6 +166,7 @@ public class Hediff_GravReactor : Hediff_AddedPart, ICustomAAHEjection, IAAHReac
     {
         base.ExposeData();
         Scribe_Values.Look(ref curEnergy, "curEnergy", 1f);
+        Scribe_Values.Look(ref chargeAuraPendingTicks, "chargeAuraPendingTicks", -1);
         if (Scribe.mode == LoadSaveMode.PostLoadInit)
         {
             SyncSeverityToEnergy();
@@ -160,6 +200,42 @@ public class Hediff_GravReactor : Hediff_AddedPart, ICustomAAHEjection, IAAHReac
         float target = curEnergy <= 0f ? 1f : 0f;
         if (!Mathf.Approximately(Severity, target))
             Severity = target;
+    }
+
+    private void TickChargeAuraPending()
+    {
+        if (chargeAuraPendingTicks < 0) return;
+        if (pawn != null && pawn.Spawned && pawn.MapHeld != null)
+        {
+            SpawnChargeAura(pawn);
+            chargeAuraPendingTicks = -1;
+            return;
+        }
+        chargeAuraPendingTicks--;
+        if (chargeAuraPendingTicks <= 0)
+            chargeAuraPendingTicks = -1;
+    }
+
+    // Powering-up aura: all three layers flow world-north, reading as "reactor
+    // charging up". Parallels Hediff_ThanaticReactor.SpawnDirectionalSourceAura,
+    // just with the cyan-blue grav mote def and no kill-stream coordination.
+    // Visual flow is opposite to the scroll vector (MoteMultiplyAddScroll
+    // samples in world space and pattern motion is sample-drift inverted), so
+    // to make the pattern visually flow world-north we set scroll = -north * s.
+    private static void SpawnChargeAura(Pawn target)
+    {
+        var moteDef = ChargeAuraMoteDef;
+        if (moteDef == null || target == null) return;
+        if (!target.Spawned || target.MapHeld == null) return;
+
+        var mote = (Mote_ThanaticSilhouetteAura)ThingMaker.MakeThing(moteDef);
+        mote.exactPosition = target.DrawPos;
+        mote.Attach(target);
+        mote.texAScroll = -ChargeWorldNorth * CloudScrollSpeed;
+        mote.texBScroll = -ChargeWorldNorth * CloudScrollSpeed;
+        mote.detailScroll = -ChargeWorldNorth * DetailScrollSpeed;
+        mote.overrideScroll = true;
+        GenSpawn.Spawn(mote, target.PositionHeld, target.MapHeld);
     }
 
     private void DrainEnergy()

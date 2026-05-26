@@ -93,7 +93,7 @@ public static class WorldComponentGravshipController_InitiateLanding_Patch
             if (pawn == null) continue;
 
             if (pawn.health?.hediffSet?.GetFirstHediffOfDef(hediffDef) is Hediff_GravReactor installed)
-                installed.Energy = 1f;
+                installed.Notify_RechargedByLaunch();
 
             buffer.Clear();
             ThingOwnerUtility.GetAllThingsRecursively(pawn, buffer, allowUnreal: true);
