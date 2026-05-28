@@ -3,7 +3,8 @@
 
   <!--
     Shared reactor core glow mote. Attached per-pawn by ReactorGlowMote.Maintain
-    from each reactor hediff's TickInterval. One mote def serves all reactor
+    from each reactor hediff's Tick (not TickInterval — see Hediff_VanometricReactor
+    for the offscreen-throttling rationale). One mote def serves all reactor
     variants; per-reactor colour is supplied via Mote.instanceColor in code.
 
     altitudeLayer=Darkness puts this above the unnatural-darkness section-layer
@@ -11,14 +12,16 @@
     lighting it just renders as an additive overlay above the pawn at the same
     visual position as the chest body attachment.
 
-    drawSize=0.36 is empirically tuned to match the chest core on a reference
-    pawn. The pure-math derivation (canvas-ratio doubling: 0.15 × 2 = 0.30)
-    undershot because PawnRenderNodeWorker_AttachmentBody composes additional
-    scale factors beyond bodyGraphicScale (chest-specific drawData scale, root
-    pawn graphic scale, etc.) that we don't replicate. Tune by eye against
-    the chest core if you swap textures. ReactorGlowMote.Maintain multiplies
-    by the pawn's bodyGraphicScale average so the glow still tracks body-type
-    variation (Thin/Fat/Hulk).
+    drawSize=0.55 is empirically tuned to match the chest core on a reference
+    pawn. Pure canvas-ratio math (chest 0.2 × 256/128 = 0.4) undershoots here
+    because PawnRenderNodeWorker_AttachmentBody composes additional scale
+    factors beyond bodyGraphicScale (chest-specific drawData scale, root pawn
+    graphic scale, etc.) that the mote rendering path doesn't replicate. The
+    RenderNodeSafe mode does go through AttachmentBody and so uses the
+    canvas-ratio 0.4 directly — see HediffDefs_VanometricReactor.xml. Tune by
+    eye against the chest core if you swap textures. ReactorGlowMote.Maintain
+    multiplies by the pawn's bodyGraphicScale average so the glow still tracks
+    body-type variation (Thin/Fat/Hulk).
 
     solidTime=600 (10s) is well beyond the 1-tick maintenance cadence; the
     Maintain() call in the hediff tick path keeps the mote indefinitely alive.
@@ -36,7 +39,7 @@
   -->
   <ThingDef ParentName="MoteBase">
     <defName>Mote_AAHReactorGlow</defName>
-    <thingClass>MoteAttached</thingClass>
+    <thingClass>ArchotechAndroidHardware.Mote_ReactorGlow</thingClass>
     <altitudeLayer>Darkness</altitudeLayer>
     <mote>
       <needsMaintenance>True</needsMaintenance>

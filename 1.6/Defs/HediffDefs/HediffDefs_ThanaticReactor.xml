@@ -72,6 +72,29 @@
           </defaultData>
         </drawData>
       </li>
+      <!-- Core glow node (RenderNodeSafe mode only) — see
+           HediffDefs_VanometricReactor.xml for the drawSize / offset rationale.
+           Colour mirrors GlowTint in Hediff_ThanaticReactor
+           (red 1,0.25,0.2) — keep in sync. -->
+      <li>
+        <workerClass>ArchotechAndroidHardware.PawnRenderNodeWorker_ReactorGlow</workerClass>
+        <texPath>Things/Mote/AAHReactorGlow</texPath>
+        <parentTagDef>Body</parentTagDef>
+        <baseLayer>36</baseLayer>
+        <drawSize>0.4</drawSize>
+        <color>(1, 0.25, 0.2, 1)</color>
+        <shaderTypeDef>MoteGlow</shaderTypeDef>
+        <visibleFacing>
+          <li>South</li>
+        </visibleFacing>
+        <rotDrawMode>Fresh</rotDrawMode>
+        <drawData>
+          <scaleOffsetByBodySize>true</scaleOffsetByBodySize>
+          <defaultData>
+            <offset>(0, 0, -0.01)</offset>
+          </defaultData>
+        </drawData>
+      </li>
     </renderNodeProperties>
   </HediffDef>
 
