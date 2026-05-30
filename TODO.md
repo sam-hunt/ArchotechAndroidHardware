@@ -7,7 +7,6 @@
 - Ensure all new gene textures are used
 
 - Hide glow motes if power need level is zero or if laying down south facing in bed offset can be weird on forehead etc
-- Bump node and mote size a bit
 
 - common body part base class like VREA's HealthItemAndroid?
 
@@ -15,7 +14,6 @@
 - Extract Thanatic reactor gizmo on corpse.
   `claude --resume "thanatic-reactor-designation-ui"`
 
-- Thanatic reactor market value
 - Thanatic overcharge doesn't match high on go-juice
 - Only fire/scale thanatic drain on psychically sensitive targets
 - New scenario "Magus of the Abyss", a sole android with a thanatic reactor. otherwise with similarities to both the rich explorer, and the VREA starting scenario

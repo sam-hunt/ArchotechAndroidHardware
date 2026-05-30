@@ -34,8 +34,11 @@
          is required for the minified VPE_ArchotechViolenceGenerator ingredient.
          See comment in RecipeDefs_ThanaticReactor.xml for details. -->
     <recipeMaker Inherit="False" />
-    <!-- costList retained for market value calculation; crafting ingredients
-         are defined in the explicit RecipeDef. -->
+    <!-- costList retained only to satisfy the def validator (an Inherit="False"
+         recipeMaker still requires a costList or costStuffCount). It does NOT
+         drive price: the explicit MarketValue below short-circuits
+         StatWorker_MarketValue's cost-derived calculation. Crafting ingredients
+         live in the explicit RecipeDef. Same posture as the grav reactor. -->
     <costList>
       <Plasteel>10</Plasteel>
       <ComponentSpacer>2</ComponentSpacer>
@@ -44,6 +47,15 @@
     </costList>
     <statBases>
       <Mass>3</Mass>
+      <!-- Explicit price, NOT cost-derived. Left to itself the costList would
+           value this at ~4,590 (the Archotech Violence Generator alone is
+           3,400), making it the most expensive reactor in the lineup. We price
+           it near the vanilla baseline (VREA_Reactor ~474) instead, because it
+           is the only reactor with active upkeep (the host must keep scoring
+           humanlike kills to recharge) AND a hard death-on-depletion failure
+           mode — the others merely down the pawn. Those downsides offset the
+           archotech-tier power, so it shouldn't carry an archotech-tier price. -->
+      <MarketValue>650</MarketValue>
     </statBases>
     <comps>
       <li Class="CompProperties_Glower">
