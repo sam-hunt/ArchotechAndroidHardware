@@ -2,8 +2,8 @@
 
 ## Features
 
-- Test Grav reactor recharges
-- Grav Reactor recharge FX
+- Test Grav reactor recharge and FX
+- Grav Reactor deconstruct?
 - Ensure all new gene textures are used
 
 - Hide glow motes if power need level is zero or if laying down south facing in bed offset can be weird on forehead etc
@@ -31,11 +31,9 @@
 ## Other?
 
 - Android stands aren't pawn-bound and androids with low memory will path to and use the nearest
-- Neutro splatter crawling support?
 - Neutro infusion operation for loss
 
 ## Cleanup
 
 - Review def descriptions copy
 - DefOf pattern for def references?
-- Update About.xml with all features

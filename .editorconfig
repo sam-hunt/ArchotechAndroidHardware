@@ -1,4 +1,4 @@
-# EditorConfig for Vanometric Android Reactor RimWorld Mod
+# EditorConfig for RimWorld modding
 # https://editorconfig.org
 
 root = true
@@ -60,7 +60,7 @@ trim_trailing_whitespace = false
 indent_style = space
 indent_size = 2
 
-# YAML files
+# YAML files (if any)
 [*.{yml,yaml}]
 indent_style = space
 indent_size = 2

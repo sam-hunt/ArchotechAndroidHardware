@@ -4,9 +4,19 @@
   <author>Sam Hunt</author>
   <packageId>shunter.archotechandroidhardware</packageId>
   <modVersion>1.0.0</modVersion>
-  <description>Adds the vanometric reactor: a self-sustaining android reactor replacement built around an archotech vanometric power cell.
+  <description>Adds a range of archotech-tier body parts for androids from Vanilla Races Expanded - Android. True archotechnology can't be built by human hands, but a salvaged vanometric power cell, psychic emanator, or violence generator can be dismantled, re-housed, and wired into an android chassis.
 
-    Unlike the standard android reactor which drains over time and must be replaced, this harnesses the quantum foam energy extraction of a vanometric power cell, miniaturized and adapted to interface directly with android power systems. Once installed, the android's power need is eliminated entirely.
+    Every part is crafted at the Android Part Workbench (Archotech Androidtech research), installed via surgery, and recovered intact if removed.
+
+    Reactors:
+    - Vanometric reactor — a permanent power cell that removes the android's power need entirely. No more drain, no more replacements.
+    - Thanatic reactor — fed by the echoes of violent death; each humanlike kill recharges it and brief overflows trigger a combat overcharge. Starved of kills it drains faster than a standard reactor, and its host dies when it runs dry.
+    - Grav reactor — drawn from gravship engine technology and recharged in full whenever its host takes part in a gravship launch. Indispensable to a colony that lives on the move.
+
+    Other hardware:
+    - Psychic transceiver — bridges an android's natural psychic inertness, granting psychic sensitivity.
+    - Archotech mnemocore — re-architects android memory onto self-organizing archotech substrate, removing the memory need entirely.
+    - Neutrosynthesizer — an android kidney that actively synthesizes fresh neutroamine, rapidly restoring neutro loss.
 </description>
   <supportedVersions>
     <li>1.6</li>
