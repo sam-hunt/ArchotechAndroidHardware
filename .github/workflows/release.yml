@@ -22,21 +22,18 @@ jobs:
       - name: Build
         run: dotnet build ArchotechAndroidHardware.sln -c Release
 
+      - name: Stage mod files
+        # Reuse the .csproj's StageMod target — the single source of truth for what
+        # files constitute the mod — so the release zip can never drift from the
+        # local deploy (e.g. forget Patches). StageMod wipes + recopies $(StageDir).
+        run: >
+          dotnet build Source/1.6/ArchotechAndroidHardware.csproj -c Release
+          -t:StageMod -p:StageDir=${{ github.workspace }}/release/ArchotechAndroidHardware
+
       - name: Package mod
         run: |
           set -e
-          VERSION=${GITHUB_REF_NAME}
-          mkdir -p release/ArchotechAndroidHardware/About
-          mkdir -p release/ArchotechAndroidHardware/1.6/Assemblies
-          mkdir -p release/ArchotechAndroidHardware/1.6/Defs
-          cp About/About.xml release/ArchotechAndroidHardware/About/
-          [ -f About/ModIcon.png ] && cp About/ModIcon.png release/ArchotechAndroidHardware/About/ || true
-          [ -f About/Preview.png ] && cp About/Preview.png release/ArchotechAndroidHardware/About/ || true
-          cp LoadFolders.xml release/ArchotechAndroidHardware/
-          cp 1.6/Assemblies/ArchotechAndroidHardware.dll release/ArchotechAndroidHardware/1.6/Assemblies/
-          cp -r 1.6/Defs/* release/ArchotechAndroidHardware/1.6/Defs/
-          [ -d Textures ] && cp -r Textures release/ArchotechAndroidHardware/ || true
-          cd release && zip -r ../ArchotechAndroidHardware-${VERSION}.zip ArchotechAndroidHardware
+          cd release && zip -r ../ArchotechAndroidHardware-${GITHUB_REF_NAME}.zip ArchotechAndroidHardware
 
       - name: Create Release
         uses: softprops/action-gh-release@v2

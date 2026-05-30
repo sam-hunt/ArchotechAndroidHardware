@@ -23,24 +23,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Build Commands
 
 ```bash
-# Build the mod (outputs to 1.6/Assemblies/ and deploys to RimWorld Mods folder)
+# Build the mod (outputs to 1.6/Assemblies/ AND atomically redeploys to the RimWorld Mods folder)
 dotnet build ArchotechAndroidHardware.sln -c Release
 
-# Build only the main project
+# Build only the main project (also triggers the deploy)
 dotnet build Source/1.6/ArchotechAndroidHardware.csproj
 
-# Clean build + deploy (removes stale files, rebuilds, redeploys)
-./Scripts/clean-build.sh
-
-# Clean deployed mod folder (use when Defs/Patches are renamed or deleted)
-dotnet build Source/1.6/ArchotechAndroidHardware.csproj -t:CleanModFolder
+# Stage the mod into an arbitrary folder (used by CI; same manifest as the local deploy)
+dotnet build Source/1.6/ArchotechAndroidHardware.csproj -c Release \
+  -t:StageMod -p:StageDir=/path/to/output/ArchotechAndroidHardware
 ```
 
 The build system auto-detects the RimWorld installation path on Windows/Linux/Mac (including WSL targeting a Windows install). For CI builds without RimWorld installed, it falls back to the `Krafs.Rimworld.Ref` NuGet package.
 
 ### Deployment
 
-The repo lives in `~/dev/ArchotechAndroidHardware`, separate from the RimWorld Mods folder. A post-build MSBuild target (`DeployToModFolder`) automatically copies runtime files to `$RIMWORLD_PATH/Mods/ArchotechAndroidHardware/`. The `Scripts/clean-build.sh` script performs a full clean build + deploy cycle and is also run automatically via a Claude Code Stop hook after each conversation turn.
+The repo lives in `~/dev/ArchotechAndroidHardware`, separate from the RimWorld Mods folder. Every local build redeploys automatically and atomically — there is no separate clean step to remember.
+
+- **Single source of truth:** the file manifest lives in **one** place — the `_ModFiles` ItemGroup in the `StageMod` target of `Source/1.6/ArchotechAndroidHardware.csproj`. It's generic over the well-known RimWorld content folders — `About`, `Assemblies`, `Defs`, `Patches`, `Textures`, `Sounds`, `Languages`, plus root `LoadFolders.xml` — each matched at the mod root **and** under any version/`Common` folder (the `$(RepoRoot)/*/<Folder>` patterns), so a new version folder (a future `1.7/`) needs no change. Source layout is mirrored verbatim into `$(StageDir)` (via per-item `MakeRelative` metadata — note an inline `MakeRelative` inside an item transform evaluates only once, not per item). Dropping in e.g. a `Sounds/` folder deploys automatically; only a brand-new *file type* needs a new line here.
+- **Lean by extension whitelist:** only the formats RimWorld loads at runtime ship — `.dll` (no `.pdb`); `.xml` (Defs/Patches/Languages/About); `.png`/`.jpg`/`.jpeg` (Textures); `.wav`/`.mp3`/`.ogg` (Sounds); `.txt` (Languages/About, e.g. `PublishedFileId.txt`). `Verse.ModContentLoader` *lists* `.psd`/`.dds` among acceptable texture extensions, but its runtime decode path (`Texture2D.LoadImage`) only handles PNG/JPEG — a shipped `.psd`/`.dds` would fail to render and just bloat the download, so they're **excluded**. OS junk, editor backups (incl. `.kra` art sources), dev notes, and `Source/` can never leak into a release.
+- **Self-cleaning:** `StageMod` wipes `$(StageDir)` and recopies from source, so renamed/deleted Defs/Patches/Textures never linger. The post-build `DeployToModFolder` target calls `StageMod` with `StageDir = $RIMWORLD_PATH/Mods/ArchotechAndroidHardware` (only when a local RimWorld install is detected).
+- **CI reuses the same target:** `.github/workflows/release.yml` invokes `StageMod` with `-p:StageDir=<release dir>` rather than its own `cp` list, so the release zip can never drift from the local deploy.
+- **Stop hook (`.claude/hooks/sync-mod.sh`):** runs after each conversation turn. It rebuilds+redeploys *only when mod-relevant source/content changed since the last deploy* (skips doc/discussion turns), logs to `$TMPDIR/aah-build.log`, and prints a warning on build failure instead of silently leaving a stale DLL in the game folder. Change-detection uses a stamp at `Source/1.6/obj/.aah-deploy-stamp`. Both the hook config (`.claude/settings.local.json`) and the helper script live under `.claude/`, which is **gitignored** — so the whole post-turn sync is local-only and untracked. If it's ever promoted to a committed config, move the helper somewhere version-controlled. The script finds the repo root via `git rev-parse`, so it works regardless of where it's relocated.
 
 **WSL Setup:** Requires `RIMWORLD_PATH` env var in `~/.bashrc` pointing to the Windows RimWorld install (e.g., `/mnt/c/Program Files (x86)/Steam/steamapps/common/RimWorld`).
 
