@@ -5,30 +5,16 @@
     Vanometric reactor body part item. This is the inventory item; the installed
     state is represented by the AAH_VanometricReactor HediffDef.
 
-    Parent: VREA_BodyPartAndroidBase provides android category, Ultra tech level,
-    and the android body part graphic class.
+    Parent: AAH_BodyPartAndroidArchotechBase provides techLevel, thing category,
+    archotech icon, and recipeMaker suppression (see ThingDefs_BodyPartBases.xml).
   -->
-  <ThingDef ParentName="VREA_BodyPartAndroidBase">
+  <ThingDef ParentName="AAH_BodyPartAndroidArchotechBase">
     <defName>AAH_VanometricReactor</defName>
     <label>vanometric reactor</label>
     <description>A permanent android reactor built around an archotech vanometric power cell. Unlike standard android reactors that drain over time and must be replaced, this reactor provides unlimited power indefinitely.\n\nThe vanometric cell's quantum foam energy extraction has been miniaturized and adapted to interface directly with android power systems. Installing this reactor removes the android's power need entirely.</description>
     <descriptionHyperlinks>
       <RecipeDef>AAH_InstallVanometricReactor</RecipeDef>
     </descriptionHyperlinks>
-    <techLevel>Archotech</techLevel>
-    <thingCategories Inherit="False">
-      <li>AAH_BodyPartsAndroidArchotech</li>
-    </thingCategories>
-    <graphicData>
-      <texPath>Items/AAH_AndroidPart_Archotech</texPath>
-      <graphicClass>Graphic_Single</graphicClass>
-      <drawSize>0.80</drawSize>
-    </graphicData>
-    <!-- Suppress parent's recipeMaker to prevent auto-generated crafting recipe.
-         The explicit RecipeDef in RecipeDefs/ uses allowMixingIngredients, which is
-         required for MinifiedThing ingredients like VanometricPowerCell. See the
-         crafting recipe comment in RecipeDefs_VanometricReactor.xml for details. -->
-    <recipeMaker Inherit="False" />
     <!-- costList retained for market value calculation (not used for crafting;
          the explicit RecipeDef defines its own ingredients list) -->
     <costList>

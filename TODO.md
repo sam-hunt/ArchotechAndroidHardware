@@ -6,8 +6,6 @@
 - Grav Reactor deconstruct?
 - Ensure all new gene textures are used
 
-- common body part base class like VREA's HealthItemAndroid?
-
 - Eject Thanatic reactor on corpse destruction?
 - Extract Thanatic reactor gizmo on corpse.
   `claude --resume "thanatic-reactor-designation-ui"`
@@ -15,7 +13,6 @@
 - Thanatic overcharge doesn't match high on go-juice
 - Only fire/scale thanatic drain on psychically sensitive targets
 - New scenario "Magus of the Abyss", a sole android with a thanatic reactor. otherwise with similarities to both the rich explorer, and the VREA starting scenario
-- Split crafting recipe for thanatic reactor to "salvage from vpe violence generator" and "rig from anomaly shards"
 - Add Persona Core upgrade part (increase consciosness +10%, increase threshold to awaken?)
 - Add powerfocus chip to archotech reactor recipes, consider whether there's too many distinct ingredients
 - more exclusion tags for conflicting subroutines

@@ -5,30 +5,16 @@
     Neutrosynthesizer body part item. This is the inventory item; the installed
     state is represented by the AAH_Neutrosynthesizer HediffDef.
 
-    Parent: VREA_BodyPartAndroidBase provides android category, Ultra tech level,
-    and the android body part graphic class.
+    Parent: AAH_BodyPartAndroidArchotechBase provides techLevel, thing category,
+    archotech icon, and recipeMaker suppression (see ThingDefs_BodyPartBases.xml).
   -->
-  <ThingDef ParentName="VREA_BodyPartAndroidBase">
+  <ThingDef ParentName="AAH_BodyPartAndroidArchotechBase">
     <defName>AAH_Neutrosynthesizer</defName>
     <label>neutrosynthesizer</label>
     <description>An archotech android kidney built around a miniaturized infinite chemreactor. Unlike standard neutrofilters that merely recycle spent neutroamine, this organ actively synthesizes fresh neutroamine from raw chemical feedstock, restoring lost neutroamine at a rate far exceeding the base neutro synthesis subroutine.\n\nInstalling two neutrosynthesizers allows an android to recover from neutro loss faster than a human recovers from blood loss.</description>
     <descriptionHyperlinks>
       <RecipeDef>AAH_InstallNeutrosynthesizer</RecipeDef>
     </descriptionHyperlinks>
-    <techLevel>Archotech</techLevel>
-    <thingCategories Inherit="False">
-      <li>AAH_BodyPartsAndroidArchotech</li>
-    </thingCategories>
-    <graphicData>
-      <texPath>Items/AAH_AndroidPart_Archotech</texPath>
-      <graphicClass>Graphic_Single</graphicClass>
-      <drawSize>0.80</drawSize>
-    </graphicData>
-    <!-- Suppress parent's recipeMaker to prevent auto-generated crafting recipe.
-         The explicit RecipeDef in RecipeDefs/ uses allowMixingIngredients, which is
-         required for MinifiedThing ingredients like InfiniteChemreactor. See the
-         crafting recipe comment in RecipeDefs_Neutrosynthesizer.xml for details. -->
-    <recipeMaker Inherit="False" />
     <!-- costList retained for market value calculation (not used for crafting;
          the explicit RecipeDef defines its own ingredients list) -->
     <costList>

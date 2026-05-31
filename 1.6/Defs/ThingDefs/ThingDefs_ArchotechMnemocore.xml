@@ -5,30 +5,16 @@
     Archotech mnemocore body part item. This is the inventory item; the installed
     state is represented by the AAH_ArchotechMnemocore HediffDef.
 
-    Parent: VREA_BodyPartAndroidBase provides android category, Ultra tech level,
-    and the android body part graphic class.
+    Parent: AAH_BodyPartAndroidArchotechBase provides techLevel, thing category,
+    archotech icon, and recipeMaker suppression (see ThingDefs_BodyPartBases.xml).
   -->
-  <ThingDef ParentName="VREA_BodyPartAndroidBase">
+  <ThingDef ParentName="AAH_BodyPartAndroidArchotechBase">
     <defName>AAH_ArchotechMnemocore</defName>
     <label>archotech mnemocore</label>
     <description>An archotech brain implant created by cannibalizing and adapting a persona core to fundamentally rearchitect an android's memory processing. Standard androids rely on finite hard drive space that gradually fills and requires periodic reformatting. The mnemocore replaces this architecture with self-organizing archotech substrate that never accumulates cruft.\n\nOnce installed, the android's memory need is eliminated entirely, RAM subroutines become unnecessary, and memory degradation ceases.</description>
     <descriptionHyperlinks>
       <RecipeDef>AAH_InstallArchotechMnemocore</RecipeDef>
     </descriptionHyperlinks>
-    <techLevel>Archotech</techLevel>
-    <thingCategories Inherit="False">
-      <li>AAH_BodyPartsAndroidArchotech</li>
-    </thingCategories>
-    <graphicData>
-      <texPath>Items/AAH_AndroidPart_Archotech</texPath>
-      <graphicClass>Graphic_Single</graphicClass>
-      <drawSize>0.80</drawSize>
-    </graphicData>
-    <!-- Suppress parent's recipeMaker to prevent auto-generated crafting recipe.
-         The explicit RecipeDef in RecipeDefs/ uses allowMixingIngredients for
-         consistency with the other hardware recipes. See the crafting recipe
-         comment in RecipeDefs_ArchotechMnemocore.xml for details. -->
-    <recipeMaker Inherit="False" />
     <!-- costList retained for market value calculation (not used for crafting;
          the explicit RecipeDef defines its own ingredients list) -->
     <costList>

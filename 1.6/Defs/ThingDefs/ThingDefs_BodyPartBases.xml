@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Abstract base for AAH archotech android body-part items. Mirrors VREA's own
+    VREA_BodyPartAndroidBase idiom one level down, hoisting the fields every
+    archotech AAH part shares:
+
+      - techLevel Archotech (vs VREA base's Ultra default)
+      - the AAH_BodyPartsAndroidArchotech thing category
+      - the archotech part icon (Items/AAH_AndroidPart_Archotech)
+      - recipeMaker Inherit="False"
+
+    recipeMaker Inherit="False" suppresses VREA_BodyPartAndroidBase's recipeMaker
+    so no Make recipe is auto-generated at the android workbench. Every AAH part
+    instead defines an explicit crafting RecipeDef with allowMixingIngredients,
+    required to resolve MinifiedThing ingredients (power cells, emanators, persona
+    cores) — the auto-generated recipe's NoMix ingredient search can't unwrap
+    minified buildings. See any RecipeDefs_*.xml for the full rationale.
+
+    Each child keeps a costList only to satisfy the def validator (an
+    Inherit="False" recipeMaker still requires a costList or costStuffCount); it
+    is not used for crafting. Where a child also sets an explicit MarketValue, the
+    costList does not drive price either (see that child's comment).
+
+    NOT used by AAH_GravReactor: it's ultratech, so it keeps VREA's Ultra tech
+    level and default blue icon and parents VREA_BodyPartAndroidBase directly.
+    AAH_ThanaticReactor uses this base but re-overrides graphicData to the dark
+    archotech variant.
+  -->
+  <ThingDef Name="AAH_BodyPartAndroidArchotechBase" ParentName="VREA_BodyPartAndroidBase" Abstract="True">
+    <techLevel>Archotech</techLevel>
+    <thingCategories Inherit="False">
+      <li>AAH_BodyPartsAndroidArchotech</li>
+    </thingCategories>
+    <graphicData>
+      <texPath>Items/AAH_AndroidPart_Archotech</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>0.80</drawSize>
+    </graphicData>
+    <recipeMaker Inherit="False" />
+  </ThingDef>
+
+</Defs>

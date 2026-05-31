@@ -10,10 +10,10 @@
     making the reactor transferable between android pawns without losing
     its current charge.
 
-    Parent: VREA_BodyPartAndroidBase provides android category, Ultra tech level,
-    and the android body part graphic class.
+    Parent: AAH_BodyPartAndroidArchotechBase (see ThingDefs_BodyPartBases.xml) —
+    but re-overrides graphicData to the dark archotech variant below.
   -->
-  <ThingDef ParentName="VREA_BodyPartAndroidBase">
+  <ThingDef ParentName="AAH_BodyPartAndroidArchotechBase">
     <defName>AAH_ThanaticReactor</defName>
     <label>thanatic reactor</label>
     <description>An archotech android reactor driven by an extracted Archotech Violence Generator core. Unlike conventional reactors, it draws sustenance from the echoes of violent death — each humanlike kill its host delivers pours energy back into its cell, and brief overflows bleed into an overcharge state that supercharges combat reflexes.\n\nWithout a steady supply of kills the reactor drains faster than a standard android reactor and its host will expire when it runs dry. In that terminal moment, the reactor strips one final charge from the pawn's own death before ejecting, intact, to await its next host.</description>
@@ -21,20 +21,12 @@
       <RecipeDef>AAH_InstallThanaticReactor</RecipeDef>
     </descriptionHyperlinks>
     <thingClass>ArchotechAndroidHardware.ThanaticReactorThing</thingClass>
-    <techLevel>Archotech</techLevel>
-    <thingCategories Inherit="False">
-      <li>AAH_BodyPartsAndroidArchotech</li>
-    </thingCategories>
+    <!-- Dark archotech variant (grey + red), overriding the base's green icon. -->
     <graphicData>
       <texPath>Items/AAH_AndroidPart_ArchotechDark</texPath>
       <graphicClass>Graphic_Single</graphicClass>
       <drawSize>0.80</drawSize>
     </graphicData>
-    <!-- Suppress parent's recipeMaker — we hand-write the crafting recipes
-         (Anomaly shard craft + VPE violence-generator salvage). The salvage
-         recipe needs allowMixingIngredients to resolve the minified generator
-         ingredient; see comment in RecipeDefs_ThanaticReactor.xml for details. -->
-    <recipeMaker Inherit="False" />
     <!-- costList retained only to satisfy the def validator (an Inherit="False"
          recipeMaker still requires a costList or costStuffCount). It does NOT
          drive price: the explicit MarketValue below short-circuits

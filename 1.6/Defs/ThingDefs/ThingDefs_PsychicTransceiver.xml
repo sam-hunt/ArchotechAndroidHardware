@@ -5,30 +5,16 @@
     Psychic transceiver body part item. This is the inventory item; the installed
     state is represented by the AAH_PsychicTransceiver HediffDef.
 
-    Parent: VREA_BodyPartAndroidBase provides android category, Ultra tech level,
-    and the android body part graphic class.
+    Parent: AAH_BodyPartAndroidArchotechBase provides techLevel, thing category,
+    archotech icon, and recipeMaker suppression (see ThingDefs_BodyPartBases.xml).
   -->
-  <ThingDef ParentName="VREA_BodyPartAndroidBase">
+  <ThingDef ParentName="AAH_BodyPartAndroidArchotechBase">
     <defName>AAH_PsychicTransceiver</defName>
     <label>psychic transceiver</label>
     <description>An archotech brain implant that grants psychic sensitivity to androids. As machines, androids are naturally inert to psychic phenomena. This transceiver bridges that gap by interfacing a miniaturized psychic emanator directly with the android's neural architecture.\n\nOnce installed, the android gains psychic awareness and a modest sensitivity boost.</description>
     <descriptionHyperlinks>
       <RecipeDef>AAH_InstallPsychicTransceiver</RecipeDef>
     </descriptionHyperlinks>
-    <techLevel>Archotech</techLevel>
-    <thingCategories Inherit="False">
-      <li>AAH_BodyPartsAndroidArchotech</li>
-    </thingCategories>
-    <graphicData>
-      <texPath>Items/AAH_AndroidPart_Archotech</texPath>
-      <graphicClass>Graphic_Single</graphicClass>
-      <drawSize>0.80</drawSize>
-    </graphicData>
-    <!-- Suppress parent's recipeMaker to prevent auto-generated crafting recipe.
-         The explicit RecipeDef in RecipeDefs/ uses allowMixingIngredients, which is
-         required for MinifiedThing ingredients like PsychicEmanator. See the
-         crafting recipe comment in RecipeDefs_PsychicTransceiver.xml for details. -->
-    <recipeMaker Inherit="False" />
     <!-- costList retained for market value calculation (not used for crafting;
          the explicit RecipeDef defines its own ingredients list) -->
     <costList>
