@@ -105,12 +105,13 @@
     (the XML default here is just a placeholder — it gets overwritten before the
     hediff ever ticks).
 
-    Psyfocus bump on initial application (+0.25, Royalty-gated) is applied in
-    C# when the hediff is first created. Subsequent overflows extend duration
-    without a further bump — see Hediff_ThanaticOvercharge for the anti-farming
-    rationale.
+    Psyfocus bump on initial application (+0.15, Royalty-gated, matching
+    go-juice's IngestionOutcomeDoer_OffsetPsyfocus) is applied in C# when the
+    hediff is first created. Subsequent overflows extend duration without a
+    further bump — see Hediff_ThanaticOvercharge for the anti-farming rationale.
 
-    Stat profile mirrors vanilla GoJuiceHigh's combat envelope.
+    Stat profile mirrors vanilla GoJuiceHigh's combat envelope (see the stage
+    comment below).
   -->
   <HediffDef>
     <defName>AAH_ThanaticOvercharge</defName>
@@ -122,19 +123,28 @@
     <isBad>false</isBad>
     <maxSeverity>1.0</maxSeverity>
     <initialSeverity>1.0</initialSeverity>
+    <!--
+      Combat envelope copied verbatim from vanilla GoJuiceHigh (Core's
+      Drugs/GoJuice.xml): painFactor 0.1 + Consciousness/Sight/Moving capacity
+      offsets. Go-juice's boost is delivered entirely through these capacity
+      offsets (which cascade into aiming, melee, work, dodge, etc.) rather than
+      per-stat statOffsets — keep these three numbers in sync with that def.
+    -->
     <stages>
       <li>
-        <statOffsets>
-          <MoveSpeed>0.5</MoveSpeed>
-          <PainShockThreshold>0.15</PainShockThreshold>
-          <MeleeHitChance>10</MeleeHitChance>
-          <MeleeDodgeChance>15</MeleeDodgeChance>
-          <ShootingAccuracyPawn>3</ShootingAccuracyPawn>
-        </statOffsets>
+        <painFactor>0.1</painFactor>
         <capMods>
           <li>
+            <capacity>Consciousness</capacity>
+            <offset>0.20</offset>
+          </li>
+          <li>
+            <capacity>Sight</capacity>
+            <offset>0.35</offset>
+          </li>
+          <li>
             <capacity>Moving</capacity>
-            <postFactor>1.2</postFactor>
+            <offset>0.50</offset>
           </li>
         </capMods>
       </li>

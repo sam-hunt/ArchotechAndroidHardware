@@ -10,7 +10,6 @@
 - Extract Thanatic reactor gizmo on corpse.
   `claude --resume "thanatic-reactor-designation-ui"`
 
-- Thanatic overcharge doesn't match high on go-juice
 - Only fire/scale thanatic drain on psychically sensitive targets
 - New scenario "Magus of the Abyss", a sole android with a thanatic reactor. otherwise with similarities to both the rich explorer, and the VREA starting scenario
 - Add Persona Core upgrade part (increase consciosness +10%, increase threshold to awaken?)

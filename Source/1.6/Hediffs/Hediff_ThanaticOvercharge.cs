@@ -14,14 +14,16 @@ namespace ArchotechAndroidHardware;
 /// by <see cref="ArchotechAndroidHardwareSettings.thanaticOverchargeCapHours"/>)
 /// rather than re-applying the hediff fresh.
 ///
-/// Psyfocus bump (Royalty-gated): +0.25 applies only on the INITIAL application,
-/// not on subsequent duration extensions. This prevents psyfocus farming by
-/// chaining small kills — the player has to let the buff expire before they can
-/// bank another psyfocus bump.
+/// Psyfocus bump (Royalty-gated): +0.15 applies only on the INITIAL application,
+/// not on subsequent duration extensions. The magnitude matches go-juice's
+/// <c>IngestionOutcomeDoer_OffsetPsyfocus</c> offset; applying it once per buff
+/// window also prevents psyfocus farming by chaining small kills — the player
+/// has to let the buff expire before they can bank another psyfocus bump.
 /// </summary>
 public class Hediff_ThanaticOvercharge : HediffWithComps
 {
-    private const float PsyfocusBumpOnInitialApply = 0.25f;
+    // Matches go-juice's instant psyfocus offset (Core Drugs/GoJuice.xml).
+    private const float PsyfocusBumpOnInitialApply = 0.15f;
 
     /// <summary>
     /// Apply or extend Thanatic Overcharge on the given pawn.
