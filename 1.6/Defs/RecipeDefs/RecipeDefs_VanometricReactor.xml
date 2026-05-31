@@ -17,9 +17,9 @@
   -->
   <RecipeDef>
     <defName>AAH_MakeVanometricReactor</defName>
-    <label>craft vanometric reactor</label>
-    <description>Craft a vanometric reactor from a vanometric power cell and advanced components.</description>
-    <jobString>Crafting vanometric reactor.</jobString>
+    <label>make vanometric reactor</label>
+    <description>Make a vanometric reactor from a vanometric power cell and advanced components.</description>
+    <jobString>Making vanometric reactor.</jobString>
     <allowMixingIngredients>true</allowMixingIngredients>
     <workAmount>32000</workAmount>
     <workSpeedStat>GeneralLaborSpeed</workSpeedStat>

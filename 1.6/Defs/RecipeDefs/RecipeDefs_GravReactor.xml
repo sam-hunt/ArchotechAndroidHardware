@@ -18,9 +18,9 @@
   -->
   <RecipeDef MayRequire="Ludeon.RimWorld.Odyssey">
     <defName>AAH_MakeGravReactor</defName>
-    <label>craft grav reactor</label>
-    <description>Craft a grav reactor from a gravcore power cell and advanced components.</description>
-    <jobString>Crafting grav reactor.</jobString>
+    <label>make grav reactor</label>
+    <description>Make a grav reactor from a gravcore power cell and advanced components.</description>
+    <jobString>Making grav reactor.</jobString>
     <allowMixingIngredients>true</allowMixingIngredients>
     <workAmount>26000</workAmount>
     <workSpeedStat>GeneralLaborSpeed</workSpeedStat>

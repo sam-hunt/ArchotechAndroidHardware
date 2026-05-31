@@ -15,9 +15,9 @@
   -->
   <RecipeDef>
     <defName>AAH_MakeArchotechMnemocore</defName>
-    <label>craft archotech mnemocore</label>
-    <description>Craft an archotech mnemocore from a persona core and advanced components.</description>
-    <jobString>Crafting archotech mnemocore.</jobString>
+    <label>make archotech mnemocore</label>
+    <description>Make an archotech mnemocore from a persona core and advanced components.</description>
+    <jobString>Making archotech mnemocore.</jobString>
     <allowMixingIngredients>true</allowMixingIngredients>
     <workAmount>26000</workAmount>
     <workSpeedStat>GeneralLaborSpeed</workSpeedStat>

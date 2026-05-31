@@ -17,9 +17,9 @@
   -->
   <RecipeDef>
     <defName>AAH_MakePsychicTransceiver</defName>
-    <label>craft psychic transceiver</label>
-    <description>Craft a psychic transceiver from a psychic emanator and advanced components.</description>
-    <jobString>Crafting psychic transceiver.</jobString>
+    <label>make psychic transceiver</label>
+    <description>Make a psychic transceiver from a psychic emanator and advanced components.</description>
+    <jobString>Making psychic transceiver.</jobString>
     <allowMixingIngredients>true</allowMixingIngredients>
     <workAmount>26000</workAmount>
     <workSpeedStat>GeneralLaborSpeed</workSpeedStat>

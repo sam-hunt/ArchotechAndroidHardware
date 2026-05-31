@@ -17,9 +17,9 @@
   -->
   <RecipeDef>
     <defName>AAH_MakeNeutrosynthesizer</defName>
-    <label>craft neutrosynthesizer</label>
-    <description>Craft a neutrosynthesizer from advanced components and a modified infinite chemreactor or nano structuring chip.</description>
-    <jobString>Crafting neutrosynthesizer.</jobString>
+    <label>make neutrosynthesizer</label>
+    <description>Make a neutrosynthesizer from advanced components and a modified infinite chemreactor or nano structuring chip.</description>
+    <jobString>Making neutrosynthesizer.</jobString>
     <allowMixingIngredients>true</allowMixingIngredients>
     <workAmount>26000</workAmount>
     <workSpeedStat>GeneralLaborSpeed</workSpeedStat>

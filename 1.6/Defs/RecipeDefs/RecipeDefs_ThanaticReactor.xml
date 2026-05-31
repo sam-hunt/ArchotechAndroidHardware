@@ -16,9 +16,9 @@
   -->
   <RecipeDef MayRequire="Ludeon.RimWorld.Anomaly">
     <defName>AAH_MakeThanaticReactor</defName>
-    <label>craft thanatic reactor</label>
-    <description>Craft a thanatic reactor around a shard, binding its death-resonance into an android reactor core.</description>
-    <jobString>Crafting thanatic reactor.</jobString>
+    <label>make thanatic reactor</label>
+    <description>Make a thanatic reactor around a shard, binding its death-resonance into an android reactor core.</description>
+    <jobString>Making thanatic reactor.</jobString>
     <workAmount>26000</workAmount>
     <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
     <workSkill>Crafting</workSkill>
@@ -91,6 +91,12 @@
     components (1,800), and yields 3 reactors + the same 275 steel. That is ~2,070 of
     inputs for 3 reactors, i.e. ~690 each against the 650 part value - near-fair, and
     the 3x output makes tearing down a 3,400 building feel like salvage, not waste.
+
+    No researchPrerequisite (deliberately, unlike the from-scratch recipe above): the
+    Steel byproduct would otherwise show up as "Steel" under AAH_ArchotechAndroidtech's
+    research unlocks, which is misleading and silly. Gating is left to needing the
+    generator itself, plus the android workbench. Do NOT re-add a researchPrerequisite
+    here for parity with the primary recipe.
   -->
   <RecipeDef MayRequire="VanillaExpanded.VFEPower">
     <defName>AAH_SalvageThanaticReactor</defName>
@@ -112,7 +118,6 @@
       <Crafting>8</Crafting>
     </skillRequirements>
     <unfinishedThingDef>VREA_UnfinishedHealthItemAndroid</unfinishedThingDef>
-    <researchPrerequisite>AAH_ArchotechAndroidtech</researchPrerequisite>
     <recipeUsers>
       <li>VREA_AndroidPartWorkbench</li>
     </recipeUsers>
@@ -144,6 +149,10 @@
       <AAH_ThanaticReactor>3</AAH_ThanaticReactor>
       <Steel>275</Steel>
     </products>
+    <!-- Multi-output recipe: RecipeDef.ProducedThingDef returns null unless there's
+         exactly one product, so the bill icon would otherwise be blank. Pin it to the
+         headline output (the reactor, not the salvaged steel). -->
+    <uiIconThing>AAH_ThanaticReactor</uiIconThing>
   </RecipeDef>
 
   <!--

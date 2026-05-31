@@ -4,7 +4,8 @@
 
 - Test Grav reactor recharge and FX
 - Grav Reactor deconstruct?
-- Ensure all new gene textures are used
+
+- Add Persona Core upgrade part (increase consciosness +10%, increase threshold to awaken?)
 
 - Eject Thanatic reactor on corpse destruction?
 - Extract Thanatic reactor gizmo on corpse.
@@ -12,10 +13,8 @@
 
 - Only fire/scale thanatic drain on psychically sensitive targets
 - New scenario "Magus of the Abyss", a sole android with a thanatic reactor. otherwise with similarities to both the rich explorer, and the VREA starting scenario
-- Add Persona Core upgrade part (increase consciosness +10%, increase threshold to awaken?)
-- Add powerfocus chip to archotech reactor recipes, consider whether there's too many distinct ingredients
+- Add powerfocus chip to reactor recipes? Evaluate recipe costs
 - more exclusion tags for conflicting subroutines
-- With Anomaly DLC, Shard can be used to awaken androids?
 - With Anomaly DLC, Shard can craft part allowing awakened behavior reprogramming, decrease mental break threshold
 - When sleep mode is used by an android with a vanometric reactor installed, building acts as a 500w power emitter
 - check body part flammability (extract AAH body parts to base def?)
