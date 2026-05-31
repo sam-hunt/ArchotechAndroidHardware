@@ -78,6 +78,7 @@ public class ArchotechAndroidHardwareSettings : ModSettings
     public float thanaticOverchargeHoursPerUnit = 17f;
     public float thanaticOverchargeCapHours = 48f;
     public ReactorGlowMode reactorGlowMode = ReactorGlowMode.MoteExperimental;
+    public bool scaleReactorGlowByPower = true;
 
     // Transient UI state for the scrollable settings panel — not serialized.
     private Vector2 settingsScroll;
@@ -90,6 +91,7 @@ public class ArchotechAndroidHardwareSettings : ModSettings
         Scribe_Values.Look(ref thanaticOverchargeHoursPerUnit, "thanaticOverchargeHoursPerUnit", 17f);
         Scribe_Values.Look(ref thanaticOverchargeCapHours, "thanaticOverchargeCapHours", 48f);
         Scribe_Values.Look(ref reactorGlowMode, "reactorGlowMode", ReactorGlowMode.MoteExperimental);
+        Scribe_Values.Look(ref scaleReactorGlowByPower, "scaleReactorGlowByPower", true);
     }
 
     public void ResetToDefaults()
@@ -98,6 +100,7 @@ public class ArchotechAndroidHardwareSettings : ModSettings
         thanaticOverchargeHoursPerUnit = 17f;
         thanaticOverchargeCapHours = 48f;
         reactorGlowMode = ReactorGlowMode.MoteExperimental;
+        scaleReactorGlowByPower = true;
     }
 
     public void DoWindowContents(Rect inRect)
@@ -132,6 +135,13 @@ public class ArchotechAndroidHardwareSettings : ModSettings
         DrawGlowModeOption(listing, ReactorGlowMode.MoteExperimental,
             "Mote overlay (experimental)",
             "Punches through night and unnatural darkness, but may also render over other overlays (weapons, stun text, other weather effects) which some players may find jarring. Rarely, it may also misalign during other animations.");
+
+        listing.Gap(6f);
+        listing.CheckboxLabeled("Dim reactor glow with power level",
+            ref scaleReactorGlowByPower,
+            "When enabled, the reactor core glow fades as the android's stored power " +
+            "drops and shines at full strength when fully charged. When disabled, the " +
+            "glow stays at a constant brightness.");
 
         listing.Gap(30f);
 

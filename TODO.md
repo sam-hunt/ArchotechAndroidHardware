@@ -6,8 +6,6 @@
 - Grav Reactor deconstruct?
 - Ensure all new gene textures are used
 
-- Scale reactor glow overlay opacity by power level
-
 - common body part base class like VREA's HealthItemAndroid?
 
 - Eject Thanatic reactor on corpse destruction?

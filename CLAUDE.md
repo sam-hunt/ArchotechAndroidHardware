@@ -68,7 +68,9 @@ Textures/
 Source/1.6/
 ├── Core/           # Mod subclass (Harmony setup + settings window), SurgeryState, ArchotechAndroidHardwareSettings
 ├── Hediffs/        # Hediff classes (gene lifecycle; Thanatic reactor drain/kill/death logic)
+├── Motes/          # Reactor-glow / charge-aura mote classes
 ├── Patches/        # Harmony patches (VREA compatibility fixes) + AAHPartEjector helper
+├── Rendering/      # Reactor-glow render-node worker + shared ReactorGlow opacity helper
 ├── Things/         # ThingWithComps subclasses (ThanaticReactorThing — stored energy)
 └── Properties/     # AssemblyInfo
 ```
@@ -109,6 +111,9 @@ Only the *crafting* recipe of a part may depend on a non-baseline mod — the he
 
 **Power need wiring without hediff-type inheritance (Thanatic reactor):**
 VREA's `Need_ReactorPower.CurLevel` looks up the reactor hediff by def (`VREA_Reactor`), not by type. Since Thanatic replaces VREA_Reactor rather than inheriting from `Hediff_AndroidReactor` (kept reflection-only), the need bar would otherwise read 0 permanently. The `NeedReactorPower_CurLevel` postfix falls through to `AAH_ThanaticReactor.Energy` when VREA_Reactor is absent. The `VREA_Power` gene's `enablesNeeds` keeps the need itself in the pawn's needs list, so only the backing lookup needed patching.
+
+**Reactor core glow (two render paths):**
+Every reactor (Vanometric / Thanatic / Grav and VREA's stock reactor) shows an additive core glow via one of two mutually-exclusive paths, chosen by the `reactorGlowMode` setting: a mote overlay (`Source/1.6/Motes/`, punches through unnatural darkness) or a body-parented render node (`Source/1.6/Rendering/`, perfectly tracked but occluded). Opacity is scaled by the android's power-need percentage (`VREA_ReactorPower.CurLevelPercentage`, routed per reactor by patch #5) when the `scaleReactorGlowByPower` setting is on; the `ReactorGlow` helper is the shared opacity source for both paths. Note the render-node path scales alpha **per-draw** in `GetMaterialPropertyBlock` — RimWorld's own per-draw tint mechanism — so there is no graphic rebake to throttle.
 
 **Death-on-depletion (Thanatic reactor):**
 Unlike Vanometric (runs indefinitely) or VREA's native reactor (forces the pawn downed at 0 energy via Severity=1 capMods), Thanatic ticks a death check in its own `TickInterval`: when Energy hits 0, it spawns the reactor item (with `storedEnergy = ThanaticRefillAmount` — lore: the pawn's death recharges the reactor once more), sets a re-entry guard flag, then calls `pawn.Kill(null, null)`. The `PawnHealthTracker_ShouldBeDowned` postfix (generalised to all AAH_ reactor types) keeps the pawn upright while Energy > 0 so VREA's "no reactor hediff → force downed" prefix doesn't pre-empt the death transition.

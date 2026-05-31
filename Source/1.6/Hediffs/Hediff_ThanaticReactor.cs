@@ -146,7 +146,7 @@ public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection, IAAH
     {
         base.Tick();
         if (pawn == null || pawn.Dead) return;
-        ReactorGlowMote.Maintain(pawn, ref glowMote, GlowTint, brightness: 1f);
+        ReactorGlowMote.Maintain(pawn, ref glowMote, GlowTint);
     }
 
     public override void TickInterval(int delta)

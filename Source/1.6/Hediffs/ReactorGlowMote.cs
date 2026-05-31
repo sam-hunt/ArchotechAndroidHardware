@@ -65,7 +65,7 @@ public static class ReactorGlowMote
     private static ThingDef MoteDef =>
         _moteDefCache ??= DefDatabase<ThingDef>.GetNamed("Mote_AAHReactorGlow", errorOnFail: false);
 
-    public static void Maintain(Pawn pawn, ref Mote mote, Color tint, float brightness)
+    public static void Maintain(Pawn pawn, ref Mote mote, Color tint)
     {
         if (pawn == null || !pawn.Spawned || MoteDef == null) return;
 
@@ -79,7 +79,11 @@ public static class ReactorGlowMote
             return;
         }
 
-        bool visible = brightness > 0f && IsChestVisible(pawn);
+        // Alpha fades with the android's power level (when the setting is on);
+        // ReactorGlow.GlowOpacity is the single source of truth shared with the
+        // render-node path. Cheap enough to read every tick — no throttling.
+        float alpha = ReactorGlow.GlowOpacity(pawn);
+        bool visible = alpha > 0f && IsChestVisible(pawn);
 
         float scale = 1f;
         if (pawn.story?.bodyType != null)
@@ -106,7 +110,7 @@ public static class ReactorGlowMote
         // Change can swap bodyType at runtime). Mote.Scale is a single Vector3
         // assignment — no allocation, safe to write every tick.
         mote.Scale = scale;
-        mote.instanceColor = new Color(tint.r, tint.g, tint.b, visible ? brightness : 0f);
+        mote.instanceColor = new Color(tint.r, tint.g, tint.b, visible ? alpha : 0f);
         mote.Maintain();
     }
 

@@ -114,7 +114,7 @@ public class Hediff_GravReactor : Hediff_AddedPart, ICustomAAHEjection, IAAHReac
     {
         base.Tick();
         if (pawn == null || pawn.Dead) return;
-        ReactorGlowMote.Maintain(pawn, ref glowMote, GlowTint, brightness: 1f);
+        ReactorGlowMote.Maintain(pawn, ref glowMote, GlowTint);
         TickChargeAuraPending();
     }
 
