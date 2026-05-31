@@ -6,7 +6,7 @@
 - Grav Reactor deconstruct?
 - Ensure all new gene textures are used
 
-- Hide glow motes if power need level is zero or if laying down south facing in bed offset can be weird on forehead etc
+- Scale reactor glow overlay opacity by power level
 
 - common body part base class like VREA's HealthItemAndroid?
 
