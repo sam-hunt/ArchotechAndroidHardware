@@ -2,35 +2,30 @@
 <Defs>
 
   <!--
-    Crafting recipe (explicit, not auto-generated from costList/recipeMaker).
+    Primary crafting recipe (explicit, not auto-generated from costList/recipeMaker).
+    Gated behind the Anomaly DLC: a shard is the thematic seed for a reactor that
+    "draws sustenance from the echoes of violent death".
 
-    Why explicit: The parent def (VREA_BodyPartAndroidBase) includes recipeMaker which
-    auto-generates a crafting recipe. We suppress it via <recipeMaker Inherit="False" />
-    in the ThingDef because the auto-generated recipe uses the NoMix ingredient search,
-    which cannot find MinifiedThing ingredients like the VPE_ArchotechViolenceGenerator.
+    Why explicit: the parent ThingDef suppresses recipeMaker (see the ThingDef
+    comment) and we hand-write the recipe. Unlike the salvage recipe below, every
+    ingredient here is a plain stackable resource, so this one does NOT need
+    allowMixingIngredients (the NoMix def-level ingredient search resolves them).
 
-    Why allowMixingIngredients: see comment in RecipeDefs_VanometricReactor.xml — the
-    AllowMix path calls ThingFilter.Allows(Thing) which unwraps minified buildings,
-    whereas the NoMix path only does def-level matching.
-
-    MayRequire on the RecipeDef: without Vanilla Expanded Power installed the recipe
-    doesn't load (the Violence Generator doesn't exist), but the hediff, ThingDef, and
-    install surgery remain functional — so transferred saves or dev-spawned reactors
-    continue to work without VPE.
+    Cost check: Shard 400 + ComponentSpacer 200 + Plasteel 10x9=90 = ~690 of
+    inputs for a part with an explicit MarketValue of 650 - roughly break-even.
   -->
-  <RecipeDef MayRequire="VanillaExpanded.VFEPower">
+  <RecipeDef MayRequire="Ludeon.RimWorld.Anomaly">
     <defName>AAH_MakeThanaticReactor</defName>
     <label>craft thanatic reactor</label>
-    <description>Craft a thanatic reactor from an archotech violence generator and advanced components.</description>
+    <description>Craft a thanatic reactor around a shard, binding its death-resonance into an android reactor core.</description>
     <jobString>Crafting thanatic reactor.</jobString>
-    <allowMixingIngredients>true</allowMixingIngredients>
     <workAmount>26000</workAmount>
     <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
     <workSkill>Crafting</workSkill>
     <effectWorking>Smith</effectWorking>
     <soundWorking>Recipe_Smith</soundWorking>
     <skillRequirements>
-      <Crafting>12</Crafting>
+      <Crafting>8</Crafting>
     </skillRequirements>
     <unfinishedThingDef>VREA_UnfinishedHealthItemAndroid</unfinishedThingDef>
     <researchPrerequisite>AAH_ArchotechAndroidtech</researchPrerequisite>
@@ -41,10 +36,10 @@
       <li>
         <filter>
           <thingDefs>
-            <li>Plasteel</li>
+            <li>Shard</li>
           </thingDefs>
         </filter>
-        <count>10</count>
+        <count>1</count>
       </li>
       <li>
         <filter>
@@ -57,11 +52,71 @@
       <li>
         <filter>
           <thingDefs>
-            <li>ArchiteCapsule</li>
+            <li>Plasteel</li>
           </thingDefs>
         </filter>
-        <count>1</count>
+        <count>10</count>
       </li>
+    </ingredients>
+    <fixedIngredientFilter>
+      <thingDefs>
+        <li>Shard</li>
+        <li>ComponentSpacer</li>
+        <li>Plasteel</li>
+      </thingDefs>
+    </fixedIngredientFilter>
+    <products>
+      <AAH_ThanaticReactor>1</AAH_ThanaticReactor>
+    </products>
+  </RecipeDef>
+
+  <!--
+    Salvage recipe (Vanilla Power Expanded only): break down an Archotech Violence
+    Generator into reactor cores rather than crafting one from scratch. Framed as
+    salvage, not construction - you recover the generator's archotech violence core
+    as three thanatic reactors plus the steel you'd get from deconstructing it.
+
+    MayRequire on the RecipeDef: skipped when VPE is absent (the generator doesn't
+    exist), but the hediff, ThingDef, surgery, and the Shard recipe above remain
+    functional.
+
+    allowMixingIngredients: the AllowMix path calls ThingFilter.Allows(Thing) which
+    unwraps minified buildings (the generator is a minified building); the NoMix
+    path only does def-level matching and would never find it. See the comment in
+    RecipeDefs_VanometricReactor.xml for the deeper rationale.
+
+    Balance (measured against the only realistic baseline - just deconstructing the
+    generator, which returns ~275 steel + 9 spacer components ~= 2,320 of materials):
+    salvaging instead spends +30 plasteel (270) and the work, forgoes those 9 spacer
+    components (1,800), and yields 3 reactors + the same 275 steel. That is ~2,070 of
+    inputs for 3 reactors, i.e. ~690 each against the 650 part value - near-fair, and
+    the 3x output makes tearing down a 3,400 building feel like salvage, not waste.
+  -->
+  <RecipeDef MayRequire="VanillaExpanded.VFEPower">
+    <defName>AAH_SalvageThanaticReactor</defName>
+    <label>salvage thanatic reactors</label>
+    <description>Salvage an archotech violence generator into three thanatic reactor cores, recovering its steel in the process.</description>
+    <jobString>Salvaging thanatic reactors.</jobString>
+    <allowMixingIngredients>true</allowMixingIngredients>
+    <!-- Low work on purpose: deconstructing the generator costs ~3000 ticks
+         (JobDriver_Deconstruct clamps WorkToBuild to [20, 3000]), so this bench
+         salvage is pinned to roughly the same effort (~1.2 in-game hours) rather
+         than a full from-scratch craft (26000) - otherwise nobody would use it
+         over deconstructing. -->
+    <workAmount>3000</workAmount>
+    <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+    <workSkill>Crafting</workSkill>
+    <effectWorking>Smith</effectWorking>
+    <soundWorking>Recipe_Smith</soundWorking>
+    <skillRequirements>
+      <Crafting>8</Crafting>
+    </skillRequirements>
+    <unfinishedThingDef>VREA_UnfinishedHealthItemAndroid</unfinishedThingDef>
+    <researchPrerequisite>AAH_ArchotechAndroidtech</researchPrerequisite>
+    <recipeUsers>
+      <li>VREA_AndroidPartWorkbench</li>
+    </recipeUsers>
+    <ingredients>
       <li>
         <filter>
           <thingDefs>
@@ -70,17 +125,24 @@
         </filter>
         <count>1</count>
       </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Plasteel</li>
+          </thingDefs>
+        </filter>
+        <count>30</count>
+      </li>
     </ingredients>
     <fixedIngredientFilter>
       <thingDefs>
-        <li>Plasteel</li>
-        <li>ComponentSpacer</li>
-        <li>ArchiteCapsule</li>
         <li>VPE_ArchotechViolenceGenerator</li>
+        <li>Plasteel</li>
       </thingDefs>
     </fixedIngredientFilter>
     <products>
-      <AAH_ThanaticReactor>1</AAH_ThanaticReactor>
+      <AAH_ThanaticReactor>3</AAH_ThanaticReactor>
+      <Steel>275</Steel>
     </products>
   </RecipeDef>
 

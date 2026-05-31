@@ -19,7 +19,7 @@
     <description>Craft an archotech mnemocore from a persona core and advanced components.</description>
     <jobString>Crafting archotech mnemocore.</jobString>
     <allowMixingIngredients>true</allowMixingIngredients>
-    <workAmount>30000</workAmount>
+    <workAmount>26000</workAmount>
     <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
     <workSkill>Crafting</workSkill>
     <effectWorking>Smith</effectWorking>

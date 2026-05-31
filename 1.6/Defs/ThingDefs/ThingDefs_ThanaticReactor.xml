@@ -30,9 +30,10 @@
       <graphicClass>Graphic_Single</graphicClass>
       <drawSize>0.80</drawSize>
     </graphicData>
-    <!-- Suppress parent's recipeMaker — explicit RecipeDef with allowMixingIngredients
-         is required for the minified VPE_ArchotechViolenceGenerator ingredient.
-         See comment in RecipeDefs_ThanaticReactor.xml for details. -->
+    <!-- Suppress parent's recipeMaker — we hand-write the crafting recipes
+         (Anomaly shard craft + VPE violence-generator salvage). The salvage
+         recipe needs allowMixingIngredients to resolve the minified generator
+         ingredient; see comment in RecipeDefs_ThanaticReactor.xml for details. -->
     <recipeMaker Inherit="False" />
     <!-- costList retained only to satisfy the def validator (an Inherit="False"
          recipeMaker still requires a costList or costStuffCount). It does NOT

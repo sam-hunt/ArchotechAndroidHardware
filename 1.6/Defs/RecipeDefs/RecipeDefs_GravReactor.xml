@@ -22,13 +22,13 @@
     <description>Craft a grav reactor from a gravcore power cell and advanced components.</description>
     <jobString>Crafting grav reactor.</jobString>
     <allowMixingIngredients>true</allowMixingIngredients>
-    <workAmount>22000</workAmount>
+    <workAmount>26000</workAmount>
     <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
     <workSkill>Crafting</workSkill>
     <effectWorking>Smith</effectWorking>
     <soundWorking>Recipe_Smith</soundWorking>
     <skillRequirements>
-      <Crafting>10</Crafting>
+      <Crafting>8</Crafting>
     </skillRequirements>
     <unfinishedThingDef>VREA_UnfinishedHealthItemAndroid</unfinishedThingDef>
     <!-- Gated behind BOTH research projects (multi-prerequisite recipe).

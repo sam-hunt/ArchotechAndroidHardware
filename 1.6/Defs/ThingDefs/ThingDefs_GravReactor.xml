@@ -42,11 +42,13 @@
          survive the AllowMix unwrap path used by ingredient resolution.
          See RecipeDefs_VanometricReactor.xml for the deeper rationale. -->
     <recipeMaker Inherit="False" />
-    <!-- costList retained for market value calculation and to satisfy the
-         RimWorld def validator (a recipeMaker — even an empty one resolved
-         via Inherit="False" — requires either a costList or costStuffCount).
-         Not used for crafting; the explicit RecipeDef defines its own
-         ingredients. Same posture as Vanometric / Thanatic. -->
+    <!-- costList retained only to satisfy the RimWorld def validator (a
+         recipeMaker — even an empty one resolved via Inherit="False" — requires
+         either a costList or costStuffCount). It does NOT drive price: the
+         explicit MarketValue below short-circuits the cost-derived calculation.
+         Not used for crafting either; the explicit RecipeDef defines its own
+         ingredients. Same posture as Thanatic — Vanometric, by contrast, has no
+         explicit MarketValue, so there the costList genuinely sets market value. -->
     <costList>
       <Plasteel>10</Plasteel>
       <ComponentSpacer>2</ComponentSpacer>

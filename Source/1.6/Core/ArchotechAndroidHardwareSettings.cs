@@ -77,6 +77,9 @@ public class ArchotechAndroidHardwareSettings : ModSettings
     public float thanaticRefillAmount = 0.35f;
     public float thanaticOverchargeHoursPerUnit = 17f;
     public float thanaticOverchargeCapHours = 48f;
+    // VPE only, default off. Toggles the startup costList rewrite in
+    // ViolenceGeneratorSalvageOverride (takes effect on restart).
+    public bool overrideViolenceGeneratorSalvage = false;
     public ReactorGlowMode reactorGlowMode = ReactorGlowMode.MoteExperimental;
     public bool scaleReactorGlowByPower = true;
 
@@ -90,6 +93,7 @@ public class ArchotechAndroidHardwareSettings : ModSettings
         Scribe_Values.Look(ref thanaticRefillAmount, "thanaticRefillAmount", 0.35f);
         Scribe_Values.Look(ref thanaticOverchargeHoursPerUnit, "thanaticOverchargeHoursPerUnit", 17f);
         Scribe_Values.Look(ref thanaticOverchargeCapHours, "thanaticOverchargeCapHours", 48f);
+        Scribe_Values.Look(ref overrideViolenceGeneratorSalvage, "overrideViolenceGeneratorSalvage", false);
         Scribe_Values.Look(ref reactorGlowMode, "reactorGlowMode", ReactorGlowMode.MoteExperimental);
         Scribe_Values.Look(ref scaleReactorGlowByPower, "scaleReactorGlowByPower", true);
     }
@@ -99,6 +103,7 @@ public class ArchotechAndroidHardwareSettings : ModSettings
         thanaticRefillAmount = 0.35f;
         thanaticOverchargeHoursPerUnit = 17f;
         thanaticOverchargeCapHours = 48f;
+        overrideViolenceGeneratorSalvage = false;
         reactorGlowMode = ReactorGlowMode.MoteExperimental;
         scaleReactorGlowByPower = true;
     }
@@ -158,6 +163,21 @@ public class ArchotechAndroidHardwareSettings : ModSettings
         listing.Gap(10f);
         listing.Label($"Thanatic Overcharge duration cap: {thanaticOverchargeCapHours:F0}h");
         thanaticOverchargeCapHours = listing.Slider(thanaticOverchargeCapHours, 6f, 120f);
+
+        // VPE only: optional override that makes the Archotech Violence Generator
+        // salvageable for reactors via plain vanilla deconstruction. Gated on the
+        // generator def existing so the option never appears without VPE. The
+        // actual costList rewrite happens at startup in ViolenceGeneratorSalvageOverride.
+        if (DefDatabase<ThingDef>.GetNamedSilentFail("VPE_ArchotechViolenceGenerator") != null)
+        {
+            listing.Gap(18f);
+            listing.CheckboxLabeled("Salvage reactors by deconstructing Archotech Violence Generators",
+                ref overrideViolenceGeneratorSalvage,
+                "When enabled, deconstructing a Vanilla Power Expanded Archotech Violence Generator " +
+                "through normal vanilla means returns 250 steel and 3 thanatic reactors instead of its " +
+                "usual salvage — letting you recover reactors without running the crafting bill.\n\n" +
+                "Takes effect on game restart. (Shown only while Vanilla Power Expanded is installed.)");
+        }
 
         listing.Gap(60f);
 

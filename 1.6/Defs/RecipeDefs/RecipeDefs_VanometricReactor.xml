@@ -21,13 +21,13 @@
     <description>Craft a vanometric reactor from a vanometric power cell and advanced components.</description>
     <jobString>Crafting vanometric reactor.</jobString>
     <allowMixingIngredients>true</allowMixingIngredients>
-    <workAmount>26000</workAmount>
+    <workAmount>32000</workAmount>
     <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
     <workSkill>Crafting</workSkill>
     <effectWorking>Smith</effectWorking>
     <soundWorking>Recipe_Smith</soundWorking>
     <skillRequirements>
-      <Crafting>12</Crafting>
+      <Crafting>14</Crafting>
     </skillRequirements>
     <unfinishedThingDef>VREA_UnfinishedHealthItemAndroid</unfinishedThingDef>
     <researchPrerequisite>AAH_ArchotechAndroidtech</researchPrerequisite>
