@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Thanatic Overcharge: whole-body combat buff applied when a Thanatic Reactor
+    kill overflows the reactor's energy meter. Duration via HediffComp_Disappears;
+    ticksToDisappear is set programmatically by Hediff_ThanaticOvercharge.ApplyOrExtend
+    (the XML default here is just a placeholder — it gets overwritten before the
+    hediff ever ticks).
+
+    Psyfocus bump on initial application (+0.15, Royalty-gated, matching
+    go-juice's IngestionOutcomeDoer_OffsetPsyfocus) is applied in C# when the
+    hediff is first created. Subsequent overflows extend duration without a
+    further bump — see Hediff_ThanaticOvercharge for the anti-farming rationale.
+
+    Stat profile mirrors vanilla GoJuiceHigh's combat envelope (see the stage
+    comment below).
+  -->
+  <HediffDef>
+    <defName>AAH_ThanaticOvercharge</defName>
+    <label>thanatic overcharge</label>
+    <labelNoun>a thanatic overcharge</labelNoun>
+    <description>The thanatic reactor is discharging excess energy across the android's motor and sensor buses. Servo response, targeting precision, and receptor tolerances are all sharply elevated until the overcharge dissipates.</description>
+    <defaultLabelColor>(0.9, 0.3, 0.3)</defaultLabelColor>
+    <hediffClass>ArchotechAndroidHardware.Hediff_ThanaticOvercharge</hediffClass>
+    <isBad>false</isBad>
+    <maxSeverity>1.0</maxSeverity>
+    <initialSeverity>1.0</initialSeverity>
+    <!--
+      Combat envelope copied verbatim from vanilla GoJuiceHigh (Core's
+      Drugs/GoJuice.xml): painFactor 0.1 + Consciousness/Sight/Moving capacity
+      offsets. Go-juice's boost is delivered entirely through these capacity
+      offsets (which cascade into aiming, melee, work, dodge, etc.) rather than
+      per-stat statOffsets — keep these three numbers in sync with that def.
+    -->
+    <stages>
+      <li>
+        <painFactor>0.1</painFactor>
+        <capMods>
+          <li>
+            <capacity>Consciousness</capacity>
+            <offset>0.20</offset>
+          </li>
+          <li>
+            <capacity>Sight</capacity>
+            <offset>0.35</offset>
+          </li>
+          <li>
+            <capacity>Moving</capacity>
+            <offset>0.50</offset>
+          </li>
+        </capMods>
+      </li>
+    </stages>
+    <comps>
+      <li Class="HediffCompProperties_Disappears">
+        <!-- Placeholder: ticksToDisappear is overwritten in ApplyOrExtend. -->
+        <disappearsAfterTicks>1</disappearsAfterTicks>
+        <showRemainingTime>true</showRemainingTime>
+      </li>
+    </comps>
+  </HediffDef>
+
+</Defs>

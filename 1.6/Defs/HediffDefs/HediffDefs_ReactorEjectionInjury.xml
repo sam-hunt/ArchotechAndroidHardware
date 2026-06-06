@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Injury def used as Hediff_MissingPart.lastInjury for the reactor slot after
+    the Thanatic Reactor self-ejects on depletion. alwaysUseDestroyedLabel +
+    "ejected" overrides Hediff_MissingPart.LabelBase's default
+    "destroyed"/"shattered" path for Inside body parts (stomach depth = Inside,
+    which otherwise always returns those labels regardless of lastInjury).
+
+    Not given a parent: InjuryBase adds tend/display behavior we don't want
+    here — the injury instance itself never sits on the pawn; it only exists
+    as a label carrier on the missing-part hediff.
+  -->
+  <HediffDef>
+    <defName>AAH_ReactorEjectionInjury</defName>
+    <label>reactor ejection</label>
+    <description>The reactor module ejected from its housing as its host expired, leaving the bay open.</description>
+    <hediffClass>Hediff_Injury</hediffClass>
+    <injuryProps>
+      <painPerSeverity>0</painPerSeverity>
+      <bleedRate>0</bleedRate>
+      <canMerge>false</canMerge>
+      <alwaysUseDestroyedLabel>true</alwaysUseDestroyedLabel>
+      <destroyedLabel>ejected</destroyedLabel>
+    </injuryProps>
+  </HediffDef>
+
+</Defs>

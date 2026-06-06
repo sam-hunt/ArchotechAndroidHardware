@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Narrative-only hediff used as the battle-log culprit when a Thanatic Reactor
+    drains to zero and kills its host. Never actually added to any pawn — we
+    construct a floating instance via HediffMaker.MakeHediff and pass it as
+    exactCulprit into Pawn.Kill so that BattleLogEntry_StateTransition picks
+    a [CULPRITHEDIFF_labelNoun] death template ("thanatic reactor depletion
+    caused X to die") rather than the generic "collapsed" fallback.
+
+    No article on labelNoun because "depletion" is a mass noun — "a thanatic
+    depletion caused X to die" reads oddly vs. "thanatic depletion caused X
+    to die".
+  -->
+  <HediffDef>
+    <defName>AAH_ThanaticDepletionCulprit</defName>
+    <label>thanatic reactor depletion</label>
+    <labelNoun>thanatic reactor depletion</labelNoun>
+    <description>Placeholder hediff: used only to carry a death-cause label into the combat log when a Thanatic Reactor fully depletes.</description>
+    <hediffClass>HediffWithComps</hediffClass>
+  </HediffDef>
+
+</Defs>
