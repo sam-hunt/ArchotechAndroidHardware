@@ -17,7 +17,6 @@
 - more exclusion tags for conflicting subroutines
 - With Anomaly DLC, Shard can craft part allowing awakened behavior reprogramming, decrease mental break threshold
 - When sleep mode is used by an android with a vanometric reactor installed, building acts as a 500w power emitter
-- check body part flammability (extract AAH body parts to base def?)
 
 ## Other?
 

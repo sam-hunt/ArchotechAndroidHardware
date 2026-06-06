@@ -38,6 +38,15 @@
       <graphicClass>Graphic_Single</graphicClass>
       <drawSize>0.80</drawSize>
     </graphicData>
+    <!--
+      Fireproof: archotech parts don't burn. A deliberate departure from the
+      vanilla BodyPartBase default (Flammability 0.7), which VREA's android parts
+      and vanilla bionic/archotech parts all inherit. Does NOT reach the grav
+      reactor (ultratech; parents VREA_BodyPartAndroidBase directly).
+    -->
+    <statBases>
+      <Flammability>0</Flammability>
+    </statBases>
     <recipeMaker Inherit="False" />
   </ThingDef>
 
