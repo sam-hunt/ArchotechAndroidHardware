@@ -10,7 +10,7 @@
     making the reactor transferable between android pawns without losing
     its current charge.
 
-    Parent: AAH_BodyPartAndroidArchotechBase (see ThingDefs_BodyPartBases.xml) —
+    Parent: AAH_BodyPartAndroidArchotechBase (see ThingDefs_BodyPartAndroidArchotechBase.xml) —
     but re-overrides graphicData to the dark archotech variant below.
   -->
   <ThingDef ParentName="AAH_BodyPartAndroidArchotechBase">

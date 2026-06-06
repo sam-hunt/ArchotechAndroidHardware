@@ -6,7 +6,7 @@
     state is represented by the AAH_ArchotechMnemocore HediffDef.
 
     Parent: AAH_BodyPartAndroidArchotechBase provides techLevel, thing category,
-    archotech icon, and recipeMaker suppression (see ThingDefs_BodyPartBases.xml).
+    archotech icon, and recipeMaker suppression (see ThingDefs_BodyPartAndroidArchotechBase.xml).
   -->
   <ThingDef ParentName="AAH_BodyPartAndroidArchotechBase">
     <defName>AAH_ArchotechMnemocore</defName>
