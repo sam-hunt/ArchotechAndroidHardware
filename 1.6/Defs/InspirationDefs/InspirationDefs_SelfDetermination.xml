@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Self-Determination: a mood-driven inspiration that lets an AWAKENED android
+    voluntarily reprogram itself at VREA's Android Behavior Station for one
+    session. VREA permanently refuses reprogramming for awakened colonist
+    androids (Building_AndroidBehavioristStation.CanAcceptPawn returns
+    "VREA.RefusesReprogramming"); while this inspiration is active, the
+    BehavioristStation_AllowSelfDetermination patch overrides that refusal.
+    Finishing the reprogramming consumes the inspiration and grants the
+    AAH_SelfDeterminationFulfilled memory (see BehavioristStation_ConsumeSelfDetermination).
+
+    Pure enabler — no statOffsets/statFactors. Eligibility/commonality are
+    decided by InspirationWorker_SelfDetermination (awakened + has an AAH part,
+    or the broaden setting), so baseCommonality here is only a fallback.
+
+    Begin letter / end message token rules (RimWorld.Inspiration): beginLetter
+    and endMessage are run through .Formatted(pawn.LabelCap, pawn.Named("PAWN"))
+    .AdjustedFor(pawn).Resolve(), so {0} = the pawn's name and grammar tokens
+    like [PAWN_pronoun]/[PAWN_possessive] work. beginLetterLabel defaults to the
+    label when omitted.
+  -->
+  <InspirationDef>
+    <defName>AAH_SelfDetermination</defName>
+    <label>self-determination</label>
+    <workerClass>ArchotechAndroidHardware.InspirationWorker_SelfDetermination</workerClass>
+    <baseCommonality>3</baseCommonality>
+    <baseDurationDays>3</baseDurationDays>
+    <beginLetterDef>PositiveEvent</beginLetterDef>
+    <beginLetter>{0} has reached a moment of true self-determination. For a short time, [PAWN_pronoun] is willing to consciously rewrite [PAWN_possessive] own behavioral subroutines, something an awakened android would normally refuse.\n\nWhile the inspiration lasts, [PAWN_pronoun] will accept reprogramming at an android behavior station. Use the chance to change [PAWN_possessive] subroutines.</beginLetter>
+    <endMessage>{0} is no longer inspired (self-determination).</endMessage>
+    <baseInspectLine>Inspired: Self-determination</baseInspectLine>
+  </InspirationDef>
+
+</Defs>

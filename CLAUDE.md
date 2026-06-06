@@ -20,6 +20,10 @@ _Implants:_
 - Archotech mnemocore — an archotech brain implant that removes the android's memory need entirely. The companion gene overrides VREA's memory genes so they no longer `enablesNeeds`, and the hediff stage's `disablesNeeds` clears any residual `VREA_MemorySpace` instance. Ends memory degradation and makes RAM subroutines unnecessary.
 - Neutrosynthesizer — an archotech android kidney (replaces the kidney slot). The companion gene shares an exclusion tag with `VREA_NeutroSynthesis` to suppress it, and the hediff actively reduces `VREA_NeutroLoss` severity by 0.3/day per kidney (vs VREA's 0.05/day subroutine). Two installed give 0.6/day, exceeding human blood-loss recovery (0.5/day).
 
+_Inspirations:_
+
+- Self-Determination (`AAH_SelfDetermination`) — a mood-driven inspiration that lets an _awakened_ android temporarily reprogram its subroutines at VREA's behavior station (which normally permanently "refuses reprogramming" for awakened colonist androids). Pure enabler (no stat offsets): while active, patch #9 overrides the station's awakening refusal; finishing the reprogramming consumes the inspiration and grants the `AAH_SelfDeterminationFulfilled` mood memory (patch #10). Eligibility is gated to awakened androids carrying an AAH part by default, broadenable to all awakened androids via a setting. This works cleanly because VREA subroutine genes are _not_ `removeWhenAwakened` (only the "disabled-needs" hardware genes are), so re-selecting subroutines neither un-awakens the pawn nor is filtered by the dialog's `GeneValidator` — the station's `CanAcceptPawn` refusal is the only blocker. Worker + shared reflection helper live in `Source/1.6/Inspirations/`.
+
 **Key Technologies:** C# (.NET Framework 4.7.2), Harmony library (reflection-only, no VREA compile-time dependency), RimWorld modding API, XML definitions
 
 ## Build Commands
@@ -70,6 +74,7 @@ Textures/
 Source/1.6/
 ├── Core/           # Mod subclass (Harmony setup + settings window), SurgeryState, ArchotechAndroidHardwareSettings
 ├── Hediffs/        # Hediff classes (gene lifecycle; Thanatic reactor drain/kill/death logic)
+├── Inspirations/   # Self-Determination InspirationWorker + shared SelfDeterminationUtility
 ├── Motes/          # Reactor-glow / charge-aura mote classes
 ├── Patches/        # Harmony patches (VREA compatibility fixes) + AAHPartEjector helper
 ├── Rendering/      # Reactor-glow render-node worker + shared ReactorGlow opacity helper
@@ -150,6 +155,10 @@ All patches target VREA classes via `AccessTools.TypeByName()` — pure reflecti
 7. **`WorldComponentGravshipController_InitiateLanding`** — Postfix on Odyssey's `WorldComponent_GravshipController.InitiateLanding` (fires once per landing, after travel completes, on clean _or_ crash landings). Walks the gravship manifest (`Gravship.Things`, recursing nested `IThingHolder`s for reactors in inventories / carry trackers / storage) plus the on-board pawns' grav reactor hediffs, and refills each grav reactor to full. Landing-time (not launch-time) so cancel-at-destination-picker and interrupted-ritual cases correctly _don't_ refill. Odyssey types live in the main assembly so direct references are safe; the patch simply never fires without Odyssey since no gravship launches occur.
 
 8. **`GravReactorInstallEnergyTransfer`** — Prefix+Postfix on VREA's `Recipe_InstallAndroidPart.ApplyOnPawn`, mirroring patch #6 exactly for the grav reactor: stashes the ingredient `GravReactorThing.storedEnergy` and writes it onto the freshly-added `Hediff_GravReactor.Energy`. Kept as a separate type (not a shared generic patch) so each reactor's transfer pipeline stays independently traceable. Coexists with patches #3 and #6 on the same target method.
+
+9. **`BehavioristStation_AllowSelfDetermination`** — Postfix on VREA's `Building_AndroidBehavioristStation.CanAcceptPawn`. Flips the awakening-only `RefusesReprogramming` refusal to "accepted" when the pawn has the active `AAH_SelfDetermination` inspiration. Only overrides the awakening case (confirms `IsAwakened` reflectively, then re-validates the power / quest-lodger gates VREA checks _after_ the awakening line, which never ran). Once admitted, no dialog patching is needed — awakened androids already pass `GeneValidator`/`CanBeRemovedFromAndroid` for subroutines.
+
+10. **`BehavioristStation_ConsumeSelfDetermination`** — Prefix on VREA's `Building_AndroidBehavioristStation.FinishAndroidProject`. When the occupant has the active inspiration, consumes it (`EndInspiration`) and grants the `AAH_SelfDeterminationFulfilled` memory. Prefix (not Postfix) because `FinishAndroidProject` ejects the occupant before returning. No-op for normal non-awakened station use.
 
 ## Debugging
 

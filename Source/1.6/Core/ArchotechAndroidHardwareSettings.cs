@@ -83,6 +83,17 @@ public class ArchotechAndroidHardwareSettings : ModSettings
     public ReactorGlowMode reactorGlowMode = ReactorGlowMode.MoteExperimental;
     public bool scaleReactorGlowByPower = true;
 
+    // Self-Determination inspiration: lets an awakened android voluntarily
+    // reprogram its subroutines at VREA's behavior station for one session.
+    // enable — master toggle for granting the inspiration at all.
+    // allowForAllAwakened — when off (default), only awakened androids carrying
+    //   an AAH part are eligible (keeps the feature in our mod's lane); when on,
+    //   any awakened colonist android can roll it.
+    // commonality — random-pool weight; consumed by InspirationWorker.CommonalityFor.
+    public bool enableSelfDeterminationInspiration = true;
+    public bool allowSelfDeterminationForAllAwakened = false;
+    public float selfDeterminationCommonality = 3f;
+
     // Transient UI state for the scrollable settings panel — not serialized.
     private Vector2 settingsScroll;
     private float settingsHeight;
@@ -96,6 +107,9 @@ public class ArchotechAndroidHardwareSettings : ModSettings
         Scribe_Values.Look(ref overrideViolenceGeneratorSalvage, "overrideViolenceGeneratorSalvage", false);
         Scribe_Values.Look(ref reactorGlowMode, "reactorGlowMode", ReactorGlowMode.MoteExperimental);
         Scribe_Values.Look(ref scaleReactorGlowByPower, "scaleReactorGlowByPower", true);
+        Scribe_Values.Look(ref enableSelfDeterminationInspiration, "enableSelfDeterminationInspiration", true);
+        Scribe_Values.Look(ref allowSelfDeterminationForAllAwakened, "allowSelfDeterminationForAllAwakened", false);
+        Scribe_Values.Look(ref selfDeterminationCommonality, "selfDeterminationCommonality", 3f);
     }
 
     public void ResetToDefaults()
@@ -106,6 +120,9 @@ public class ArchotechAndroidHardwareSettings : ModSettings
         overrideViolenceGeneratorSalvage = false;
         reactorGlowMode = ReactorGlowMode.MoteExperimental;
         scaleReactorGlowByPower = true;
+        enableSelfDeterminationInspiration = true;
+        allowSelfDeterminationForAllAwakened = false;
+        selfDeterminationCommonality = 3f;
     }
 
     public void DoWindowContents(Rect inRect)
@@ -177,6 +194,44 @@ public class ArchotechAndroidHardwareSettings : ModSettings
                 "through normal vanilla means returns 250 steel and 3 thanatic reactors instead of its " +
                 "usual salvage — letting you recover reactors without running the crafting bill.\n\n" +
                 "Takes effect on game restart. (Shown only while Vanilla Power Expanded is installed.)");
+        }
+
+        listing.Gap(30f);
+
+        // ===== Self-Determination Inspiration =====
+        SectionHeader(listing, "Self-Determination Inspiration");
+
+        listing.CheckboxLabeled("Enable the Self-Determination inspiration",
+            ref enableSelfDeterminationInspiration,
+            "When enabled, awakened androids can occasionally gain the Self-Determination " +
+            "inspiration. While it is active, the android will, for once, accept reprogramming " +
+            "at an android behavior station despite having awakened, letting you change its " +
+            "subroutines. Completing the reprogramming consumes the inspiration and grants a " +
+            "positive mood memory.");
+
+        if (enableSelfDeterminationInspiration)
+        {
+            listing.Gap(6f);
+            listing.CheckboxLabeled("Offer it to all awakened androids",
+                ref allowSelfDeterminationForAllAwakened,
+                "When off (default), only awakened androids carrying an Archotech Android Hardware " +
+                "part can gain this inspiration, which keeps it scoped to this mod. When on, any " +
+                "awakened colonist android is eligible.");
+
+            listing.Gap(10f);
+            listing.Label($"Inspiration commonality (random-pool weight): {selfDeterminationCommonality:F1}");
+            selfDeterminationCommonality = listing.Slider(selfDeterminationCommonality, 0.1f, 10f);
+
+            // Succinct reference scale: this is a selection weight (which inspiration
+            // gets picked), not how often inspirations occur. Vanilla inspirations are
+            // all baseCommonality 1, scaled by passion (x1 / x2.5 / x5).
+            Text.Font = GameFont.Tiny;
+            GUI.color = new Color(1f, 1f, 1f, 0.6f);
+            listing.Label("Weight when picked among the pawn's eligible inspirations. " +
+                "Reference: 1 plain vanilla, 2.5 vanilla minor passion, 5 vanilla major passion. " +
+                "Default 3, just above minor passion.");
+            GUI.color = Color.white;
+            Text.Font = GameFont.Small;
         }
 
         listing.Gap(60f);

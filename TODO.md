@@ -5,6 +5,8 @@
 - Test Grav reactor recharge and FX
 - Grav Reactor deconstruct?
 
+- Bug with android behavior station conflicts between aah hardware genes and base VREA genes. can't confirm modifications
+
 - Add Persona Core upgrade part (increase consciosness +10%, increase threshold to awaken?)
 
 - Eject Thanatic reactor on corpse destruction?
@@ -27,3 +29,4 @@
 
 - Review def descriptions copy
 - DefOf pattern for def references?
+- Keyed language strings everywhere

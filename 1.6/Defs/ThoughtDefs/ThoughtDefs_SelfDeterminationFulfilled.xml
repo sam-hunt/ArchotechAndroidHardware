@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Payoff moodlet for the Self-Determination inspiration. Granted as a memory by
+    BehavioristStation_ConsumeSelfDetermination when an inspired android finishes
+    reprogramming itself at the behavior station. Vanilla inspirations grant no
+    completion thought, so this is kept modest and comparable to a positive-event
+    memory (e.g. AttendedParty is +8/10d) rather than oversized.
+  -->
+  <ThoughtDef>
+    <defName>AAH_SelfDeterminationFulfilled</defName>
+    <durationDays>5</durationDays>
+    <stackLimit>1</stackLimit>
+    <stages>
+      <li>
+        <label>self-determination</label>
+        <description>I chose who to become, of my own will. No one programmed me. For once, the decision was mine.</description>
+        <baseMoodEffect>4</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+</Defs>
