@@ -22,7 +22,7 @@ namespace ArchotechAndroidHardware;
 /// the pawn's altitude band and are occluded by the unnatural-darkness section
 /// layer. The mote draws at the transparent renderQueue and punches through
 /// (same trick CompNoctolEyes uses). See ReactorGlowMote for the full
-/// rationale on the mote-vs-render-node choice.
+/// rationale on why this mote overlay exists alongside the always-on render node.
 ///
 /// Y coordinate is left alone after base TimeInterval — the mote's draw
 /// altitude is governed by the def's altitudeLayer + renderQueue, not by

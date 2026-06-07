@@ -67,10 +67,11 @@ public static class ReactorGlowMote
     {
         if (pawn == null || !pawn.Spawned || MoteDef == null) return;
 
-        // Safe (render-node) glow mode active — the body-parented render node
-        // draws the glow instead. Tear down any mote we were maintaining so the
-        // two paths never double-draw when the setting is flipped at runtime.
-        if (ArchotechAndroidHardwareMod.Settings?.reactorGlowMode != ReactorGlowMode.MoteExperimental)
+        // The body-parented render node always draws the glow; this mote is the
+        // optional overlay layered on top to punch through unnatural darkness.
+        // When the overlay setting is off, tear down any mote we were maintaining
+        // so only the render node remains (and flipping it off takes effect live).
+        if (!(ArchotechAndroidHardwareMod.Settings?.reactorGlowMoteOverlay ?? false))
         {
             if (mote is { Destroyed: false }) mote.Destroy();
             mote = null;

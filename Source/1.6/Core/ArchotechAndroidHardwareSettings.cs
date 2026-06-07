@@ -4,35 +4,26 @@ using Verse;
 namespace ArchotechAndroidHardware;
 
 /// <summary>
-/// Render pipeline for the reactor core glow.
-///
-/// MoteExperimental — a Mote_AAHReactorGlow drawn at AltitudeLayer.Darkness /
-///   renderQueue 4000, so it punches through the unnatural-darkness section
-///   layer (the impressive effect). A mote isn't part of the pawn's render
-///   tree, so Mote_ReactorGlow + ReactorGlowMote manually mirror the body's
-///   posture/bed transform and hide the glow in cases they can't track
-///   (crawling, carry, hidden body, vanilla animations). Because that render
-///   order draws above almost everything, the glow can also punch through other
-///   overlays (weapons, stun stars, combat effects), which some players may
-///   find jarring. Third-party draw-patch animators (Yayo's Animations etc.)
-///   can't be detected either, so it may also rarely misalign under heavy
-///   animation mods — hence "experimental".
-///
-/// RenderNodeSafe — the glow is a body-parented PawnRenderNode (sibling of the
-///   chest attachment). It inherits every transform the body does automatically
-///   (posture, bed, carry, crawl, vanilla + third-party animation), so it's
-///   always correctly placed. Trade-off: it draws in the pawn's altitude band
-///   and is occluded by unnatural darkness — no punch-through.
-///
-/// The paths are mutually exclusive and switch live: the render node's worker
-/// (PawnRenderNodeWorker_ReactorGlow) only draws in RenderNodeSafe mode, and
-/// ReactorGlowMote.Maintain only creates/keeps a mote in MoteExperimental mode
-/// (tearing down any live mote when the setting flips).
-/// </summary>
-public enum ReactorGlowMode { MoteExperimental, RenderNodeSafe }
-
-/// <summary>
 /// Mod settings for the reactor balance knobs and render options.
+///
+/// Reactor core glow rendering — two layers:
+///   • Body-attachment render node (PawnRenderNodeWorker_ReactorGlow) — ALWAYS
+///     drawn. As a sibling of the chest attachment it inherits every body
+///     transform automatically (posture, bed, carry, crawl, vanilla + third-party
+///     animation) and also appears anywhere the pawn is portrait-rendered (the
+///     colonist bar, the inspect-pane icon). Trade-off: it draws in the pawn's
+///     altitude band, so unnatural darkness occludes it.
+///   • Mote overlay (ReactorGlowMote → Mote_AAHReactorGlow) — OPTIONAL, gated by
+///     the reactorGlowMoteOverlay setting. Drawn at AltitudeLayer.Darkness /
+///     renderQueue 4000 so it punches through night and unnatural darkness (the
+///     CompNoctolEyes trick). It is layered ON TOP of the render node, not in
+///     place of it. Because that render order draws above almost everything it
+///     can also cover other overlays (weapons, stun text, weather), and a mote
+///     isn't in the render tree so ReactorGlowMote mirrors the body transform by
+///     hand and hides in cases it can't track (crawling, carry, hidden body,
+///     animations) — hence it's the opt-in extra rather than the baseline.
+/// The setting switches live: ReactorGlowMote.Maintain creates/keeps the mote
+/// only while reactorGlowMoteOverlay is on and tears it down when flipped off.
 ///
 /// Balance rationale (VREA 1.6, verified at implementation time — re-verify if
 /// VREA internals change):
@@ -80,7 +71,9 @@ public class ArchotechAndroidHardwareSettings : ModSettings
     // VPE only, default off. Toggles the startup costList rewrite in
     // ViolenceGeneratorSalvageOverride (takes effect on restart).
     public bool overrideViolenceGeneratorSalvage = false;
-    public ReactorGlowMode reactorGlowMode = ReactorGlowMode.MoteExperimental;
+    // The body-attachment render node always draws the glow; this toggles the
+    // additional darkness-piercing mote overlay layered on top (see class doc).
+    public bool reactorGlowMoteOverlay = true;
     public bool scaleReactorGlowByPower = true;
 
     // Psychic transceiver reprogramming unlock: when on (default), an awakened
@@ -113,7 +106,7 @@ public class ArchotechAndroidHardwareSettings : ModSettings
         Scribe_Values.Look(ref thanaticOverchargeHoursPerUnit, "thanaticOverchargeHoursPerUnit", 17f);
         Scribe_Values.Look(ref thanaticOverchargeCapHours, "thanaticOverchargeCapHours", 48f);
         Scribe_Values.Look(ref overrideViolenceGeneratorSalvage, "overrideViolenceGeneratorSalvage", false);
-        Scribe_Values.Look(ref reactorGlowMode, "reactorGlowMode", ReactorGlowMode.MoteExperimental);
+        Scribe_Values.Look(ref reactorGlowMoteOverlay, "reactorGlowMoteOverlay", true);
         Scribe_Values.Look(ref scaleReactorGlowByPower, "scaleReactorGlowByPower", true);
         Scribe_Values.Look(ref enableTransceiverReprogramming, "enableTransceiverReprogramming", true);
         Scribe_Values.Look(ref enableSelfDeterminationInspiration, "enableSelfDeterminationInspiration", true);
@@ -127,7 +120,7 @@ public class ArchotechAndroidHardwareSettings : ModSettings
         thanaticOverchargeHoursPerUnit = 17f;
         thanaticOverchargeCapHours = 48f;
         overrideViolenceGeneratorSalvage = false;
-        reactorGlowMode = ReactorGlowMode.MoteExperimental;
+        reactorGlowMoteOverlay = true;
         scaleReactorGlowByPower = true;
         enableTransceiverReprogramming = true;
         enableSelfDeterminationInspiration = true;
@@ -159,14 +152,15 @@ public class ArchotechAndroidHardwareSettings : ModSettings
         // ===== Reactors =====
         SectionHeader(listing, "Reactors");
 
-        listing.Label("Reactor core glow render mode:");
-        listing.Gap(6f);
-        DrawGlowModeOption(listing, ReactorGlowMode.RenderNodeSafe,
-            "Body attachment (reliable)",
-            "Perfectly tracks the torso with conventional render ordering, but is occluded by unnatural darkness, weapons, and most other overlay effects.");
-        DrawGlowModeOption(listing, ReactorGlowMode.MoteExperimental,
-            "Mote overlay (experimental)",
-            "Punches through night and unnatural darkness, but may also render over other overlays (weapons, stun text, other weather effects) which some players may find jarring. Rarely, it may also misalign during other animations.");
+        listing.CheckboxLabeled("Pierce darkness with a reactor glow overlay",
+            ref reactorGlowMoteOverlay,
+            "The reactor core glow always renders as a body attachment that tracks the " +
+            "torso everywhere the android is drawn (including the colonist bar and inspect " +
+            "pane), but conventional render ordering means unnatural darkness occludes it.\n\n" +
+            "When enabled, an additional glow overlay is layered on top that punches through " +
+            "night and unnatural darkness. Because it draws above almost everything, it may " +
+            "also render over other overlays (weapons, stun text, weather effects) — which " +
+            "some players find jarring — and can rarely misalign under heavy animation mods.");
 
         listing.Gap(6f);
         listing.CheckboxLabeled("Dim reactor glow with power level",
@@ -265,18 +259,6 @@ public class ArchotechAndroidHardwareSettings : ModSettings
 
         if (Widgets.ButtonText(buttonRect, "Reset to defaults"))
             ResetToDefaults();
-    }
-
-    /// <summary>
-    /// Renders one option of the reactor-glow radio group: a short label with
-    /// the explanation in the hover tooltip. Indented under the prompt so the
-    /// options read as children of the setting, with a trailing 6px gap.
-    /// </summary>
-    private void DrawGlowModeOption(Listing_Standard listing, ReactorGlowMode mode, string label, string tooltip)
-    {
-        if (listing.RadioButton(label, reactorGlowMode == mode, tabIn: 16f, tooltip: tooltip))
-            reactorGlowMode = mode;
-        listing.Gap(6f);
     }
 
     /// <summary>Top-level section heading (medium font), e.g. "Reactors".</summary>

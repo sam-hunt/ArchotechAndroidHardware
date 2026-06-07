@@ -73,16 +73,15 @@
           </defaultData>
         </drawData>
       </li>
-      <!-- Core glow node (RenderNodeSafe mode only — gated by
-           PawnRenderNodeWorker_ReactorGlow.CanDrawNow). Sibling of the chest
-           attachment above; baseLayer 36 draws the additive halo just over the
-           chest core. drawSize 0.4 = chest 0.2 × the 256/128 glow-vs-chest
-           canvas ratio, confirmed by eye against the chest core. Z offset
-           -0.01 seats the halo onto the chest core (the chest sprite renders
-           slightly south of the body's root). Colour mirrors GlowTint in
-           Hediff_VanometricReactor (lime 0.871,0.875,0.259) — keep in sync.
-           In MoteExperimental mode this stays dormant and ReactorGlowMote
-           draws the glow with darkness punch-through instead. -->
+      <!-- Core glow node (always drawn, via PawnRenderNodeWorker_ReactorGlow).
+           Sibling of the chest attachment above; baseLayer 36 draws the additive
+           halo just over the chest core. drawSize 0.4 = chest 0.2 × the 256/128
+           glow-vs-chest canvas ratio, confirmed by eye against the chest core. Z
+           offset -0.01 seats the halo onto the chest core (the chest sprite
+           renders slightly south of the body's root). Colour mirrors GlowTint in
+           Hediff_VanometricReactor (lime 0.871,0.875,0.259) — keep in sync. When
+           the reactorGlowMoteOverlay setting is on, ReactorGlowMote layers an
+           additional darkness-piercing glow on top of this node. -->
       <li>
         <workerClass>ArchotechAndroidHardware.PawnRenderNodeWorker_ReactorGlow</workerClass>
         <texPath>Things/Mote/AAHReactorGlow</texPath>

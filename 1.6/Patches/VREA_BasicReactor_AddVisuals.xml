@@ -47,7 +47,7 @@
             </defaultData>
           </drawData>
         </li>
-        <!-- Core glow node (RenderNodeSafe mode only) — see
+        <!-- Core glow node (always drawn) — see
              HediffDefs_VanometricReactor.xml for the drawSize / offset rationale.
              White tint matches HediffComp_BasicReactorGlow's untinted "stock
              reactor" glow. -->

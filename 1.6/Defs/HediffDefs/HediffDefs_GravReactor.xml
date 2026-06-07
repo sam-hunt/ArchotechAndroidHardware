@@ -91,7 +91,7 @@
           </defaultData>
         </drawData>
       </li>
-      <!-- Core glow node (RenderNodeSafe mode only) — see
+      <!-- Core glow node (always drawn) — see
            HediffDefs_VanometricReactor.xml for the drawSize / offset rationale.
            Colour mirrors GlowTint in Hediff_GravReactor
            (cyan 0,0.714,0.937) — keep in sync. -->

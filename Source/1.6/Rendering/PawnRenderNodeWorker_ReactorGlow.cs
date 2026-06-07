@@ -4,26 +4,20 @@ using Verse;
 namespace ArchotechAndroidHardware;
 
 /// <summary>
-/// Render-node worker for the body-parented reactor core glow (the "safe" glow
-/// mode). Behaves exactly like the chest attachment's
-/// <see cref="PawnRenderNodeWorker_AttachmentBody"/> — inheriting body posture,
-/// bed, carry, crawl and animation transforms plus body-size scaling — but only
-/// draws when the player has selected <see cref="ReactorGlowMode.RenderNodeSafe"/>.
+/// Render-node worker for the body-parented reactor core glow. Behaves exactly
+/// like the chest attachment's <see cref="PawnRenderNodeWorker_AttachmentBody"/>
+/// — inheriting body posture, bed, carry, crawl and animation transforms plus
+/// body-size scaling — so it tracks the torso everywhere the pawn is drawn,
+/// including the colonist bar and the inspect-pane portrait.
 ///
-/// In <see cref="ReactorGlowMode.MoteExperimental"/> mode the glow is supplied by
-/// <see cref="ReactorGlowMote"/> instead, so this node stays dormant. The check
-/// is per-draw (CanDrawNow), so toggling the mod setting takes effect live with
-/// no render-tree recache.
+/// This node ALWAYS draws (subject only to the base worker's facing /
+/// body-visibility checks). The optional <see cref="ReactorGlowMote"/> overlay,
+/// gated by the <c>reactorGlowMoteOverlay</c> setting, layers on TOP of this node
+/// to punch through unnatural darkness — it does not replace it. The only
+/// customisation here is per-draw alpha (see <see cref="GetMaterialPropertyBlock"/>).
 /// </summary>
 public class PawnRenderNodeWorker_ReactorGlow : PawnRenderNodeWorker_AttachmentBody
 {
-    public override bool CanDrawNow(PawnRenderNode node, PawnDrawParms parms)
-    {
-        if (ArchotechAndroidHardwareMod.Settings?.reactorGlowMode != ReactorGlowMode.RenderNodeSafe)
-            return false;
-        return base.CanDrawNow(node, parms);
-    }
-
     /// <summary>
     /// Scales the glow's alpha by the android's power level each draw. The base
     /// implementation sets _Color to <c>parms.tint * material.color</c> on a

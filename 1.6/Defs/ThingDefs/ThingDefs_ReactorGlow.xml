@@ -17,7 +17,7 @@
     because PawnRenderNodeWorker_AttachmentBody composes additional scale
     factors beyond bodyGraphicScale (chest-specific drawData scale, root pawn
     graphic scale, etc.) that the mote rendering path doesn't replicate. The
-    RenderNodeSafe mode does go through AttachmentBody and so uses the
+    always-on render-node glow does go through AttachmentBody and so uses the
     canvas-ratio 0.4 directly — see HediffDefs_VanometricReactor.xml. Tune by
     eye against the chest core if you swap textures. ReactorGlowMote.Maintain
     multiplies by the pawn's bodyGraphicScale average so the glow still tracks
