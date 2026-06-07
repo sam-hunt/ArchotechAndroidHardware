@@ -96,7 +96,7 @@
   <RecipeDef ParentName="VREA_SurgeryInstallBodyPartAndroidBase">
     <defName>AAH_InstallPsychicTransceiver</defName>
     <label>install psychic transceiver</label>
-    <description>Install a psychic transceiver in the brain, granting an android psychic sensitivity.</description>
+    <description>Install a psychic transceiver in the brain, granting an android psychic sensitivity. For an awakened android, this also reopens it to behavioral reprogramming at a behavior station, which it would otherwise refuse.</description>
     <descriptionHyperlinks>
       <ThingDef>AAH_PsychicTransceiver</ThingDef>
       <HediffDef>AAH_PsychicTransceiver</HediffDef>

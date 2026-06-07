@@ -11,7 +11,9 @@ namespace ArchotechAndroidHardware;
 /// tag with VREA_PsychicallyDeaf. Androids are naturally psychically inert; VREA
 /// encodes this as a gene with PsychicSensitivity factor of zero. Biotech's gene
 /// override system suppresses that gene while ours is active, removing the zero
-/// factor. The hediff's statOffset then provides +20% psychic sensitivity.
+/// factor. Because that was a x0 *factor* (not a base change), PsychicSensitivity
+/// then falls back to its 100% StatDef base, and the hediff's +0.20 statOffset
+/// stacks on top — a net 120% (not 20%).
 ///
 /// Lifecycle:
 ///   Install  (PostAdd)         -> adds companion gene as xenogene

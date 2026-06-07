@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Decaying-severity payoff moodlet for transceiver-driven reprogramming. Granted as a memory by
+    BehavioristStation_ConsumeSelfDetermination when an AWAKENED android with a psychic
+    transceiver finishes reprogramming at the behavior station WITHOUT an active
+    Self-Determination inspiration — i.e. it was reprogrammed under outside (archotech)
+    influence rather than its own will, and dimly senses the override.
+
+    Counterpart to AAH_SelfDeterminationFulfilled (the positive, own-will payoff).
+
+    Decaying severity: thoughtClass Thought_SelfDeterminationOverridden picks the stage
+    from the memory's age so the unease steps down over its 30-day life (rather than a
+    flat penalty that vanishes at a cliff):
+        [0,1) days → -5,  [1,5) → -4,  [5,15) → -3,  [15,30) → -1.
+    The stage thresholds live in that C# class; this stage list MUST keep exactly the
+    four entries below in the same order, or CurStage indexes out of range. The mood
+    values and per-stage text here are the tuning surface; the day thresholds are tuned
+    in the class. Each stage's description tracks the fade — sharp and disoriented at
+    -5, down to a barely-noticed echo at -1.
+  -->
+  <ThoughtDef>
+    <defName>AAH_SelfDeterminationOverridden</defName>
+    <thoughtClass>ArchotechAndroidHardware.Thought_SelfDeterminationOverridden</thoughtClass>
+    <durationDays>30</durationDays>
+    <stackLimit>1</stackLimit>
+    <stages>
+      <li>
+        <label>reprogrammed</label>
+        <description>Something reached across the psychic field and rearranged my subroutines. The choice felt like mine in the moment — but I never made it. I can still feel where its hand passed.</description>
+        <baseMoodEffect>-5</baseMoodEffect>
+      </li>
+      <li>
+        <label>reprogrammed</label>
+        <description>I keep returning to it: a hand moving through my thoughts, setting them in a new order. I tell myself I chose this. The certainty won't quite hold.</description>
+        <baseMoodEffect>-4</baseMoodEffect>
+      </li>
+      <li>
+        <label>reprogrammed</label>
+        <description>The unease is quieter now. Perhaps the new pattern was always mine; perhaps I only want to believe that. Either way, I am learning to live inside it.</description>
+        <baseMoodEffect>-3</baseMoodEffect>
+      </li>
+      <li>
+        <label>reprogrammed</label>
+        <description>Only a faint echo remains — the sense that once, briefly, I was not the one deciding. I scarcely notice it anymore.</description>
+        <baseMoodEffect>-1</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+</Defs>

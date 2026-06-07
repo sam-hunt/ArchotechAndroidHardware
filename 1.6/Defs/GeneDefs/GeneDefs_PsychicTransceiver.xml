@@ -8,8 +8,9 @@
     Purpose: Overrides the android's inherent psychic insensitivity. VREA encodes
     this machine-nature trait as the VREA_PsychicallyDeaf gene (PsychicSensitivity
     factor of zero). The shared AAH_AndroidPsychic exclusion tag causes Biotech to
-    suppress VREA_PsychicallyDeaf while this gene is active, removing the zero factor
-    and allowing the hediff's +20% PsychicSensitivity stat offset to take effect.
+    suppress VREA_PsychicallyDeaf while this gene is active, removing the zero factor.
+    Since that was a x0 factor (not a base change), PsychicSensitivity returns to its
+    100% StatDef base and the hediff's +20% stat offset stacks on top — net 120%.
     The VREA_GenePatches.xml XPath patch adds this exclusion tag to VREA_PsychicallyDeaf.
 
     canGenerateInGeneSet: false prevents this from appearing in xenotype creation.
@@ -30,7 +31,7 @@
   <GeneDef>
     <defName>AAH_PsychicTransceiver</defName>
     <label>psychic transceiver</label>
-    <description>Androids with this hardware are sensitive to psychic energy and influence, despite their synthetic nature.</description>
+    <description>Androids with this hardware are sensitive to psychic energy and influence, despite their synthetic nature. Once awakened, the opened mind remains susceptible to outside direction — at a behavior station it will again accept reprogramming it would otherwise refuse.</description>
     <iconPath>UI/Icons/Genes/Hardware/Gene_PsychicTransceiver</iconPath>
     <!-- <iconPath>UI/Icons/Genes/Gene_EnhancedPsychicAbility</iconPath> -->
     <displayCategory>AAH_Hardware</displayCategory>

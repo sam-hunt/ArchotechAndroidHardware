@@ -83,6 +83,14 @@ public class ArchotechAndroidHardwareSettings : ModSettings
     public ReactorGlowMode reactorGlowMode = ReactorGlowMode.MoteExperimental;
     public bool scaleReactorGlowByPower = true;
 
+    // Psychic transceiver reprogramming unlock: when on (default), an awakened
+    // android with the AAH_PsychicTransceiver implant permanently accepts
+    // reprogramming at VREA's behavior station (which it would otherwise refuse).
+    // The reliable, prerequisite-gated counterpart to the random inspiration —
+    // the implant opens the android to outside (archotech) influence. Off makes
+    // the transceiver a pure psychic-sensitivity implant with no station effect.
+    public bool enableTransceiverReprogramming = true;
+
     // Self-Determination inspiration: lets an awakened android voluntarily
     // reprogram its subroutines at VREA's behavior station for one session.
     // enable — master toggle for granting the inspiration at all.
@@ -107,6 +115,7 @@ public class ArchotechAndroidHardwareSettings : ModSettings
         Scribe_Values.Look(ref overrideViolenceGeneratorSalvage, "overrideViolenceGeneratorSalvage", false);
         Scribe_Values.Look(ref reactorGlowMode, "reactorGlowMode", ReactorGlowMode.MoteExperimental);
         Scribe_Values.Look(ref scaleReactorGlowByPower, "scaleReactorGlowByPower", true);
+        Scribe_Values.Look(ref enableTransceiverReprogramming, "enableTransceiverReprogramming", true);
         Scribe_Values.Look(ref enableSelfDeterminationInspiration, "enableSelfDeterminationInspiration", true);
         Scribe_Values.Look(ref allowSelfDeterminationForAllAwakened, "allowSelfDeterminationForAllAwakened", false);
         Scribe_Values.Look(ref selfDeterminationCommonality, "selfDeterminationCommonality", 3f);
@@ -120,6 +129,7 @@ public class ArchotechAndroidHardwareSettings : ModSettings
         overrideViolenceGeneratorSalvage = false;
         reactorGlowMode = ReactorGlowMode.MoteExperimental;
         scaleReactorGlowByPower = true;
+        enableTransceiverReprogramming = true;
         enableSelfDeterminationInspiration = true;
         allowSelfDeterminationForAllAwakened = false;
         selfDeterminationCommonality = 3f;
@@ -198,8 +208,20 @@ public class ArchotechAndroidHardwareSettings : ModSettings
 
         listing.Gap(30f);
 
-        // ===== Self-Determination Inspiration =====
-        SectionHeader(listing, "Self-Determination Inspiration");
+        // ===== Awakened Reprogramming =====
+        SectionHeader(listing, "Awakened Reprogramming");
+
+        listing.CheckboxLabeled("Psychic transceiver re-enables reprogramming",
+            ref enableTransceiverReprogramming,
+            "When enabled, an awakened android with a psychic transceiver installed will accept " +
+            "reprogramming at an android behavior station, which it would otherwise refuse — the " +
+            "implant's psychic bridge leaves it open to outside direction. This is the reliable, " +
+            "permanent counterpart to the random Self-Determination inspiration below. Reprogramming " +
+            "an android this way leaves it with a lingering unease that fades over the following weeks.\n\n" +
+            "When disabled, the transceiver is purely a psychic-sensitivity implant with no effect " +
+            "on the behavior station.");
+
+        listing.Gap(18f);
 
         listing.CheckboxLabeled("Enable the Self-Determination inspiration",
             ref enableSelfDeterminationInspiration,

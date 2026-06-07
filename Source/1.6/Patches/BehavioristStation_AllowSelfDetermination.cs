@@ -6,14 +6,17 @@ using Verse;
 namespace ArchotechAndroidHardware.VREAPatches;
 
 /// <summary>
-/// Lets an awakened android with the <c>AAH_SelfDetermination</c> inspiration use
-/// VREA's Android Behavior Station.
+/// Lets an awakened android use VREA's Android Behavior Station when one of two
+/// triggers is present: the temporary <c>AAH_SelfDetermination</c> inspiration (the
+/// android's own will) or a permanently installed psychic transceiver (the android
+/// opened to outside/archotech influence — see
+/// <see cref="SelfDeterminationUtility.HasReprogrammingImplant"/>).
 ///
 /// VREA's <c>Building_AndroidBehavioristStation.CanAcceptPawn(Pawn)</c> permanently
 /// refuses awakened colonist androids:
 /// <code>if (selPawn.IsAwakened() &amp;&amp; selPawn.IsColonist &amp;&amp; !selPawn.IsPrisoner)
 ///         return Translate("VREA.RefusesReprogramming");</code>
-/// While the inspiration is active we flip that refusal to "accepted". Once inside,
+/// While either trigger holds we flip that refusal to "accepted". Once inside,
 /// no further patching is needed: the modification dialog's <c>GeneValidator</c>
 /// already lets awakened androids toggle every non-<c>removeWhenAwakened</c> gene
 /// (which is all subroutines), and re-selecting subroutines doesn't un-awaken the
@@ -40,7 +43,11 @@ public static class BehavioristStation_AllowSelfDetermination_Patch
     public static void Postfix(object __instance, Pawn selPawn, ref AcceptanceReport __result)
     {
         if (__result.Accepted) return;                              // already allowed
-        if (!SelfDeterminationUtility.IsActiveOn(selPawn)) return;  // no inspiration → keep refusal
+
+        // Either trigger lifts the awakening refusal: the active inspiration or the implant.
+        bool inspired = SelfDeterminationUtility.IsActiveOn(selPawn);
+        bool implanted = SelfDeterminationUtility.HasReprogrammingImplant(selPawn);
+        if (!inspired && !implanted) return;                        // neither → keep refusal
         if (!SelfDeterminationUtility.IsAwakened(selPawn)) return;  // only the awakening refusal is ours to override
 
         // Re-validate the gates VREA checks after the awakening line.

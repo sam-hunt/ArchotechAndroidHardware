@@ -73,4 +73,31 @@ public static class SelfDeterminationUtility
         ResolveVreaMethods();
         return _isAwakenedMethod != null && pawn != null && (bool)_isAwakenedMethod.Invoke(null, new object[] { pawn });
     }
+
+    private static HediffDef _transceiverHediff;
+    private static bool _transceiverHediffResolved;
+
+    /// <summary>
+    /// True when the permanent psychic-transceiver reprogramming unlock applies to
+    /// <paramref name="pawn"/>: the <c>enableTransceiverReprogramming</c> setting is on and
+    /// the pawn carries the <c>AAH_PsychicTransceiver</c> implant.
+    ///
+    /// Thematically the inverse of the inspiration: where the inspiration is the android's
+    /// own unaided will, the transceiver opens an awakened android to outside (archotech)
+    /// influence, so it accepts reprogramming it would otherwise refuse. No reflection —
+    /// the transceiver hediff is our own def.
+    /// </summary>
+    public static bool HasReprogrammingImplant(Pawn pawn)
+    {
+        var settings = ArchotechAndroidHardwareMod.Settings;
+        if (settings == null || !settings.enableTransceiverReprogramming) return false;
+        if (pawn?.health?.hediffSet == null) return false;
+
+        if (!_transceiverHediffResolved)
+        {
+            _transceiverHediff = DefDatabase<HediffDef>.GetNamed("AAH_PsychicTransceiver", errorOnFail: false);
+            _transceiverHediffResolved = true;
+        }
+        return _transceiverHediff != null && pawn.health.hediffSet.HasHediff(_transceiverHediff);
+    }
 }

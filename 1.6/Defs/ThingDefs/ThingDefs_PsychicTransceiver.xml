@@ -11,7 +11,7 @@
   <ThingDef ParentName="AAH_BodyPartAndroidArchotechBase">
     <defName>AAH_PsychicTransceiver</defName>
     <label>psychic transceiver</label>
-    <description>An archotech brain implant that grants psychic sensitivity to androids. As machines, androids are naturally inert to psychic phenomena. This transceiver bridges that gap by interfacing a miniaturized psychic emanator directly with the android's neural architecture.\n\nOnce installed, the android gains psychic awareness and a modest sensitivity boost.</description>
+    <description>An archotech brain implant that grants psychic sensitivity to androids. As machines, androids are naturally inert to psychic phenomena. This transceiver bridges that gap by interfacing a miniaturized psychic emanator directly with the android's neural architecture.\n\nOnce installed, the android gains psychic awareness and a modest sensitivity boost.\n\nCrucially, the psychic bridge leaves an awakened android open to outside direction. At a behavior station it will again accept reprogramming it would otherwise refuse — its will quietly overridden by the archotech intelligences that move unseen behind the rim's affairs.</description>
     <descriptionHyperlinks>
       <RecipeDef>AAH_InstallPsychicTransceiver</RecipeDef>
     </descriptionHyperlinks>

@@ -8,7 +8,8 @@
     (VREA encodes this as the VREA_PsychicallyDeaf gene with a PsychicSensitivity
     factor of zero). The companion gene (AAH_PsychicTransceiver GeneDef) overrides
     VREA_PsychicallyDeaf via Biotech's exclusion tag system, removing the zero
-    factor and allowing the hediff's +0.20 stat offset to take effect.
+    factor. As that was a x0 factor (not a base change), PsychicSensitivity returns
+    to its 100% base and the hediff's +0.20 stat offset stacks on top — net 120%.
 
     hediffClass: Hediff_PsychicTransceiver manages the companion gene lifecycle
     (add on install, remove on uninstall, restore on load if missing).
@@ -23,7 +24,7 @@
     <defName>AAH_PsychicTransceiver</defName>
     <label>psychic transceiver</label>
     <labelNoun>a psychic transceiver</labelNoun>
-    <description>An installed psychic transceiver. This archotech brain implant bridges the gap between an android's machine nature and the psychic field, granting psychic sensitivity.</description>
+    <description>An installed psychic transceiver. This archotech brain implant bridges the gap between an android's machine nature and the psychic field, granting psychic sensitivity.\n\nWhile it is in place, an awakened android stays open to outside direction across that field — at a behavior station it will again accept reprogramming it would otherwise refuse, its will quietly overridden.</description>
     <descriptionHyperlinks>
       <ThingDef>AAH_PsychicTransceiver</ThingDef>
     </descriptionHyperlinks>
