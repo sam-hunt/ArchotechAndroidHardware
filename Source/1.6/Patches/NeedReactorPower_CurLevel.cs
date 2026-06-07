@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Reflection;
 using HarmonyLib;
 using RimWorld;
@@ -21,7 +22,7 @@ namespace ArchotechAndroidHardware.VREAPatches;
 /// <c>enablesNeeds</c> creates it.
 ///
 /// Fix: Postfix both accessors. When VREA_Reactor is absent, enumerate the
-/// known AAH reactor defs (see <see cref="ReactorDefNames"/>) and route
+/// known AAH reactor defs (see <see cref="ReactorDefs"/>) and route
 /// through the first installed one that implements
 /// <see cref="IAAHReactorEnergy"/>. Getter reads Energy; setter writes Energy
 /// and syncs <c>Need.curLevelInt</c> (matches VREA's native setter behaviour
@@ -31,52 +32,27 @@ namespace ArchotechAndroidHardware.VREAPatches;
 /// original accessors are left untouched in that branch.
 ///
 /// Adding a new reactor type: implement <see cref="IAAHReactorEnergy"/> on
-/// the new hediff and add its defName to <see cref="ReactorDefNames"/>.
+/// the new hediff and add its DefOf field to <see cref="ReactorDefs"/>.
 ///
 /// Removable if: VREA makes the reactor hediff lookup extensible (by tag,
 /// interface, or DefDatabase scan rather than a single hardcoded def).
 /// </summary>
 internal static class NeedReactorPowerPatchHelpers
 {
+    private static HediffDef[] _reactorDefs;
+
+    internal static HediffDef VreaReactorDef => AAH_HediffDefOf.VREA_Reactor;
+
     // Order matters: the first installed reactor wins. Defensive ordering —
     // a pawn shouldn't have more than one AAH reactor installed (they all
     // occupy the same Stomach slot), but if some external mod allows it,
-    // Thanatic before Grav matches the historical default.
-    internal static readonly string[] ReactorDefNames =
+    // Thanatic before Grav matches the historical default. AAH_GravReactor is
+    // Odyssey-gated (null without Odyssey) and filtered out.
+    internal static HediffDef[] ReactorDefs => _reactorDefs ??= new[]
     {
-        "AAH_ThanaticReactor",
-        "AAH_GravReactor",
-    };
-
-    private static HediffDef _vreaReactorDef;
-    private static bool _vreaReactorDefResolved;
-    private static HediffDef[] _reactorDefs;
-
-    internal static HediffDef VreaReactorDef
-    {
-        get
-        {
-            if (_vreaReactorDefResolved) return _vreaReactorDef;
-            _vreaReactorDefResolved = true;
-            _vreaReactorDef = DefDatabase<HediffDef>.GetNamed("VREA_Reactor", errorOnFail: false);
-            return _vreaReactorDef;
-        }
-    }
-
-    internal static HediffDef[] ReactorDefs
-    {
-        get
-        {
-            if (_reactorDefs != null) return _reactorDefs;
-            var list = new System.Collections.Generic.List<HediffDef>(ReactorDefNames.Length);
-            for (int i = 0; i < ReactorDefNames.Length; i++)
-            {
-                var def = DefDatabase<HediffDef>.GetNamed(ReactorDefNames[i], errorOnFail: false);
-                if (def != null) list.Add(def);
-            }
-            return _reactorDefs = list.ToArray();
-        }
-    }
+        AAH_HediffDefOf.AAH_ThanaticReactor,
+        AAH_HediffDefOf.AAH_GravReactor,
+    }.Where(d => d != null).ToArray();
 
     internal static IAAHReactorEnergy FindReactor(Pawn pawn)
     {

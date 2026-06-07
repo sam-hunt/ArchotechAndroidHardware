@@ -72,7 +72,7 @@ About/              # Mod metadata (About.xml, ModIcon.png)
 Textures/
 └── Items/          # Custom body part textures
 Source/1.6/
-├── Core/           # Mod subclass (Harmony setup + settings window), SurgeryState, ArchotechAndroidHardwareSettings
+├── Core/           # Mod subclass (Harmony setup + settings window), SurgeryState, ArchotechAndroidHardwareSettings, AAH_DefOf
 ├── Hediffs/        # Hediff classes (gene lifecycle; Thanatic reactor drain/kill/death logic)
 ├── Inspirations/   # Self-Determination InspirationWorker + shared SelfDeterminationUtility
 ├── Motes/          # Reactor-glow / charge-aura mote classes
@@ -85,6 +85,8 @@ Source/1.6/
 ### Def Naming Convention
 
 All defs use the `AAH_` prefix (Archotech Android Hardware).
+
+**Def references go through `AAH_DefOf`** (`Core/AAH_DefOf.cs`), mirroring vanilla's `*DefOf` / VREA's `VREA_DefOf` — bound at load (errors surface at startup, not as a runtime null) and a cheap static field read. It's **split into type-scoped classes** (`AAH_HediffDefOf`, `AAH_GeneDefOf`, `AAH_ThingDefOf`, `AAH_DesignationDefOf`, `AAH_JobDefOf`, plus the catch-all `AAH_DefOf`) because `[DefOf]` binds by field-name == defName, and the companion-part convention reuses one defName across types (e.g. `AAH_ThanaticReactor` is a Hediff, Gene _and_ Thing; `AAH_ExtractThanaticReactor` is a Designation _and_ Job). Optional-content defs (Odyssey grav parts, VFEPower violence generator) carry `[MayRequire(...)]` so they stay null instead of erroring when that content is absent; VREA defs are plain fields (hard dependency → fail loud). Don't add new `DefDatabase.GetNamed` calls — add a DefOf field. (The only legitimate runtime lookups left are the genuinely dynamic ones in `RecipeInstallAndroidPart_ApplyOnPawn`, keyed off a hediff/gene's own defName.)
 
 ### Key Patterns
 
@@ -142,7 +144,7 @@ All patches target VREA classes via `AccessTools.TypeByName()` — pure reflecti
 
 1. **`AlertAndroidsLowOnPower_Culprits`** — Prefix replacing VREA's `Alert_AndroidsLowOnPower.get_Culprits` with a null-safe version. VREA's original calls `.CurLevelPercentage` on a null need (Vanometric reactor disables it), causing a periodic NRE.
 
-2. **`PawnHealthTracker_ShouldBeDowned`** — Postfix on `Pawn_HealthTracker.ShouldBeDowned`. VREA's Prefix forces androids downed when no `Hediff_AndroidReactor` type is found (checked via `OfType<>`). Our reactor hediffs use `Hediff_AddedPart` (reflection-only stance, no VREA compile dep), so VREA thinks the android is reactor-less. The Postfix restores capacity-based downing for pawns with any AAH\_ reactor (Vanometric, Thanatic, _or_ Grav). **When adding a new reactor-type hediff, extend `ReactorHediffDefNames` in this patch.**
+2. **`PawnHealthTracker_ShouldBeDowned`** — Postfix on `Pawn_HealthTracker.ShouldBeDowned`. VREA's Prefix forces androids downed when no `Hediff_AndroidReactor` type is found (checked via `OfType<>`). Our reactor hediffs use `Hediff_AddedPart` (reflection-only stance, no VREA compile dep), so VREA thinks the android is reactor-less. The Postfix restores capacity-based downing for pawns with any AAH\_ reactor (Vanometric, Thanatic, _or_ Grav). **When adding a new reactor-type hediff, add its DefOf field to the `ReactorHediffs` array in this patch.**
 
 3. **`RecipeInstallAndroidPart_ApplyOnPawn`** — Prefix on VREA's `Recipe_InstallAndroidPart.ApplyOnPawn`. VREA calls `RestorePart()` which destroys hediffs without spawning `spawnThingOnRemoved` items. This Prefix delegates ejection to `AAHPartEjector.Eject` (which dispatches to `ICustomAAHEjection` for state-preserving hediffs like Thanatic, or falls through to `spawnThingOnRemoved` for the rest) and removes companion genes before the original method runs. The Postfix cleans up any orphaned genes as a safety net. Handles all `AAH_` hediffs generically via the defName = geneName convention.
 

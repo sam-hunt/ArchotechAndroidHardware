@@ -24,9 +24,7 @@ namespace ArchotechAndroidHardware;
 /// </summary>
 public class Hediff_ArchotechMnemocore : HediffWithComps
 {
-    private static GeneDef _mnemocoreGene;
-    private static GeneDef MnemocoreGene =>
-        _mnemocoreGene ??= DefDatabase<GeneDef>.GetNamed("AAH_ArchotechMnemocore", errorOnFail: false);
+    private static GeneDef MnemocoreGene => AAH_GeneDefOf.AAH_ArchotechMnemocore;
 
     public override void PostAdd(DamageInfo? dinfo)
     {

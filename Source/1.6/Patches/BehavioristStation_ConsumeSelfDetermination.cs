@@ -35,12 +35,6 @@ public static class BehavioristStation_ConsumeSelfDetermination_Patch
     private static PropertyInfo _occupantProp;
     private static bool _occupantPropResolved;
 
-    private static ThoughtDef _fulfilledThought;
-    private static bool _fulfilledThoughtResolved;
-
-    private static ThoughtDef _overriddenThought;
-    private static bool _overriddenThoughtResolved;
-
     static MethodBase TargetMethod()
     {
         var type = AccessTools.TypeByName("VREAndroids.Building_AndroidBehavioristStation");
@@ -89,29 +83,6 @@ public static class BehavioristStation_ConsumeSelfDetermination_Patch
         return _occupantProp?.GetValue(station) as Pawn;
     }
 
-    private static ThoughtDef FulfilledThought
-    {
-        get
-        {
-            if (!_fulfilledThoughtResolved)
-            {
-                _fulfilledThought = DefDatabase<ThoughtDef>.GetNamed("AAH_SelfDeterminationFulfilled", errorOnFail: false);
-                _fulfilledThoughtResolved = true;
-            }
-            return _fulfilledThought;
-        }
-    }
-
-    private static ThoughtDef OverriddenThought
-    {
-        get
-        {
-            if (!_overriddenThoughtResolved)
-            {
-                _overriddenThought = DefDatabase<ThoughtDef>.GetNamed("AAH_SelfDeterminationOverridden", errorOnFail: false);
-                _overriddenThoughtResolved = true;
-            }
-            return _overriddenThought;
-        }
-    }
+    private static ThoughtDef FulfilledThought => AAH_DefOf.AAH_SelfDeterminationFulfilled;
+    private static ThoughtDef OverriddenThought => AAH_DefOf.AAH_SelfDeterminationOverridden;
 }

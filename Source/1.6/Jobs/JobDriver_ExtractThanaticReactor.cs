@@ -20,13 +20,8 @@ public class JobDriver_ExtractThanaticReactor : JobDriver
 {
     private const int ExtractionTimeTicks = 480; // 8 seconds — slower than skull (180) to read as deliberate archotech work
 
-    private static DesignationDef _designationDef;
-    private static DesignationDef DesignationDef =>
-        _designationDef ??= DefDatabase<DesignationDef>.GetNamed("AAH_ExtractThanaticReactor", errorOnFail: false);
-
-    private static HediffDef _reactorHediffDef;
-    private static HediffDef ReactorHediffDef =>
-        _reactorHediffDef ??= DefDatabase<HediffDef>.GetNamed("AAH_ThanaticReactor", errorOnFail: false);
+    private static DesignationDef DesignationDef => AAH_DesignationDefOf.AAH_ExtractThanaticReactor;
+    private static HediffDef ReactorHediffDef => AAH_HediffDefOf.AAH_ThanaticReactor;
 
     private Corpse Corpse => (Corpse)job.targetA.Thing;
 

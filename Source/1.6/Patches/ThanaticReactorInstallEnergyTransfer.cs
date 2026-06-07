@@ -28,9 +28,7 @@ namespace ArchotechAndroidHardware.VREAPatches;
 public static class ThanaticReactorInstallEnergyTransfer_Patch
 {
     private static float? _pendingEnergy;
-    private static HediffDef _thanaticReactorDef;
-    private static HediffDef ThanaticReactorDef =>
-        _thanaticReactorDef ??= DefDatabase<HediffDef>.GetNamed("AAH_ThanaticReactor", errorOnFail: false);
+    private static HediffDef ThanaticReactorDef => AAH_HediffDefOf.AAH_ThanaticReactor;
 
     static MethodBase TargetMethod()
     {

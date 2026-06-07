@@ -32,11 +32,11 @@ public static class ViolenceGeneratorSalvageOverride
             || !ArchotechAndroidHardwareMod.Settings.overrideViolenceGeneratorSalvage)
             return;
 
-        ThingDef generator = DefDatabase<ThingDef>.GetNamedSilentFail("VPE_ArchotechViolenceGenerator");
+        ThingDef generator = AAH_ThingDefOf.VPE_ArchotechViolenceGenerator;
         if (generator == null)
             return; // Vanilla Power Expanded not loaded — nothing to override.
 
-        ThingDef reactor = DefDatabase<ThingDef>.GetNamedSilentFail("AAH_ThanaticReactor");
+        ThingDef reactor = AAH_ThingDefOf.AAH_ThanaticReactor;
         if (reactor == null)
         {
             Log.Warning("[Archotech Android Hardware] AAH_ThanaticReactor def missing; skipping violence generator salvage override.");

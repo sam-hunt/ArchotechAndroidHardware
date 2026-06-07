@@ -25,9 +25,7 @@ namespace ArchotechAndroidHardware;
 /// </summary>
 public class Hediff_PsychicTransceiver : HediffWithComps
 {
-    private static GeneDef _psychicTransceiverGene;
-    private static GeneDef PsychicTransceiverGene =>
-        _psychicTransceiverGene ??= DefDatabase<GeneDef>.GetNamed("AAH_PsychicTransceiver", errorOnFail: false);
+    private static GeneDef PsychicTransceiverGene => AAH_GeneDefOf.AAH_PsychicTransceiver;
 
     public override void PostAdd(DamageInfo? dinfo)
     {

@@ -14,17 +14,9 @@ namespace ArchotechAndroidHardware;
 /// </summary>
 public class WorkGiver_ExtractThanaticReactor : WorkGiver_Scanner
 {
-    private static DesignationDef _designationDef;
-    private static DesignationDef DesignationDef =>
-        _designationDef ??= DefDatabase<DesignationDef>.GetNamed("AAH_ExtractThanaticReactor", errorOnFail: false);
-
-    private static JobDef _jobDef;
-    private static JobDef JobDef =>
-        _jobDef ??= DefDatabase<JobDef>.GetNamed("AAH_ExtractThanaticReactor", errorOnFail: false);
-
-    private static HediffDef _reactorHediffDef;
-    private static HediffDef ReactorHediffDef =>
-        _reactorHediffDef ??= DefDatabase<HediffDef>.GetNamed("AAH_ThanaticReactor", errorOnFail: false);
+    private static DesignationDef DesignationDef => AAH_DesignationDefOf.AAH_ExtractThanaticReactor;
+    private static JobDef JobDef => AAH_JobDefOf.AAH_ExtractThanaticReactor;
+    private static HediffDef ReactorHediffDef => AAH_HediffDefOf.AAH_ThanaticReactor;
 
     public override PathEndMode PathEndMode => PathEndMode.OnCell;
 

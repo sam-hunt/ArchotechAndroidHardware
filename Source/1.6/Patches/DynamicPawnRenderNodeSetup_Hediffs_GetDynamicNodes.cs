@@ -55,19 +55,7 @@ namespace ArchotechAndroidHardware.VREAPatches;
 [HarmonyPatch(typeof(DynamicPawnRenderNodeSetup_Hediffs), nameof(DynamicPawnRenderNodeSetup_Hediffs.GetDynamicNodes))]
 public static class DynamicPawnRenderNodeSetup_Hediffs_GetDynamicNodes_Patch
 {
-    private static HediffDef _vreaReactorDef;
-    private static bool _vreaReactorDefResolved;
-
-    private static HediffDef VreaReactorDef
-    {
-        get
-        {
-            if (_vreaReactorDefResolved) return _vreaReactorDef;
-            _vreaReactorDefResolved = true;
-            _vreaReactorDef = DefDatabase<HediffDef>.GetNamed("VREA_Reactor", errorOnFail: false);
-            return _vreaReactorDef;
-        }
-    }
+    private static HediffDef VreaReactorDef => AAH_HediffDefOf.VREA_Reactor;
 
     [HarmonyPostfix]
     public static void Postfix(

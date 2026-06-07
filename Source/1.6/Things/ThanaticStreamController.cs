@@ -50,9 +50,7 @@ public class ThanaticStreamController : Thing
     private const float ScaleMin = 0.6f;
     private const float ScaleMax = 1.2f;
 
-    private static ThingDef _particleDefCache;
-    private static ThingDef ParticleDef =>
-        _particleDefCache ??= DefDatabase<ThingDef>.GetNamed("AAH_ThanaticDrainParticle", errorOnFail: false);
+    private static ThingDef ParticleDef => AAH_ThingDefOf.AAH_ThanaticDrainParticle;
 
     protected override void Tick()
     {

@@ -31,13 +31,8 @@ public class Hediff_Neutrosynthesizer : Hediff_AddedPart
     private const float SeverityPerDay = 0.3f;
     private static readonly float SeverityPerTick = SeverityPerDay / GenDate.TicksPerDay;
 
-    private static GeneDef _neutrosynthesizerGene;
-    private static GeneDef NeutrosynthesizerGene =>
-        _neutrosynthesizerGene ??= DefDatabase<GeneDef>.GetNamed("AAH_Neutrosynthesizer", errorOnFail: false);
-
-    private static HediffDef _neutroLossDef;
-    private static HediffDef NeutroLossDef =>
-        _neutroLossDef ??= DefDatabase<HediffDef>.GetNamed("VREA_NeutroLoss", errorOnFail: false);
+    private static GeneDef NeutrosynthesizerGene => AAH_GeneDefOf.AAH_Neutrosynthesizer;
+    private static HediffDef NeutroLossDef => AAH_HediffDefOf.VREA_NeutroLoss;
 
     public override void Tick()
     {

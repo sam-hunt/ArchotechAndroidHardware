@@ -32,7 +32,7 @@ public class Hediff_ThanaticOvercharge : HediffWithComps
     public static void ApplyOrExtend(Pawn pawn, float overflow, ArchotechAndroidHardwareSettings settings)
     {
         if (pawn == null || overflow <= 0f) return;
-        var def = DefDatabase<HediffDef>.GetNamed("AAH_ThanaticOvercharge", errorOnFail: false);
+        var def = AAH_HediffDefOf.AAH_ThanaticOvercharge;
         if (def == null) return;
 
         // Convert overflow fraction to tick budget: overflow × hoursPerUnit × 2500 ticks/hour

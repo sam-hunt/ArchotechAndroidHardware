@@ -21,9 +21,6 @@ namespace ArchotechAndroidHardware;
 /// </summary>
 public class InspirationWorker_SelfDetermination : InspirationWorker
 {
-    private static GeneCategoryDef _aahHardwareCategory;
-    private static bool _aahHardwareCategoryResolved;
-
     public override bool InspirationCanOccur(Pawn pawn)
     {
         var settings = ArchotechAndroidHardwareMod.Settings;
@@ -50,13 +47,9 @@ public class InspirationWorker_SelfDetermination : InspirationWorker
     {
         if (pawn?.genes == null) return false;
 
-        if (!_aahHardwareCategoryResolved)
-        {
-            _aahHardwareCategory = DefDatabase<GeneCategoryDef>.GetNamed("AAH_Hardware", errorOnFail: false);
-            _aahHardwareCategoryResolved = true;
-        }
-        if (_aahHardwareCategory == null) return false;
+        var hardware = AAH_DefOf.AAH_Hardware;
+        if (hardware == null) return false;
 
-        return pawn.genes.GenesListForReading.Any(g => g.def.displayCategory == _aahHardwareCategory);
+        return pawn.genes.GenesListForReading.Any(g => g.def.displayCategory == hardware);
     }
 }

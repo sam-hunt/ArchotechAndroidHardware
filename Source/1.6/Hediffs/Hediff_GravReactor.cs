@@ -69,15 +69,9 @@ public class Hediff_GravReactor : Hediff_AddedPart, ICustomAAHEjection, IAAHReac
     private const float DetailScrollSpeed = 0.5f;
     private static readonly Vector2 ChargeWorldNorth = new(0f, 1f);
 
-    private static GeneDef _gravGene;
-    private static GeneDef GravGene =>
-        _gravGene ??= DefDatabase<GeneDef>.GetNamed("AAH_GravReactor", errorOnFail: false);
-
-    private static ThingDef _thingDefCache;
-
-    private static ThingDef _chargeAuraMoteDefCache;
-    private static ThingDef ChargeAuraMoteDef =>
-        _chargeAuraMoteDefCache ??= DefDatabase<ThingDef>.GetNamed("AAH_GravChargeAura", errorOnFail: false);
+    // Thin aliases over the centralised DefOf (Odyssey-gated; null without Odyssey).
+    private static GeneDef GravGene => AAH_GeneDefOf.AAH_GravReactor;
+    private static ThingDef ChargeAuraMoteDef => AAH_ThingDefOf.AAH_GravChargeAura;
 
     private static SimpleCurve _drainCurveCache;
     private static bool _drainCurveResolved;
@@ -276,7 +270,7 @@ public class Hediff_GravReactor : Hediff_AddedPart, ICustomAAHEjection, IAAHReac
     private static void SpawnReactorItem(IntVec3 pos, Map map, float energy)
     {
         if (map == null) return;
-        var thingDef = _thingDefCache ??= DefDatabase<ThingDef>.GetNamed("AAH_GravReactor", errorOnFail: false);
+        var thingDef = AAH_ThingDefOf.AAH_GravReactor;
         if (thingDef == null) return;
         var thing = ThingMaker.MakeThing(thingDef);
         if (thing is GravReactorThing gr)

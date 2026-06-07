@@ -52,18 +52,7 @@ namespace ArchotechAndroidHardware.VREAPatches;
 [HarmonyPatch]
 public static class WorldComponentGravshipController_InitiateLanding_Patch
 {
-    private static HediffDef _gravReactorHediffDef;
-    private static bool _gravReactorHediffDefResolved;
-    private static HediffDef GravReactorHediffDef
-    {
-        get
-        {
-            if (_gravReactorHediffDefResolved) return _gravReactorHediffDef;
-            _gravReactorHediffDefResolved = true;
-            _gravReactorHediffDef = DefDatabase<HediffDef>.GetNamed("AAH_GravReactor", errorOnFail: false);
-            return _gravReactorHediffDef;
-        }
-    }
+    private static HediffDef GravReactorHediffDef => AAH_HediffDefOf.AAH_GravReactor;
 
     static MethodBase TargetMethod()
     {

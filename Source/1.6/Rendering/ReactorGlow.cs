@@ -33,20 +33,7 @@ public static class ReactorGlow
     // "fade with power" and exactly the previous behaviour.
     public const float PeakOpacity = 1f;
 
-    private static NeedDef _needDef;
-    private static bool _needResolved;
-    private static NeedDef ReactorNeedDef
-    {
-        get
-        {
-            if (!_needResolved)
-            {
-                _needResolved = true;
-                _needDef = DefDatabase<NeedDef>.GetNamed("VREA_ReactorPower", errorOnFail: false);
-            }
-            return _needDef;
-        }
-    }
+    private static NeedDef ReactorNeedDef => AAH_DefOf.VREA_ReactorPower;
 
     /// <summary>
     /// The android's power-need fraction in [0, 1]. Returns 1f when the reactor

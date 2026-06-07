@@ -61,9 +61,7 @@ public static class ReactorGlowMote
     // mote needs a small southward (-Z) shift to overlay the chest core.
     private static readonly Vector3 ChestOffset = new(0f, 0f, -0.008f);
 
-    private static ThingDef _moteDefCache;
-    private static ThingDef MoteDef =>
-        _moteDefCache ??= DefDatabase<ThingDef>.GetNamed("Mote_AAHReactorGlow", errorOnFail: false);
+    private static ThingDef MoteDef => AAH_ThingDefOf.Mote_AAHReactorGlow;
 
     public static void Maintain(Pawn pawn, ref Mote mote, Color tint)
     {

@@ -51,9 +51,6 @@ namespace ArchotechAndroidHardware.VREAPatches;
 [HarmonyPatch]
 public static class Utils_IsAndroidGene_Patch
 {
-    private static GeneCategoryDef _aahHardwareCategory;
-    private static bool _aahHardwareCategoryResolved;
-
     static MethodBase TargetMethod()
     {
         var type = AccessTools.TypeByName("VREAndroids.Utils");
@@ -66,14 +63,10 @@ public static class Utils_IsAndroidGene_Patch
         if (__result) return;
         if (geneDef == null) return;
 
-        if (!_aahHardwareCategoryResolved)
-        {
-            _aahHardwareCategory = DefDatabase<GeneCategoryDef>.GetNamed("AAH_Hardware", errorOnFail: false);
-            _aahHardwareCategoryResolved = true;
-        }
-        if (_aahHardwareCategory == null) return;
+        var hardware = AAH_DefOf.AAH_Hardware;
+        if (hardware == null) return;
 
-        if (geneDef.displayCategory == _aahHardwareCategory)
+        if (geneDef.displayCategory == hardware)
             __result = true;
     }
 }

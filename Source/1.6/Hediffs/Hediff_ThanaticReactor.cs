@@ -64,36 +64,17 @@ public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection, IAAH
     private const int SourceAuraDelayTicks = 60;   // 1.0s
     private const int DyingCountdownTicks = 300;    // 5.0s
 
-    private static GeneDef _thanaticGene;
-    private static GeneDef ThanaticGene =>
-        _thanaticGene ??= DefDatabase<GeneDef>.GetNamed("AAH_ThanaticReactor", errorOnFail: false);
-
-    private static HediffDef OverchargeDef =>
-        _overchargeDefCache ??= DefDatabase<HediffDef>.GetNamed("AAH_ThanaticOvercharge", errorOnFail: false);
-
-    private static DamageDef DepletionDamageDef =>
-        _depletionDamageDefCache ??= DefDatabase<DamageDef>.GetNamed("AAH_ThanaticDepletion", errorOnFail: false);
-
-    private static RulePackDef DrainEventRulePack =>
-        _drainEventRulePackCache ??= DefDatabase<RulePackDef>.GetNamed("AAH_Event_ThanaticDrain", errorOnFail: false);
-
-    private static HediffDef DepletionCulpritDef =>
-        _depletionCulpritDefCache ??= DefDatabase<HediffDef>.GetNamed("AAH_ThanaticDepletionCulprit", errorOnFail: false);
-
-    private static HediffDef EjectionInjuryDef =>
-        _ejectionInjuryDefCache ??= DefDatabase<HediffDef>.GetNamed("AAH_ReactorEjectionInjury", errorOnFail: false);
-
-    private static ThingDef AuraShortMoteDef =>
-        _auraShortMoteDefCache ??= DefDatabase<ThingDef>.GetNamed("AAH_ThanaticAura", errorOnFail: false);
-
-    private static ThingDef AuraLongMoteDef =>
-        _auraLongMoteDefCache ??= DefDatabase<ThingDef>.GetNamed("AAH_ThanaticAuraLong", errorOnFail: false);
-
-    private static ThingDef StreamControllerDef =>
-        _streamControllerDefCache ??= DefDatabase<ThingDef>.GetNamed("AAH_ThanaticStreamController", errorOnFail: false);
-
-    private static DesignationDef ExtractDesignationDef =>
-        _extractDesignationDefCache ??= DefDatabase<DesignationDef>.GetNamed("AAH_ExtractThanaticReactor", errorOnFail: false);
+    // Thin aliases over the centralised DefOf (load-time-validated, statically bound).
+    private static GeneDef ThanaticGene => AAH_GeneDefOf.AAH_ThanaticReactor;
+    private static HediffDef OverchargeDef => AAH_HediffDefOf.AAH_ThanaticOvercharge;
+    private static DamageDef DepletionDamageDef => AAH_DefOf.AAH_ThanaticDepletion;
+    private static RulePackDef DrainEventRulePack => AAH_DefOf.AAH_Event_ThanaticDrain;
+    private static HediffDef DepletionCulpritDef => AAH_HediffDefOf.AAH_ThanaticDepletionCulprit;
+    private static HediffDef EjectionInjuryDef => AAH_HediffDefOf.AAH_ReactorEjectionInjury;
+    private static ThingDef AuraShortMoteDef => AAH_ThingDefOf.AAH_ThanaticAura;
+    private static ThingDef AuraLongMoteDef => AAH_ThingDefOf.AAH_ThanaticAuraLong;
+    private static ThingDef StreamControllerDef => AAH_ThingDefOf.AAH_ThanaticStreamController;
+    private static DesignationDef ExtractDesignationDef => AAH_DesignationDefOf.AAH_ExtractThanaticReactor;
 
     // Transient dessication queue: Notify_KilledPawn fires inside Pawn.Kill
     // before the victim's Corpse is spawned, so we poll for the Corpse in
@@ -106,16 +87,6 @@ public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection, IAAH
 
     private static SimpleCurve _drainCurveCache;
     private static bool _drainCurveResolved;
-    private static ThingDef _thingDefCache;
-    private static HediffDef _overchargeDefCache;
-    private static DamageDef _depletionDamageDefCache;
-    private static RulePackDef _drainEventRulePackCache;
-    private static HediffDef _depletionCulpritDefCache;
-    private static HediffDef _ejectionInjuryDefCache;
-    private static ThingDef _auraShortMoteDefCache;
-    private static ThingDef _auraLongMoteDefCache;
-    private static ThingDef _streamControllerDefCache;
-    private static DesignationDef _extractDesignationDefCache;
 
     public float Energy
     {
@@ -607,7 +578,7 @@ public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection, IAAH
     private static void SpawnReactorItem(IntVec3 pos, Map map, float energy)
     {
         if (map == null) return;
-        var thingDef = _thingDefCache ??= DefDatabase<ThingDef>.GetNamed("AAH_ThanaticReactor", errorOnFail: false);
+        var thingDef = AAH_ThingDefOf.AAH_ThanaticReactor;
         if (thingDef == null) return;
         var thing = ThingMaker.MakeThing(thingDef);
         if (thing is ThanaticReactorThing tr)

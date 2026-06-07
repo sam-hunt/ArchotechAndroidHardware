@@ -26,9 +26,7 @@ namespace ArchotechAndroidHardware.VREAPatches;
 public static class GravReactorInstallEnergyTransfer_Patch
 {
     private static float? _pendingEnergy;
-    private static HediffDef _gravReactorDef;
-    private static HediffDef GravReactorDef =>
-        _gravReactorDef ??= DefDatabase<HediffDef>.GetNamed("AAH_GravReactor", errorOnFail: false);
+    private static HediffDef GravReactorDef => AAH_HediffDefOf.AAH_GravReactor;
 
     static MethodBase TargetMethod()
     {

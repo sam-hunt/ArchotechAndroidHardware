@@ -26,9 +26,7 @@ namespace ArchotechAndroidHardware;
 /// </summary>
 public class Hediff_VanometricReactor : Hediff_AddedPart
 {
-    private static GeneDef _vanometricPowerGene;
-    private static GeneDef VanometricPowerGene =>
-        _vanometricPowerGene ??= DefDatabase<GeneDef>.GetNamed("AAH_VanometricReactor", errorOnFail: false);
+    private static GeneDef VanometricPowerGene => AAH_GeneDefOf.AAH_VanometricReactor;
 
     // Lime-green glow sampled directly from the core disk of
     // AAH_VanometricReactor_Chest.png (RGB 222,223,66 — every pixel of the

@@ -17,22 +17,8 @@ namespace ArchotechAndroidHardware;
 /// </summary>
 public static class SelfDeterminationUtility
 {
-    private static InspirationDef _def;
-    private static bool _defResolved;
-
     /// <summary>The <c>AAH_SelfDetermination</c> inspiration def, or null if missing.</summary>
-    public static InspirationDef Def
-    {
-        get
-        {
-            if (!_defResolved)
-            {
-                _def = DefDatabase<InspirationDef>.GetNamed("AAH_SelfDetermination", errorOnFail: false);
-                _defResolved = true;
-            }
-            return _def;
-        }
-    }
+    public static InspirationDef Def => AAH_DefOf.AAH_SelfDetermination;
 
     /// <summary>True if <paramref name="pawn"/> currently has the Self-Determination inspiration active.</summary>
     public static bool IsActiveOn(Pawn pawn)
@@ -74,9 +60,6 @@ public static class SelfDeterminationUtility
         return _isAwakenedMethod != null && pawn != null && (bool)_isAwakenedMethod.Invoke(null, new object[] { pawn });
     }
 
-    private static HediffDef _transceiverHediff;
-    private static bool _transceiverHediffResolved;
-
     /// <summary>
     /// True when the permanent psychic-transceiver reprogramming unlock applies to
     /// <paramref name="pawn"/>: the <c>enableTransceiverReprogramming</c> setting is on and
@@ -93,11 +76,7 @@ public static class SelfDeterminationUtility
         if (settings == null || !settings.enableTransceiverReprogramming) return false;
         if (pawn?.health?.hediffSet == null) return false;
 
-        if (!_transceiverHediffResolved)
-        {
-            _transceiverHediff = DefDatabase<HediffDef>.GetNamed("AAH_PsychicTransceiver", errorOnFail: false);
-            _transceiverHediffResolved = true;
-        }
-        return _transceiverHediff != null && pawn.health.hediffSet.HasHediff(_transceiverHediff);
+        var transceiver = AAH_HediffDefOf.AAH_PsychicTransceiver;
+        return transceiver != null && pawn.health.hediffSet.HasHediff(transceiver);
     }
 }

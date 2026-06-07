@@ -27,7 +27,6 @@ namespace ArchotechAndroidHardware.VREAPatches;
 [HarmonyPatch]
 public static class AlertAndroidsLowOnPower_Culprits_Patch
 {
-    private static NeedDef _reactorPowerNeed;
     private static readonly List<Pawn> Result = new();
 
     static MethodBase TargetMethod()
@@ -39,13 +38,13 @@ public static class AlertAndroidsLowOnPower_Culprits_Patch
     static bool Prefix(ref List<Pawn> __result)
     {
         Result.Clear();
-        _reactorPowerNeed ??= DefDatabase<NeedDef>.GetNamed("VREA_ReactorPower", errorOnFail: false);
+        var reactorPowerNeed = AAH_DefOf.VREA_ReactorPower;
 
-        if (_reactorPowerNeed != null)
+        if (reactorPowerNeed != null)
         {
             foreach (var pawn in PawnsFinder.AllMapsCaravansAndTravellingTransporters_Alive_FreeColonists_NoSuspended)
             {
-                var need = pawn.needs?.TryGetNeed(_reactorPowerNeed);
+                var need = pawn.needs?.TryGetNeed(reactorPowerNeed);
                 if (need != null && need.CurLevelPercentage < 0.2f)
                     Result.Add(pawn);
             }

@@ -195,7 +195,7 @@ public class ArchotechAndroidHardwareSettings : ModSettings
         // salvageable for reactors via plain vanilla deconstruction. Gated on the
         // generator def existing so the option never appears without VPE. The
         // actual costList rewrite happens at startup in ViolenceGeneratorSalvageOverride.
-        if (DefDatabase<ThingDef>.GetNamedSilentFail("VPE_ArchotechViolenceGenerator") != null)
+        if (AAH_ThingDefOf.VPE_ArchotechViolenceGenerator != null)
         {
             listing.Gap(18f);
             listing.CheckboxLabeled("Salvage reactors by deconstructing Archotech Violence Generators",
