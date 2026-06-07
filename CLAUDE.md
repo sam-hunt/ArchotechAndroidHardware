@@ -162,6 +162,8 @@ All patches target VREA classes via `AccessTools.TypeByName()` — pure reflecti
 
 10. **`BehavioristStation_ConsumeSelfDetermination`** — Prefix on VREA's `Building_AndroidBehavioristStation.FinishAndroidProject`. Branches on _why_ the awakened android was admitted (patch #9): active inspiration → consume it (`EndInspiration`) + grant the positive `AAH_SelfDeterminationFulfilled` memory; else awakened + transceiver → grant the `AAH_SelfDeterminationOverridden` memory (reprogrammed under outside influence, not own will). The latter is a decaying memory: `Thought_SelfDeterminationOverridden` picks its stage from the memory's age (−5/−4/−3/−1 at day 0/1/5/15, 30-day life). Prefix (not Postfix) because `FinishAndroidProject` ejects the occupant before returning. No-op for normal non-awakened station use.
 
+11. **`Corpse_GetInspectString_TrimTrailingNewline`** — Postfix on vanilla `Corpse.GetInspectString`, ordered after VREA via `[HarmonyAfter("VREAndroidsMod")]` + `Priority.Last`. VREA's own postfix strips the "Body parts missing: X%" line from android corpses with a naive `Replace(text, "")` that leaves the line's trailing `\n`, so the result ends in a newline and RimWorld's `ContainsEmptyLines` check spams a red "inspect string contains empty lines" error. We just re-apply `TrimEndNewlines()` after VREA (what vanilla already does at its tail). Thanatic death (and the corpse extraction job) reliably triggers it: ejecting the reactor adds a MissingBodyPart, pushing the corpse over the ≥1% missing-parts threshold that surfaces the line.
+
 ## Debugging
 
 1. **Enable RimWorld Dev Mode:** Settings > Dev Mode > Logging

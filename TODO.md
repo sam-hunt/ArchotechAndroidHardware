@@ -22,9 +22,10 @@
 ## Other?
 
 - Android stands aren't pawn-bound and androids with low memory will path to and use the nearest
-- Neutro infusion operation for loss
 
 ## Cleanup
 
 - Review def descriptions copy
 - Keyed language strings everywhere
+- Check patches for upstream issues and file reports/PRs
+- Neutro infusion operation upstream feature PR?
