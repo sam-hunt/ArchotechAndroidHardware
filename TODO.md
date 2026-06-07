@@ -2,7 +2,6 @@
 
 ## Features
 
-- Test Grav reactor recharge and FX
 - Grav Reactor deconstruct?
 
 - Bug with android behavior station conflicts between aah hardware genes and base VREA genes. can't confirm modifications
@@ -28,5 +27,4 @@
 ## Cleanup
 
 - Review def descriptions copy
-- DefOf pattern for def references?
 - Keyed language strings everywhere
