@@ -2,11 +2,18 @@
 
 ## Features
 
-- Grav Reactor deconstruct?
-
-- Bug with android behavior station conflicts between aah hardware genes and base VREA genes. can't confirm modifications
+- Grav Reactor/installed-corpse destruction should respawn grav core
+- Grav overcharge effect similar to thanatic overcharge
+  - thematically: discharges extra grav heat
+  - decreases minimum comfortable temperature
+  - increases move speed/global work speed?
 
 - Add Persona Core upgrade part (increase consciosness +10%, increase threshold to awaken?)
+
+- Add setting-gated workgiver to autoqueue reactor replacements on low-power androids?
+- Add setting sliders for low-power alert/auto-replacement thresholds? PR upstream?
+
+- Our AAH Hediffs supposedly re-add their genes on a tick interval if missing?
 
 - Eject Thanatic reactor on corpse destruction?
 - Extract Thanatic reactor gizmo on corpse.

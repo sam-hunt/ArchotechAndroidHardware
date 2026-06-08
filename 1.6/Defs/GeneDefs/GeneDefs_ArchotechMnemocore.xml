@@ -25,8 +25,13 @@
     check recognises. The Utils_IsAndroidGene patch extends that check to all
     AAH_Hardware-category genes, which also relabels biostatMet as "Power
     efficiency" and rolls it into the inspector's Power efficiency total.
+
+    Locked: declared as VREAndroids.AndroidGeneDef with isCoreComponent=true so VREA's
+    behavior-station modify dialog treats it like core hardware — Utils.CanBeRemovedFromAndroid
+    returns false, so it can't be removed by clicking in the dialog (as with VREA's own
+    reactor/body genes). Removal stays exclusive to our surgery recipes / hediff hooks.
   -->
-  <GeneDef>
+  <VREAndroids.AndroidGeneDef>
     <defName>AAH_ArchotechMnemocore</defName>
     <label>archotech mnemocore</label>
     <description>Androids with this hardware have an archotech mnemocore that provides self-organizing, effectively infinite memory storage. Reformatting is unnecessary and memory never degrades.</description>
@@ -34,6 +39,7 @@
     <displayCategory>AAH_Hardware</displayCategory>
     <displayOrderInCategory>9</displayOrderInCategory>
     <canGenerateInGeneSet>false</canGenerateInGeneSet>
+    <isCoreComponent>true</isCoreComponent>
     <biostatArc>2</biostatArc>
     <biostatCpx>6</biostatCpx>
     <exclusionTags>
@@ -46,6 +52,6 @@
         <backgroundPathArchite>UI/Icons/Genes/GeneBackground_ArchotechHardware</backgroundPathArchite>
       </li>
     </modExtensions>
-  </GeneDef>
+  </VREAndroids.AndroidGeneDef>
 
 </Defs>

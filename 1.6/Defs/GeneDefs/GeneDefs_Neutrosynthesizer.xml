@@ -22,8 +22,13 @@
     check recognises. The Utils_IsAndroidGene patch extends that check to all
     AAH_Hardware-category genes, which also relabels biostatMet as "Power
     efficiency" and rolls it into the inspector's Power efficiency total.
+
+    Locked: declared as VREAndroids.AndroidGeneDef with isCoreComponent=true so VREA's
+    behavior-station modify dialog treats it like core hardware — Utils.CanBeRemovedFromAndroid
+    returns false, so it can't be removed by clicking in the dialog (as with VREA's own
+    reactor/body genes). Removal stays exclusive to our surgery recipes / hediff hooks.
   -->
-  <GeneDef>
+  <VREAndroids.AndroidGeneDef>
     <defName>AAH_Neutrosynthesizer</defName>
     <label>super neutro synthesis</label>
     <description>Androids with this hardware can actively synthesize non-trivial quantities of neutroamine, restoring lost internal supplies at a greatly accelerated rate.</description>
@@ -31,6 +36,7 @@
     <displayCategory>AAH_Hardware</displayCategory>
     <displayOrderInCategory>7</displayOrderInCategory>
     <canGenerateInGeneSet>false</canGenerateInGeneSet>
+    <isCoreComponent>true</isCoreComponent>
     <biostatArc>1</biostatArc>
     <biostatCpx>4</biostatCpx>
     <exclusionTags>
@@ -41,6 +47,6 @@
         <backgroundPathArchite>UI/Icons/Genes/GeneBackground_ArchotechHardware</backgroundPathArchite>
       </li>
     </modExtensions>
-  </GeneDef>
+  </VREAndroids.AndroidGeneDef>
 
 </Defs>

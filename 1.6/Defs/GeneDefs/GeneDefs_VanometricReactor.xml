@@ -22,8 +22,13 @@
     check recognises. The Utils_IsAndroidGene patch extends that check to all
     AAH_Hardware-category genes, which also relabels biostatMet as "Power
     efficiency" and rolls it into the inspector's Power efficiency total.
+
+    Locked: declared as VREAndroids.AndroidGeneDef with isCoreComponent=true so VREA's
+    behavior-station modify dialog treats it like core hardware — Utils.CanBeRemovedFromAndroid
+    returns false, so it can't be removed by clicking in the dialog (as with VREA's own
+    reactor/body genes). Removal stays exclusive to our surgery recipes / hediff hooks.
   -->
-  <GeneDef>
+  <VREAndroids.AndroidGeneDef>
     <defName>AAH_VanometricReactor</defName>
     <label>vanometric reactor</label>
     <description>Androids with this hardware have an adapted archotech reactor that extracts unlimited power from fluctuations in quantum foam. The reactor never needs to be replaced.</description>
@@ -31,6 +36,7 @@
     <displayCategory>AAH_Hardware</displayCategory>
     <displayOrderInCategory>3</displayOrderInCategory>
     <canGenerateInGeneSet>false</canGenerateInGeneSet>
+    <isCoreComponent>true</isCoreComponent>
     <biostatArc>2</biostatArc>
     <biostatCpx>6</biostatCpx>
     <biostatMet>6</biostatMet>
@@ -42,6 +48,6 @@
         <backgroundPathArchite>UI/Icons/Genes/GeneBackground_ArchotechHardware</backgroundPathArchite>
       </li>
     </modExtensions>
-  </GeneDef>
+  </VREAndroids.AndroidGeneDef>
 
 </Defs>
