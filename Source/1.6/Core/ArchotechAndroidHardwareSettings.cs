@@ -158,22 +158,23 @@ public class ArchotechAndroidHardwareSettings : ModSettings
         // ===== Reactors =====
         SectionHeader(listing, "Reactors");
 
-        listing.CheckboxLabeled("Pierce darkness with a reactor glow overlay",
+        // TODO: Add setting "Render AAH reactor body attachments" (enabled by default)
+        // TODO: Add setting "Render VREA reactor body attachment" (enabled by default)
+
+        // TODO: Gate other reactor render settings in this section on at least one of the above being enabled
+
+        listing.CheckboxLabeled("Render reactor glow mote (experimental)",
             ref reactorGlowMoteOverlay,
-            "The reactor core glow always renders as a body attachment that tracks the " +
-            "torso everywhere the android is drawn (including the colonist bar and inspect " +
-            "pane), but conventional render ordering means unnatural darkness occludes it.\n\n" +
-            "When enabled, an additional glow overlay is layered on top that punches through " +
-            "night and unnatural darkness. Because it draws above almost everything, it may " +
-            "also render over other overlays (weapons, stun text, weather effects) — which " +
-            "some players find jarring — and can rarely misalign under heavy animation mods.");
+            "When enabled, an extra glow layer is rendered for the reactor core at a very high render order, " +
+            "piercing night, and unnatural darkness. Because it draws above almost everything, it may also " +
+            "render over some overlays (weapons, stun text, weather effects etc), which some players find jarring. " +
+            "Rarely, it may also misalign during heavy animation or if the pawn moves between game ticks.");
 
         listing.Gap(6f);
-        listing.CheckboxLabeled("Dim reactor glow with power level",
+        listing.CheckboxLabeled("Scale reactor glow opacity by power need level",
             ref scaleReactorGlowByPower,
-            "When enabled, the reactor core glow fades as the android's stored power " +
-            "drops and shines at full strength when fully charged. When disabled, the " +
-            "glow stays at a constant brightness.");
+            "When enabled, the reactor core glows at full strength when the power need meter is full, and dims " +
+            "as the level drops. When disabled, the glow stays at a constant full brightness.");
 
         listing.Gap(30f);
 
@@ -183,9 +184,13 @@ public class ArchotechAndroidHardwareSettings : ModSettings
         listing.Label($"Refill per humanlike kill: {thanaticRefillAmount:F2} (fraction of max energy)");
         thanaticRefillAmount = listing.Slider(thanaticRefillAmount, 0.05f, 1.0f);
 
+        // TODO: Add setting for refill per non-humanlike kill (mechs, animals, entities etc)
+
         listing.Gap(10f);
         listing.Label($"Thanatic Overcharge hours per kill when power meter is full: {thanaticOverchargeHoursPerUnit:F1}h");
         thanaticOverchargeHoursPerUnit = listing.Slider(thanaticOverchargeHoursPerUnit, 1f, 48f);
+
+        // TODO: Add setting to scale power refill fraction and overcharge hours by victim psychic sensitivity
 
         listing.Gap(10f);
         bool capUnlimited = thanaticOverchargeCapHours >= ThanaticOverchargeCapUnlimited;
@@ -198,45 +203,58 @@ public class ArchotechAndroidHardwareSettings : ModSettings
         thanaticOverchargeCapHours = Mathf.Round(
             listing.Slider(thanaticOverchargeCapHours, 6f, ThanaticOverchargeCapUnlimited));
 
-        // VPE only: optional override that makes the Archotech Violence Generator
+        // VFEPower only: optional override that makes the Archotech Violence Generator
         // salvageable for reactors via plain vanilla deconstruction. Gated on the
         // generator def existing so the option never appears without VPE. The
         // actual costList rewrite happens at startup in ViolenceGeneratorSalvageOverride.
         if (AAH_ThingDefOf.VPE_ArchotechViolenceGenerator != null)
         {
             listing.Gap(18f);
-            listing.CheckboxLabeled("Salvage reactors by deconstructing Archotech Violence Generators",
+            listing.CheckboxLabeled("Replace Archotech Violence Generator costList",
                 ref overrideViolenceGeneratorSalvage,
-                "When enabled, deconstructing a Vanilla Power Expanded Archotech Violence Generator " +
-                "through normal vanilla means returns 250 steel and 3 thanatic reactors instead of its " +
-                "usual salvage — letting you recover reactors without running the crafting bill.\n\n" +
-                "Takes effect on game restart. (Shown only while Vanilla Power Expanded is installed.)");
+                "When enabled, deconstructing a VFEPower Archotech Violence Generator returns 250 steel " +
+                "and 3 thanatic reactors instead of its usual 275 steel + 9 Advanced Components. " +
+                "Takes effect on game restart.");
         }
 
         listing.Gap(30f);
 
-        // ===== Awakened Reprogramming =====
-        SectionHeader(listing, "Awakened Reprogramming");
+        // TODO: Add new section for Grav Reactor, only shown if Odyssey DLC is enabled
+
+        // TODO: Add slider setting "Refill per grav launch (fraction of max energy)"
+
+        // TODO: Add slider setting for Grav Overcharge hours per grav launch when power meter is full
+
+        // TODO: Add slider setting for Grav Overcharge duration cap (hours) with extra max slider value for unlimited
+
+        // TODO: Add setting to scale power refill fraction and overcharge hours by distance travelled
+
+        // ===== Psychic Transceiver =====
+        SectionHeader(listing, "Psychic Transceiver");
 
         listing.CheckboxLabeled("Psychic transceiver re-enables reprogramming",
             ref enableTransceiverReprogramming,
             "When enabled, an awakened android with a psychic transceiver installed will accept " +
-            "reprogramming at an android behavior station, which it would otherwise refuse — the " +
-            "implant's psychic bridge leaves it open to outside direction. This is the reliable, " +
-            "permanent counterpart to the random Self-Determination inspiration below. Reprogramming " +
+            "reprogramming at an android behavior station, which it would otherwise refuse: the " +
+            "implant's psychic bridge leaves it open to outside influence. Reprogramming " +
             "an android this way leaves it with a lingering unease that fades over the following weeks.\n\n" +
             "When disabled, the transceiver is purely a psychic-sensitivity implant with no effect " +
             "on the behavior station.");
 
-        listing.Gap(18f);
+        listing.Gap(30f);
 
-        listing.CheckboxLabeled("Enable the Self-Determination inspiration",
+        // ===== Miscellaneous =====
+        SectionHeader(listing, "Miscellaneous");
+
+        // TODO: Refactor the 3 inspiration-related settings below to combine the 2x checkboxes + 1x slider into 2x sliders:
+        // one for androids with >= 1 AAH part, and one for androids without.
+        // default for those with AAH parts should be 3.0, recommended 3.0
+        // default for those without should be 0.0 (for parity with VREA balance), recommended 1.0
+        listing.CheckboxLabeled("Enable Self-Determination inspiration",
             ref enableSelfDeterminationInspiration,
-            "When enabled, awakened androids can occasionally gain the Self-Determination " +
-            "inspiration. While it is active, the android will, for once, accept reprogramming " +
-            "at an android behavior station despite having awakened, letting you change its " +
-            "subroutines. Completing the reprogramming consumes the inspiration and grants a " +
-            "positive mood memory.");
+            "When enabled, awakened androids with archotech android hardware may occasionally gain " +
+            "an inspiration during which it will accept subroutine reprogramming at an android behavior " +
+            "Completing the reprogramming consumes the inspiration and grants a small positive moodlet.");
 
         if (enableSelfDeterminationInspiration)
         {
@@ -254,6 +272,7 @@ public class ArchotechAndroidHardwareSettings : ModSettings
             // Succinct reference scale: this is a selection weight (which inspiration
             // gets picked), not how often inspirations occur. Vanilla inspirations are
             // all baseCommonality 1, scaled by passion (x1 / x2.5 / x5).
+            // TODO: Move the annotations for each value here to parenthesized suffixes on the main slider's label
             Text.Font = GameFont.Tiny;
             GUI.color = new Color(1f, 1f, 1f, 0.6f);
             listing.Label("Weight when picked among the pawn's eligible inspirations. " +
