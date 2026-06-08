@@ -56,7 +56,8 @@ namespace ArchotechAndroidHardware;
 ///     Overflow: any kill while Energy > (1 - refill) overflows into
 ///     Thanatic Overcharge.
 ///     Max overcharge from a single kill (kill at Energy=1.0) = 0.35 × 17h ≈ 5h57m
-///     Overcharge duration stacks via HediffComp_Disappears extension, capped at 48h
+///     Overcharge duration stacks via HediffComp_Disappears extension, capped at
+///     thanaticOverchargeCapHours (default 48h; the slider's top notch removes the cap)
 ///
 /// Design intent: most raids should push Energy into overcharge territory
 /// rather than forcing players to hunt for kills to survive. If the realised
@@ -68,6 +69,11 @@ public class ArchotechAndroidHardwareSettings : ModSettings
     public float thanaticRefillAmount = 0.35f;
     public float thanaticOverchargeHoursPerUnit = 17f;
     public float thanaticOverchargeCapHours = 48f;
+    // Sentinel for thanaticOverchargeCapHours: the slider's top notch (one hour
+    // past the 120h max of meaningful values). At this value the duration cap is
+    // removed entirely — overflow kills stack without limit. Hediff_ThanaticOvercharge
+    // treats any cap >= this as "no cap".
+    public const float ThanaticOverchargeCapUnlimited = 121f;
     // VPE only, default off. Toggles the startup costList rewrite in
     // ViolenceGeneratorSalvageOverride (takes effect on restart).
     public bool overrideViolenceGeneratorSalvage = false;
@@ -178,12 +184,19 @@ public class ArchotechAndroidHardwareSettings : ModSettings
         thanaticRefillAmount = listing.Slider(thanaticRefillAmount, 0.05f, 1.0f);
 
         listing.Gap(10f);
-        listing.Label($"Thanatic Overcharge hours per unit of overflow: {thanaticOverchargeHoursPerUnit:F1}h");
+        listing.Label($"Thanatic Overcharge hours per kill when power meter is full: {thanaticOverchargeHoursPerUnit:F1}h");
         thanaticOverchargeHoursPerUnit = listing.Slider(thanaticOverchargeHoursPerUnit, 1f, 48f);
 
         listing.Gap(10f);
-        listing.Label($"Thanatic Overcharge duration cap: {thanaticOverchargeCapHours:F0}h");
-        thanaticOverchargeCapHours = listing.Slider(thanaticOverchargeCapHours, 6f, 120f);
+        bool capUnlimited = thanaticOverchargeCapHours >= ThanaticOverchargeCapUnlimited;
+        listing.Label(capUnlimited
+            ? "Thanatic Overcharge duration cap: Unlimited (kills stack without limit)"
+            : $"Thanatic Overcharge duration cap: {thanaticOverchargeCapHours:F0}h");
+        // The extra notch past 120h (ThanaticOverchargeCapUnlimited) removes the cap.
+        // Round so the stored value snaps to whole hours, making that top notch a
+        // deterministic sentinel rather than a near-max float that reads as "121h".
+        thanaticOverchargeCapHours = Mathf.Round(
+            listing.Slider(thanaticOverchargeCapHours, 6f, ThanaticOverchargeCapUnlimited));
 
         // VPE only: optional override that makes the Archotech Violence Generator
         // salvageable for reactors via plain vanilla deconstruction. Gated on the

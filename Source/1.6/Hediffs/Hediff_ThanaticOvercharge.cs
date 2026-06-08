@@ -37,8 +37,13 @@ public class Hediff_ThanaticOvercharge : HediffWithComps
 
         // Convert overflow fraction to tick budget: overflow × hoursPerUnit × 2500 ticks/hour
         int addedTicks = Mathf.RoundToInt(overflow * settings.thanaticOverchargeHoursPerUnit * 2500f);
-        int capTicks = Mathf.RoundToInt(settings.thanaticOverchargeCapHours * 2500f);
         if (addedTicks <= 0) return;
+
+        // The slider's top notch removes the cap (overflow stacks without limit);
+        // int.MaxValue makes the Mathf.Min clamps below no-ops. Real play never
+        // accumulates anywhere near that, so the additions can't overflow.
+        bool unlimited = settings.thanaticOverchargeCapHours >= ArchotechAndroidHardwareSettings.ThanaticOverchargeCapUnlimited;
+        int capTicks = unlimited ? int.MaxValue : Mathf.RoundToInt(settings.thanaticOverchargeCapHours * 2500f);
 
         var existing = pawn.health.hediffSet.GetFirstHediffOfDef(def);
         if (existing != null)
