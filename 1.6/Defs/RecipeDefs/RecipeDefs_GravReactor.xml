@@ -98,7 +98,7 @@
   <RecipeDef ParentName="VREA_SurgeryInstallBodyPartAndroidBase" MayRequire="Ludeon.RimWorld.Odyssey">
     <defName>AAH_InstallGravReactor</defName>
     <label>install grav reactor</label>
-    <description>Install a grav reactor, replacing the android's existing reactor. Recharged in full whenever the host participates in a gravship launch.</description>
+    <description>Install a grav reactor, replacing the android's existing reactor. Recharged whenever the host participates in a gravship launch.</description>
     <descriptionHyperlinks>
       <ThingDef>AAH_GravReactor</ThingDef>
       <HediffDef>AAH_GravReactor</HediffDef>

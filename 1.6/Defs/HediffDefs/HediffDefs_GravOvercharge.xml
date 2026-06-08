@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Grav Overcharge: whole-body buff applied when a grav reactor's launch-refill
+    overflows the energy meter (the reactor was already partly charged at launch,
+    so the surplus discharges as grav heat). Duration via HediffComp_Disappears;
+    ticksToDisappear is set programmatically by Hediff_GravOvercharge.ApplyOrExtend
+    (the XML default here is a placeholder — it gets overwritten before the hediff
+    ever ticks).
+
+    Mirrors AAH_ThanaticOvercharge's lifecycle (extend-don't-reapply, capped) but
+    carries NO psyfocus bump (that is thanatic's psychic theme) and uses a
+    grav-themed stat envelope — thermal vent + agility — rather than go-juice's
+    capacity offsets:
+      ComfyTemperatureMin -40  → shrugs off cold (the reactor runs hot)
+      MoveSpeed         +0.2   → faster on foot (matches the +0.2 "fast walker"
+                                 trait; ~+4% of the 4.6 c/s base). A flat c/s
+                                 offset, deliberately modest — the punchy
+                                 capacity-style move boost stays unique to
+                                 Thanatic Overcharge.
+      WorkSpeedGlobal   +0.2   → quicker labour (matches the +0.2 "hard worker"
+                                 trait; trait-tier, like the move bonus)
+
+    Odyssey-gated alongside the rest of the grav slice — without Odyssey there is
+    no gravship launch to trigger it.
+  -->
+  <HediffDef MayRequire="Ludeon.RimWorld.Odyssey">
+    <defName>AAH_GravOvercharge</defName>
+    <label>grav overcharge</label>
+    <labelNoun>a grav overcharge</labelNoun>
+    <description>The grav reactor is venting surplus gravitational energy as heat across the android's frame. It shrugs off the cold, moves faster, and works more quickly until the overcharge dissipates.</description>
+    <defaultLabelColor>(0, 0.714, 0.937)</defaultLabelColor>
+    <hediffClass>ArchotechAndroidHardware.Hediff_GravOvercharge</hediffClass>
+    <isBad>false</isBad>
+    <maxSeverity>1.0</maxSeverity>
+    <initialSeverity>1.0</initialSeverity>
+    <stages>
+      <li>
+        <statOffsets>
+          <ComfyTemperatureMin>-40</ComfyTemperatureMin>
+          <MoveSpeed>0.2</MoveSpeed>
+          <WorkSpeedGlobal>0.2</WorkSpeedGlobal>
+        </statOffsets>
+      </li>
+    </stages>
+    <comps>
+      <li Class="HediffCompProperties_Disappears">
+        <!-- Placeholder: ticksToDisappear is overwritten in ApplyOrExtend. -->
+        <disappearsAfterTicks>1</disappearsAfterTicks>
+        <showRemainingTime>true</showRemainingTime>
+      </li>
+    </comps>
+  </HediffDef>
+
+</Defs>

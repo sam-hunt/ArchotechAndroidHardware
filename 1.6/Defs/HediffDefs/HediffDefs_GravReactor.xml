@@ -14,8 +14,8 @@
         value into VREA's need bar.
       - Drain rate driven entirely by the companion gene's biostatMet feeding
         VREA's PowerEfficiencyToPowerDrainFactorCurve. Companion gene has
-        biostatMet 0 (baseline drain) — gravship launches are infrequent
-        events, so faster-than-baseline drain would make this unplayable.
+        biostatMet +4 (slower-than-baseline drain) — gravship launches are
+        infrequent events, so a charge needs to last a long while between them.
 
     On depletion: severity is driven to 1 via TickInterval setting
     Severity = 1 - Energy. The empty stage's Consciousness setMax of 0 makes
@@ -35,7 +35,7 @@
     <defName>AAH_GravReactor</defName>
     <label>grav reactor</label>
     <labelNoun>a grav reactor</labelNoun>
-    <description>An installed grav reactor. Draws power from gravitational waves and is recharged in full whenever its host participates in a gravship launch ritual.</description>
+    <description>An installed grav reactor. Draws power from gravitational waves and is recharged whenever its host participates in a gravship launch ritual.</description>
     <descriptionHyperlinks>
       <ThingDef>AAH_GravReactor</ThingDef>
     </descriptionHyperlinks>

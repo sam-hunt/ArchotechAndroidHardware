@@ -3,10 +3,9 @@
 ## Features
 
 - Grav Reactor/installed-corpse destruction should respawn grav core
-- Grav overcharge effect similar to thanatic overcharge
-  - thematically: discharges extra grav heat
-  - decreases minimum comfortable temperature
-  - increases move speed/global work speed?
+- Scale grav refill fraction + Grav Overcharge hours by gravship trip distance
+  (deferred from the Grav Overcharge build; straight-line tiles between the
+  controller's takeoff/landing tiles, normalization curve + reference-distance knob)
 
 - Add Persona Core upgrade part (increase consciosness +10%, increase threshold to awaken?)
 

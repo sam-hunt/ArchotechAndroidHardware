@@ -34,6 +34,8 @@ public static class AAH_HediffDefOf
 
     [MayRequire("Ludeon.RimWorld.Odyssey")]
     public static HediffDef AAH_GravReactor;
+    [MayRequire("Ludeon.RimWorld.Odyssey")]
+    public static HediffDef AAH_GravOvercharge;
 
     public static HediffDef VREA_Reactor;
     public static HediffDef VREA_NeutroLoss;

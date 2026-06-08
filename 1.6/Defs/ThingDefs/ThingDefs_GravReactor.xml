@@ -22,7 +22,7 @@
   <ThingDef ParentName="VREA_BodyPartAndroidBase" MayRequire="Ludeon.RimWorld.Odyssey">
     <defName>AAH_GravReactor</defName>
     <label>grav reactor</label>
-    <description>An ultratech android reactor adapted from gravship engine technology. Instead of burning through a finite charge like a standard reactor, it draws power from gravitational waves — recharged in full whenever its host participates in a gravship launch.\n\nUseless to a colony that never leaves the rim: with no launches, the reactor drains exactly like any other and the android shuts down. Indispensable to a colony that lives on the move.</description>
+    <description>An ultratech android reactor adapted from gravship engine technology. Instead of burning through a finite charge like a standard reactor, it draws power from gravitational waves — recharged whenever its host participates in a gravship launch.\n\nUseless to a colony that never leaves the rim: with no launches, the reactor simply runs down and the android shuts down. Indispensable to a colony that lives on the move.</description>
     <descriptionHyperlinks>
       <RecipeDef>AAH_InstallGravReactor</RecipeDef>
     </descriptionHyperlinks>

@@ -7,10 +7,11 @@ using Verse;
 namespace ArchotechAndroidHardware;
 
 /// <summary>
-/// Core hediff for the grav reactor. Drains at VREA's baseline rate (driven by
-/// the companion gene's biostatMet 0 through VREA's
-/// PowerEfficiencyToPowerDrainFactorCurve) and is refilled in full whenever the
-/// host participates in a gravship launch ritual — see
+/// Core hediff for the grav reactor. Drains slower than baseline (driven by
+/// the companion gene's biostatMet +4 through VREA's
+/// PowerEfficiencyToPowerDrainFactorCurve) and is refilled by the configured
+/// fraction (default 0.5) whenever the host participates in a gravship launch
+/// ritual — see
 /// <see cref="VREAPatches.RitualOutcomeWorker_GravshipLaunch_Apply_Patch"/>.
 ///
 /// On depletion: the hediff's Severity tracks (1 - Energy), so when Energy
@@ -129,14 +130,30 @@ public class Hediff_GravReactor : Hediff_AddedPart, ICustomAAHEjection, IAAHReac
 
     /// <summary>
     /// Recharge entry point for the gravship-landing patch. Refills the reactor
-    /// and arms the cyan charging aura, which fires on the next Tick once the
-    /// host pawn is back on a map. Coalescing two landings within the same
-    /// ~10s window is fine — the second call just resets the pending timer to
-    /// the full window; the aura plays once when the pawn next ticks-while-spawned.
+    /// by the configured fraction (default 0.5), spills any overflow into the
+    /// Grav Overcharge buff, and arms the cyan charging aura, which fires on the
+    /// next Tick once the host pawn is back on a map. Coalescing two landings
+    /// within the same ~10s window is fine — the second call just resets the
+    /// pending timer to the full window; the aura plays once when the pawn next
+    /// ticks-while-spawned.
+    ///
+    /// Overflow mirrors Thanatic's kill-refill: it appears only when the reactor
+    /// was already more than (1 - refill) full at launch, and a fuller reactor
+    /// grants more overcharge. Only installed reactors reach here (item reactors
+    /// on the manifest are topped off directly by the landing patch), so there
+    /// is always a host pawn to buff.
     /// </summary>
     public void Notify_RechargedByLaunch()
     {
-        Energy = 1f;
+        var settings = ArchotechAndroidHardwareMod.Settings;
+        float refill = settings?.gravRefillAmount ?? 0.5f;
+        float before = curEnergy;
+        float overflow = Mathf.Max(0f, before + refill - 1f);
+        Energy = before + refill;   // setter clamps to [0,1] and syncs severity
+
+        if (overflow > 0f && settings != null)
+            Hediff_GravOvercharge.ApplyOrExtend(pawn, overflow, settings);
+
         chargeAuraPendingTicks = ChargeAuraPendingTimeoutTicks;
     }
 
@@ -236,9 +253,9 @@ public class Hediff_GravReactor : Hediff_AddedPart, ICustomAAHEjection, IAAHReac
     {
         // Baseline VREA drain formula — same constant Thanatic uses, since the
         // tuning lever is entirely the companion gene's biostatMet feeding
-        // VREA's curve. The grav reactor's gene contributes biostatMet 0, so
-        // the realised rate is whatever VREA's curve evaluates to at the
-        // pawn's summed metabolism (typically 1.0× — baseline).
+        // VREA's curve. The grav reactor's gene contributes biostatMet +4, so
+        // the realised rate is whatever VREA's curve evaluates to at the pawn's
+        // summed metabolism (slower than baseline — the mirror of Thanatic's -4).
         float drainPerCheck = 1.388889e-7f * PowerEfficiencyDrainMultiplier() * 60f;
         curEnergy = Mathf.Max(0f, curEnergy - drainPerCheck);
     }

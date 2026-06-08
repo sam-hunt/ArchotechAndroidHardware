@@ -10,11 +10,12 @@
     counterpart gene. VREA_Power must stay active so the ReactorPower need is
     enabled and the charge bar visible.
 
-    biostatMet 0: baseline drain via VREA's PowerEfficiencyToPowerDrainFactorCurve.
-    The grav reactor doesn't accelerate drain (unlike Thanatic, biostatMet -4)
-    and doesn't suppress the need (unlike Vanometric). Tuning lever: lower this
-    value to accelerate drain if a fresh charge feels too long-lasting between
-    launches.
+    biostatMet +4: slower-than-baseline drain via VREA's PowerEfficiencyToPowerDrainFactorCurve
+    (higher biostatMet → lower drain multiplier). The mirror of Thanatic's biostatMet -4
+    (accelerated drain); the grav reactor also doesn't suppress the need (unlike Vanometric).
+    Gravship launches are infrequent, so a fresh charge is meant to last between trips.
+    Tuning lever: lower this value toward 0 (or negative) to drain faster if a charge lasts
+    too long between launches.
 
     biostatArc 1 (vs. the archotech reactors' 2): the brief positions Grav as
     ultratech, a step below archotech. Kept > 0 so the archite gene background
@@ -45,7 +46,7 @@
     <isCoreComponent>true</isCoreComponent>
     <biostatArc>1</biostatArc>
     <biostatCpx>4</biostatCpx>
-    <biostatMet>0</biostatMet>
+    <biostatMet>4</biostatMet>
     <modExtensions>
       <li Class="VEF.Genes.GeneExtension">
         <backgroundPathArchite>UI/Icons/Genes/GeneBackground_ArchotechHardware</backgroundPathArchite>
