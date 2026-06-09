@@ -9,7 +9,12 @@
     factor of zero). The companion gene (AAH_PsychicTransceiver GeneDef) overrides
     VREA_PsychicallyDeaf via Biotech's exclusion tag system, removing the zero
     factor. As that was a x0 factor (not a base change), PsychicSensitivity returns
-    to its 100% base and the hediff's +0.20 stat offset stacks on top — net 120%.
+    to its 100% base, on which this hediff's PsychicSensitivity offset then stacks
+    (net = 100% + the offset). That offset is the transceiverSensitivityOffset
+    setting; the value below is only the load-time default — overwritten by
+    ArchotechAndroidHardwareSettings.ApplyTransceiverSensitivityOffset at startup /
+    on settings write (kept in sync with the setting's default for the case the
+    apply ever doesn't run).
 
     hediffClass: Hediff_PsychicTransceiver manages the companion gene lifecycle
     (add on install, remove on uninstall, restore on load if missing).
@@ -33,7 +38,7 @@
     <stages>
       <li>
         <statOffsets>
-          <PsychicSensitivity>0.20</PsychicSensitivity>
+          <PsychicSensitivity>0.25</PsychicSensitivity>
         </statOffsets>
       </li>
     </stages>

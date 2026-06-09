@@ -27,6 +27,14 @@ public class ArchotechAndroidHardwareMod : Mod
         Settings.DoWindowContents(inRect);
     }
 
+    // Re-apply def-mutating settings when the window closes (the psychic-sensitivity
+    // offset is pushed into the hediff stage here, not read live like the reactor knobs).
+    public override void WriteSettings()
+    {
+        base.WriteSettings();
+        Settings.ApplyTransceiverSensitivityOffset();
+    }
+
     public override string SettingsCategory() => "Archotech Android Hardware";
 }
 
@@ -52,5 +60,9 @@ internal static class ArchotechAndroidHardwareHarmony
         var harmony = new Harmony("shunter.archotechandroidhardware");
         harmony.PatchAll();
         Log.Message($"[Archotech Android Hardware] Initialized with {harmony.GetPatchedMethods().EnumerableCount()} patches.");
+
+        // Defs are loaded by now; push the saved psychic-sensitivity offset into the
+        // transceiver hediff so it reflects the setting from the first stat query.
+        ArchotechAndroidHardwareMod.Settings?.ApplyTransceiverSensitivityOffset();
     }
 }

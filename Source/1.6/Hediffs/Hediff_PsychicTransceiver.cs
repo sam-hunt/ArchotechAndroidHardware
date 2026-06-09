@@ -1,5 +1,4 @@
 using System.Linq;
-using RimWorld;
 using Verse;
 
 namespace ArchotechAndroidHardware;
@@ -12,8 +11,9 @@ namespace ArchotechAndroidHardware;
 /// encodes this as a gene with PsychicSensitivity factor of zero. Biotech's gene
 /// override system suppresses that gene while ours is active, removing the zero
 /// factor. Because that was a x0 *factor* (not a base change), PsychicSensitivity
-/// then falls back to its 100% StatDef base, and the hediff's +0.20 statOffset
-/// stacks on top — a net 120% (not 20%).
+/// then falls back to its 100% StatDef base, on which the hediff's statOffset stacks
+/// (net = 100% + the offset, not the offset alone). The offset value is the
+/// transceiverSensitivityOffset setting (see ApplyTransceiverSensitivityOffset).
 ///
 /// Lifecycle:
 ///   Install  (PostAdd)         -> adds companion gene as xenogene

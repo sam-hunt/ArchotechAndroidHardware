@@ -12,8 +12,9 @@
     AAH_SelfDeterminationFulfilled memory (see BehavioristStation_ConsumeSelfDetermination).
 
     Pure enabler — no statOffsets/statFactors. Eligibility/commonality are
-    decided by InspirationWorker_SelfDetermination (awakened + has an AAH part,
-    or the broaden setting), so baseCommonality here is only a fallback.
+    decided by InspirationWorker_SelfDetermination (awakened android; per-pool
+    commonality sliders for with-AAH-part vs. without, 0 = ineligible), so
+    baseCommonality here is only a fallback.
 
     Begin letter / end message token rules (RimWorld.Inspiration): beginLetter
     and endMessage are run through .Formatted(pawn.LabelCap, pawn.Named("PAWN"))

@@ -10,7 +10,7 @@
     factor of zero). The shared AAH_AndroidPsychic exclusion tag causes Biotech to
     suppress VREA_PsychicallyDeaf while this gene is active, removing the zero factor.
     Since that was a x0 factor (not a base change), PsychicSensitivity returns to its
-    100% StatDef base and the hediff's +20% stat offset stacks on top — net 120%.
+    100% StatDef base, on which the hediff's own PsychicSensitivity offset then stacks.
     The VREA_GenePatches.xml XPath patch adds this exclusion tag to VREA_PsychicallyDeaf.
 
     canGenerateInGeneSet: false prevents this from appearing in xenotype creation.
