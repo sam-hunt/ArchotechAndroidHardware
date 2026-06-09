@@ -63,15 +63,18 @@ public static class ReactorGlowMote
 
     private static ThingDef MoteDef => AAH_ThingDefOf.Mote_AAHReactorGlow;
 
-    public static void Maintain(Pawn pawn, ref Mote mote, Color tint)
+    public static void Maintain(Pawn pawn, HediffDef reactorDef, ref Mote mote, Color tint)
     {
         if (pawn == null || !pawn.Spawned || MoteDef == null) return;
 
-        // The body-parented render node always draws the glow; this mote is the
-        // optional overlay layered on top to punch through unnatural darkness.
-        // When the overlay setting is off, tear down any mote we were maintaining
-        // so only the render node remains (and flipping it off takes effect live).
-        if (!(ArchotechAndroidHardwareMod.Settings?.reactorGlowMoteOverlay ?? false))
+        // Master gate: when this reactor's body attachment is turned off the whole
+        // visual is hidden (chassis + glow node + this mote), so tear the mote down.
+        // The mote-overlay setting is the finer gate on top of that — when it's off
+        // we likewise tear down so only the always-on render node remains. Either
+        // way the teardown is live (flipping the setting takes effect immediately).
+        bool moteEnabled = ReactorGlow.AttachmentsEnabledFor(reactorDef)
+            && (ArchotechAndroidHardwareMod.Settings?.reactorGlowMoteOverlay ?? false);
+        if (!moteEnabled)
         {
             if (mote is { Destroyed: false }) mote.Destroy();
             mote = null;

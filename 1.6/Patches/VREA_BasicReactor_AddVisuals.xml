@@ -31,7 +31,7 @@
     <value>
       <renderNodeProperties>
         <li>
-          <workerClass>PawnRenderNodeWorker_AttachmentBody</workerClass>
+          <workerClass>ArchotechAndroidHardware.PawnRenderNodeWorker_ReactorAttachment</workerClass>
           <texPath>Things/Pawn/Humanlike/BodyAttachments/AAH_BasicReactor_Chest</texPath>
           <parentTagDef>Body</parentTagDef>
           <baseLayer>35</baseLayer>
@@ -47,7 +47,7 @@
             </defaultData>
           </drawData>
         </li>
-        <!-- Core glow node (always drawn) — see
+        <!-- Core glow node (drawn with the chassis while the body attachment is enabled) — see
              HediffDefs_VanometricReactor.xml for the drawSize / offset rationale.
              White tint matches HediffComp_BasicReactorGlow's untinted "stock
              reactor" glow. -->

@@ -36,6 +36,28 @@ public static class ReactorGlow
     private static NeedDef ReactorNeedDef => AAH_DefOf.VREA_ReactorPower;
 
     /// <summary>
+    /// Whether a reactor hediff's body-attachment visuals (chest chassis render
+    /// node, the always-on core-glow render node, and the darkness-piercing mote)
+    /// should draw, per the two master "Render … reactor body attachments" settings.
+    /// VREA's stock reactor and this mod's exotic reactors toggle independently.
+    ///
+    /// Consumed by every reactor render path: the render-node workers gate
+    /// <c>CanDrawNow</c> on it (so the toggle takes effect live, no tree rebuild),
+    /// and <see cref="ReactorGlowMote.Maintain"/> tears the mote down when it
+    /// returns false. The only non-AAH reactor that reaches here is VREA_Reactor
+    /// (these paths are wired only to reactor hediffs), so anything else is one of
+    /// ours. Null def / missing settings → draw (fail visible, not invisible).
+    /// </summary>
+    public static bool AttachmentsEnabledFor(HediffDef reactorDef)
+    {
+        var settings = ArchotechAndroidHardwareMod.Settings;
+        if (settings == null || reactorDef == null) return true;
+        return reactorDef == AAH_HediffDefOf.VREA_Reactor
+            ? settings.renderVreaReactorAttachment
+            : settings.renderAahReactorAttachments;
+    }
+
+    /// <summary>
     /// The android's power-need fraction in [0, 1]. Returns 1f when the reactor
     /// need is absent (Vanometric suppresses it; a pawn with no reactor has none).
     /// </summary>

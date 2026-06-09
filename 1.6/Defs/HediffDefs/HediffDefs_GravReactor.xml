@@ -75,7 +75,7 @@
          (0, 182, 239) exactly, applied in code via Mote.instanceColor. -->
     <renderNodeProperties>
       <li>
-        <workerClass>PawnRenderNodeWorker_AttachmentBody</workerClass>
+        <workerClass>ArchotechAndroidHardware.PawnRenderNodeWorker_ReactorAttachment</workerClass>
         <texPath>Things/Pawn/Humanlike/BodyAttachments/AAH_GravReactor_Chest</texPath>
         <parentTagDef>Body</parentTagDef>
         <baseLayer>35</baseLayer>
@@ -91,7 +91,7 @@
           </defaultData>
         </drawData>
       </li>
-      <!-- Core glow node (always drawn) — see
+      <!-- Core glow node (drawn with the chassis while the body attachment is enabled) — see
            HediffDefs_VanometricReactor.xml for the drawSize / offset rationale.
            Colour mirrors GlowTint in Hediff_GravReactor
            (cyan 0,0.714,0.937) — keep in sync. -->

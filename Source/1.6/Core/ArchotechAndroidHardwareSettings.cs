@@ -107,8 +107,20 @@ public class ArchotechAndroidHardwareSettings : ModSettings
     // VPE only, default off. Toggles the startup costList rewrite in
     // ViolenceGeneratorSalvageOverride (takes effect on restart).
     public bool overrideViolenceGeneratorSalvage = false;
-    // The body-attachment render node always draws the glow; this toggles the
-    // additional darkness-piercing mote overlay layered on top (see class doc).
+    // Master per-source toggles for the reactor body-attachment visuals (chest
+    // chassis sprite + always-on core-glow render node + the optional mote). When
+    // off, the reactor renders no hardware on the body at all for that source — it
+    // still functions, it just shows nothing. Split so players can hide this mod's
+    // exotic reactors (vanometric / thanatic / grav) and/or the stock VREA reactor
+    // independently; the VREA visuals are themselves added by this mod, so opting
+    // out restores plain-VREA appearance. The two glow settings below are inert
+    // when both are off. Gated in ReactorGlow.AttachmentsEnabledFor (render nodes
+    // via CanDrawNow, the mote via ReactorGlowMote.Maintain).
+    public bool renderAahReactorAttachments = true;
+    public bool renderVreaReactorAttachment = true;
+    // Whenever a reactor's body attachment is drawn, the core-glow render node
+    // draws with it; this toggles an additional darkness-piercing mote overlay
+    // layered on top (see class doc).
     public bool reactorGlowMoteOverlay = true;
     public bool scaleReactorGlowByPower = true;
 
@@ -145,6 +157,8 @@ public class ArchotechAndroidHardwareSettings : ModSettings
         Scribe_Values.Look(ref gravOverchargeHoursPerUnit, "gravOverchargeHoursPerUnit", 24f);
         Scribe_Values.Look(ref gravOverchargeCapHours, "gravOverchargeCapHours", 72f);
         Scribe_Values.Look(ref overrideViolenceGeneratorSalvage, "overrideViolenceGeneratorSalvage", false);
+        Scribe_Values.Look(ref renderAahReactorAttachments, "renderAahReactorAttachments", true);
+        Scribe_Values.Look(ref renderVreaReactorAttachment, "renderVreaReactorAttachment", true);
         Scribe_Values.Look(ref reactorGlowMoteOverlay, "reactorGlowMoteOverlay", true);
         Scribe_Values.Look(ref scaleReactorGlowByPower, "scaleReactorGlowByPower", true);
         Scribe_Values.Look(ref enableTransceiverReprogramming, "enableTransceiverReprogramming", true);
@@ -162,6 +176,8 @@ public class ArchotechAndroidHardwareSettings : ModSettings
         gravOverchargeHoursPerUnit = 24f;
         gravOverchargeCapHours = 72f;
         overrideViolenceGeneratorSalvage = false;
+        renderAahReactorAttachments = true;
+        renderVreaReactorAttachment = true;
         reactorGlowMoteOverlay = true;
         scaleReactorGlowByPower = true;
         enableTransceiverReprogramming = true;
@@ -194,23 +210,40 @@ public class ArchotechAndroidHardwareSettings : ModSettings
         // ===== Reactors =====
         SectionHeader(listing, "Reactors");
 
-        // TODO: Add setting "Render AAH reactor body attachments" (enabled by default)
-        // TODO: Add setting "Render VREA reactor body attachment" (enabled by default)
+        listing.CheckboxLabeled("Render archotech reactor body attachments",
+            ref renderAahReactorAttachments,
+            "When enabled, androids display the chest housing and core glow for installed archotech " +
+            "reactors (the vanometric, thanatic, and grav reactors added by this mod). When disabled, " +
+            "those reactors render no hardware on the body — they still function, they just stay hidden.");
 
-        // TODO: Gate other reactor render settings in this section on at least one of the above being enabled
+        listing.Gap(6f);
+        listing.CheckboxLabeled("Render VREA reactor body attachment",
+            ref renderVreaReactorAttachment,
+            "When enabled, androids display a chest housing and core glow for VREA's standard reactor. " +
+            "This visual is added by Archotech Android Hardware so a stock android matches one with " +
+            "archotech hardware installed; disable it to restore the plain VREA appearance.");
 
-        listing.CheckboxLabeled("Render reactor glow mote (experimental)",
+        listing.Gap(12f);
+
+        // The glow-mote overlay and opacity-scaling options only affect reactors that
+        // are actually being drawn, so grey them out (and ignore clicks) when both
+        // master toggles above are off — there's nothing for them to act on.
+        bool anyReactorRendered = renderAahReactorAttachments || renderVreaReactorAttachment;
+
+        CheckboxLabeled(listing, "Render reactor glow mote (experimental)",
             ref reactorGlowMoteOverlay,
             "When enabled, an extra glow layer is rendered for the reactor core at a very high render order, " +
             "piercing night, and unnatural darkness. Because it draws above almost everything, it may also " +
             "render over some overlays (weapons, stun text, weather effects etc), which some players find jarring. " +
-            "Rarely, it may also misalign during heavy animation or if the pawn moves between game ticks.");
+            "Rarely, it may also misalign during heavy animation or if the pawn moves between game ticks.",
+            disabled: !anyReactorRendered);
 
         listing.Gap(6f);
-        listing.CheckboxLabeled("Scale reactor glow opacity by power need level",
+        CheckboxLabeled(listing, "Scale reactor glow opacity by power need level",
             ref scaleReactorGlowByPower,
             "When enabled, the reactor core glows at full strength when the power need meter is full, and dims " +
-            "as the level drops. When disabled, the glow stays at a constant full brightness.");
+            "as the level drops. When disabled, the glow stays at a constant full brightness.",
+            disabled: !anyReactorRendered);
 
         listing.Gap(30f);
 
@@ -366,5 +399,34 @@ public class ArchotechAndroidHardwareSettings : ModSettings
         listing.Label(label);
         Text.Font = GameFont.Small;
         listing.Gap(10f);
+    }
+
+    /// <summary>
+    /// A <see cref="Listing_Standard.CheckboxLabeled(string, ref bool, string, float, float)"/>
+    /// with a <paramref name="disabled"/> flag the vanilla listing helper lacks
+    /// (only <see cref="Widgets.CheckboxLabeled(Rect, string, ref bool, bool, Texture2D, Texture2D, bool, bool)"/>
+    /// exposes one). When disabled the row is dimmed and ignores clicks, so a
+    /// dependent setting reads as inert until its prerequisite is enabled — its
+    /// stored value is preserved, not forced. Mirrors the vanilla listing helper's
+    /// rect/tooltip/spacing so it lines up with the other rows.
+    /// </summary>
+    private static void CheckboxLabeled(Listing_Standard listing, string label, ref bool checkOn,
+        string tooltip, bool disabled)
+    {
+        float height = Text.CalcHeight(label, listing.ColumnWidth);
+        Rect rect = listing.GetRect(height);
+        rect.width = Mathf.Min(rect.width + 24f, listing.ColumnWidth);
+        if (!tooltip.NullOrEmpty())
+        {
+            if (Mouse.IsOver(rect)) Widgets.DrawHighlight(rect);
+            TooltipHandler.TipRegion(rect, tooltip);
+        }
+        Color prev = GUI.color;
+        // Widgets.CheckboxLabeled greys only the checkbox glyph when disabled, not
+        // the label; dim the whole row so it reads uniformly inactive.
+        if (disabled) GUI.color = new Color(prev.r, prev.g, prev.b, prev.a * 0.5f);
+        Widgets.CheckboxLabeled(rect, label, ref checkOn, disabled);
+        GUI.color = prev;
+        listing.Gap(listing.verticalSpacing);
     }
 }

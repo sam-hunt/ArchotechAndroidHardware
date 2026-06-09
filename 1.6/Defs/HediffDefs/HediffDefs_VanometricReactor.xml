@@ -57,7 +57,7 @@
     -->
     <renderNodeProperties>
       <li>
-        <workerClass>PawnRenderNodeWorker_AttachmentBody</workerClass>
+        <workerClass>ArchotechAndroidHardware.PawnRenderNodeWorker_ReactorAttachment</workerClass>
         <texPath>Things/Pawn/Humanlike/BodyAttachments/AAH_VanometricReactor_Chest</texPath>
         <parentTagDef>Body</parentTagDef>
         <baseLayer>35</baseLayer>
@@ -73,7 +73,8 @@
           </defaultData>
         </drawData>
       </li>
-      <!-- Core glow node (always drawn, via PawnRenderNodeWorker_ReactorGlow).
+      <!-- Core glow node (drawn with the chassis whenever this reactor's body
+           attachment is enabled, via PawnRenderNodeWorker_ReactorGlow).
            Sibling of the chest attachment above; baseLayer 36 draws the additive
            halo just over the chest core. drawSize 0.4 = chest 0.2 × the 256/128
            glow-vs-chest canvas ratio, confirmed by eye against the chest core. Z

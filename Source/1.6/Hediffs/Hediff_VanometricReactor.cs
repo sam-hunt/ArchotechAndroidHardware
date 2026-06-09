@@ -52,7 +52,7 @@ public class Hediff_VanometricReactor : Hediff_AddedPart
     public override void Tick()
     {
         base.Tick();
-        ReactorGlowMote.Maintain(pawn, ref glowMote, GlowTint);
+        ReactorGlowMote.Maintain(pawn, def, ref glowMote, GlowTint);
     }
 
     public override void PostRemoved()

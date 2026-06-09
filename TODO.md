@@ -12,8 +12,6 @@
 - Add setting-gated workgiver to autoqueue reactor replacements on low-power androids?
 - Add setting sliders for low-power alert/auto-replacement thresholds? PR upstream?
 
-- Our AAH Hediffs supposedly re-add their genes on a tick interval if missing?
-
 - Eject Thanatic reactor on corpse destruction?
 - Extract Thanatic reactor gizmo on corpse.
   `claude --resume "thanatic-reactor-designation-ui"`

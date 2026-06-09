@@ -30,6 +30,6 @@ public class HediffComp_BasicReactorGlow : HediffComp
 
     public override void CompPostTick(ref float severityAdjustment)
     {
-        ReactorGlowMote.Maintain(Pawn, ref glowMote, Color.white);
+        ReactorGlowMote.Maintain(Pawn, parent.def, ref glowMote, Color.white);
     }
 }
