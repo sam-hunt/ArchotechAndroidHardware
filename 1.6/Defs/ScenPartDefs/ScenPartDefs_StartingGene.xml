@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Grants a gene to starting colonists, using the part's chance roll for partial
+    odds (see ScenPart_StartingGene). Used by Magus of the Abyss for a 25% chance of
+    red eyes (VREA_Eyes_Red). canBeRandomlyAdded=false keeps it out of unrelated
+    random scenarios.
+  -->
+  <ScenPartDef>
+    <defName>AAH_StartingGene</defName>
+    <label>chance of starting gene</label>
+    <scenPartClass>ArchotechAndroidHardware.ScenPart_StartingGene</scenPartClass>
+    <category>PlayerPawnModifier</category>
+    <canBeRandomlyAdded>false</canBeRandomlyAdded>
+  </ScenPartDef>
+
+</Defs>

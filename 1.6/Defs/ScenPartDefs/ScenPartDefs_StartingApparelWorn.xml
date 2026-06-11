@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Dresses each starting colonist in a piece of apparel (worn, not stockpiled; see
+    ScenPart_StartingApparelWorn). Used by Magus of the Abyss for dark-grey marine
+    armor. canBeRandomlyAdded=false keeps it out of unrelated random scenarios.
+  -->
+  <ScenPartDef>
+    <defName>AAH_StartingApparelWorn</defName>
+    <label>start wearing apparel</label>
+    <scenPartClass>ArchotechAndroidHardware.ScenPart_StartingApparelWorn</scenPartClass>
+    <category>PlayerPawnModifier</category>
+    <canBeRandomlyAdded>false</canBeRandomlyAdded>
+  </ScenPartDef>
+
+</Defs>

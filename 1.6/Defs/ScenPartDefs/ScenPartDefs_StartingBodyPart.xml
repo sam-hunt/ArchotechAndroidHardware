@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Installs an added-part hediff (bionic / archotech prosthetic) into a named body
+    part of each starting colonist (see ScenPart_StartingBodyPart). Used by Magus of
+    the Abyss for an archotech arm on the right shoulder.
+    canBeRandomlyAdded=false keeps it out of unrelated random scenarios.
+  -->
+  <ScenPartDef>
+    <defName>AAH_StartingBodyPart</defName>
+    <label>start with body part installed</label>
+    <scenPartClass>ArchotechAndroidHardware.ScenPart_StartingBodyPart</scenPartClass>
+    <category>PlayerPawnModifier</category>
+    <canBeRandomlyAdded>false</canBeRandomlyAdded>
+  </ScenPartDef>
+
+</Defs>

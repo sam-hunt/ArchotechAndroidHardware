@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Fits a reactor hediff into the android reactor slot of each starting colonist,
+    replacing the stock reactor. Reactor-agnostic: the hediff is chosen per scenario
+    (or in the editor), so the same part backs any reactor-themed scenario.
+    canBeRandomlyAdded=false keeps it out of unrelated random scenarios.
+  -->
+  <ScenPartDef>
+    <defName>AAH_StartingAndroidReactor</defName>
+    <label>start with reactor installed</label>
+    <scenPartClass>ArchotechAndroidHardware.ScenPart_StartingAndroidReactor</scenPartClass>
+    <category>PlayerPawnModifier</category>
+    <canBeRandomlyAdded>false</canBeRandomlyAdded>
+  </ScenPartDef>
+
+</Defs>

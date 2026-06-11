@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    Drives every goodwill faction to the -100 floor at game start (see
+    ScenPart_AllFactionsHostile). canBeRandomlyAdded=false keeps it out of unrelated
+    random scenarios.
+  -->
+  <ScenPartDef>
+    <defName>AAH_AllFactionsHostile</defName>
+    <label>all factions hostile</label>
+    <scenPartClass>ArchotechAndroidHardware.ScenPart_AllFactionsHostile</scenPartClass>
+    <category>Rule</category>
+    <maxUses>1</maxUses>
+    <canBeRandomlyAdded>false</canBeRandomlyAdded>
+  </ScenPartDef>
+
+</Defs>

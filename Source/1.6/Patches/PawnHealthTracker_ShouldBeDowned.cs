@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using HarmonyLib;
 using RimWorld;
 using Verse;
@@ -36,23 +34,14 @@ namespace ArchotechAndroidHardware.VREAPatches;
 [HarmonyPatch(typeof(Pawn_HealthTracker), nameof(Pawn_HealthTracker.ShouldBeDowned))]
 public static class PawnHealthTracker_ShouldBeDowned_Postfix
 {
-    // AAH_GravReactor is Odyssey-gated (DefOf field is null without Odyssey) and
-    // filtered out below. When adding a new reactor-type hediff, add its DefOf field here.
-    private static HediffDef[] _reactorHediffs;
-    private static HediffDef[] ReactorHediffs => _reactorHediffs ??= new[]
-    {
-        AAH_HediffDefOf.AAH_VanometricReactor,
-        AAH_HediffDefOf.AAH_ThanaticReactor,
-        AAH_HediffDefOf.AAH_GravReactor,
-    }.Where(d => d != null).ToArray();
-
     [HarmonyPostfix]
     public static void Postfix(ref bool __result, Pawn_HealthTracker __instance, Pawn ___pawn)
     {
         if (!__result) return;
         if (___pawn?.health?.hediffSet == null) return;
 
-        var defs = ReactorHediffs;
+        // Canonical reactor set (see AAHReactorDefs) — add a new reactor there.
+        var defs = AAHReactorDefs.All;
         if (defs.Length == 0) return;
 
         bool hasAahReactor = false;

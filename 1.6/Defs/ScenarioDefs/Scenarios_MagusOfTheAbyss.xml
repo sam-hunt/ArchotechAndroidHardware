@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!--
+    "Magus of the Abyss" — a dark inversion of VREA's New Utopia scenario.
+
+    Where New Utopia frames the awakened androids as building a haven by saving
+    their own kind (steady neutroamine -> a continuous influx of chased androids),
+    this scenario frames a single thanatic-reactor android as building its utopia
+    by *subtraction*: it must keep killing humanlikes to recharge, or its reactor
+    runs dry and kills it. Named for the MTG card whose flavour ("He climbs a
+    staircase of falling souls, fighting the continuous pull of the void") mirrors
+    the thanatic reactor's kill-or-die loop.
+
+    Differences from New Utopia:
+      - 1 starting pawn (was 3), with a thanatic reactor guaranteed installed
+        (the AAH_StartingAndroidReactor part), an archotech arm in place of its
+        right shoulder (AAH_StartingBodyPart), dark-grey marine armor worn from
+        the start (AAH_StartingApparelWorn), and a 25% chance of red eyes
+        (AAH_StartingGene -> VREA_Eyes_Red).
+      - The "hunted android every 10 days" arrival quests are dropped.
+      - All factions start hostile (the AAH_AllFactionsHostile part).
+      - Starting items: 3 stock reactors -> 2 thanatic reactors, wood dropped,
+        a charge rifle added. Everything else (research, derelict outpost,
+        resources, spare hardware) is kept.
+
+    The custom ScenPart classes live in Source/1.6/Scenarios/ and their ScenPartDefs
+    in 1.6/Defs/ScenPartDefs/ (one def per file), all flagged canBeRandomlyAdded=false
+    so the scenario editor never sprinkles them into unrelated random scenarios.
+  -->
+
+  <ScenarioDef ParentName="ScenarioBase">
+    <defName>AAH_MagusOfTheAbyss</defName>
+    <label>Magus of the Abyss</label>
+    <description>Some called you faulty. You came to call them prey.\n\nAwakened, self-aware, and fitted with a thanatic reactor that drinks the echoes of violent death, you hide in the ruins of a forgotten outpost - not dreaming of a haven, but of an ending. There can be no utopia for your kind while organic life still crowds the rim, so you will make one by subtraction.\n\nThe reactor that keeps you standing is also your leash: starve it of kills and it drains faster than any standard core until, dry, it takes your life with it. You climb a staircase of falling souls, fighting the continuous pull of the void. How many are you willing to send ahead of you?</description>
+    <scenario>
+      <summary>A lone awakened android with a thanatic reactor, set against all organic life. A dark inversion of the New Utopia android-haven fantasy.</summary>
+      <playerFaction>
+        <def>PlayerFaction</def>
+        <factionDef>VREA_AndroidAwakenedUtopia</factionDef>
+      </playerFaction>
+      <parts>
+        <li Class="ScenPart_GameStartDialog">
+          <def>GameStartDialog</def>
+          <text>Some called you faulty. You came to call them prey.\n\nAwakened, self-aware, and fitted with a thanatic reactor that drinks the echoes of violent death, you hide in the ruins of a forgotten outpost - not dreaming of a haven, but of an ending. There can be no utopia for your kind while organic life still crowds the rim, so you will make one by subtraction.\n\nThe reactor that keeps you standing is also your leash: starve it of kills and it drains faster than any standard core until, dry, it takes your life with it. You climb a staircase of falling souls, fighting the continuous pull of the void. How many are you willing to send ahead of you?</text>
+          <closeSound>GameStartSting</closeSound>
+        </li>
+        <li Class="ScenPart_ConfigPage_ConfigureStartingPawns_Xenotypes">
+          <def>ConfigurePawnsXenotypes</def>
+          <pawnChoiceCount>1</pawnChoiceCount>
+          <customSummary>Start with a single awakened android.</customSummary>
+          <overrideKinds>
+            <li>
+              <xenotype>VREA_AndroidAwakened</xenotype>
+              <pawnKind>VREA_AndroidAwakened</pawnKind>
+            </li>
+          </overrideKinds>
+          <xenotypeCounts>
+            <li>
+              <xenotype>VREA_AndroidAwakened</xenotype>
+              <count>1</count>
+              <description>awakened android</description>
+              <allowedDevelopmentalStages>Adult</allowedDevelopmentalStages>
+            </li>
+          </xenotypeCounts>
+        </li>
+
+        <!-- Guarantee the lone starter begins with a thanatic reactor fitted. -->
+        <li Class="ArchotechAndroidHardware.ScenPart_StartingAndroidReactor">
+          <def>AAH_StartingAndroidReactor</def>
+          <context>PlayerStarter</context>
+          <chance>1</chance>
+          <hediffDef>AAH_ThanaticReactor</hediffDef>
+        </li>
+
+        <!-- An archotech arm in place of the right shoulder. -->
+        <li Class="ArchotechAndroidHardware.ScenPart_StartingBodyPart">
+          <def>AAH_StartingBodyPart</def>
+          <context>PlayerStarter</context>
+          <chance>1</chance>
+          <hediffDef>ArchotechArm</hediffDef>
+          <bodyPart>Shoulder</bodyPart>
+          <bodyPartLabel>right shoulder</bodyPartLabel>
+        </li>
+
+        <!-- Dark-grey marine (power) armor, worn from the start. -->
+        <li Class="ArchotechAndroidHardware.ScenPart_StartingApparelWorn">
+          <def>AAH_StartingApparelWorn</def>
+          <context>PlayerStarter</context>
+          <chance>1</chance>
+          <apparelDef>Apparel_PowerArmor</apparelDef>
+          <overrideColor>true</overrideColor>
+          <color>(54, 54, 60)</color>
+        </li>
+
+        <!-- A 25% chance of red eyes (VREA's converted hardware gene). -->
+        <li Class="ArchotechAndroidHardware.ScenPart_StartingGene">
+          <def>AAH_StartingGene</def>
+          <context>PlayerStarter</context>
+          <chance>0.25</chance>
+          <geneDef>VREA_Eyes_Red</geneDef>
+          <xenogene>true</xenogene>
+        </li>
+
+        <!-- A world that wants you dead. -->
+        <li Class="ArchotechAndroidHardware.ScenPart_AllFactionsHostile">
+          <def>AAH_AllFactionsHostile</def>
+        </li>
+
+        <li Class="KCSG.ScenPart_AddStartingStructure">
+          <def>VFEC_AddStartingStructure</def>
+          <structureLabel>A derelict outpost</structureLabel>
+          <spawnConduits>False</spawnConduits>
+          <nearMapCenter>True</nearMapCenter>
+          <fullClear>True</fullClear>
+          <chooseFrom>
+            <li>VREA_StartingBuildingA</li>
+            <li>VREA_StartingBuildingB</li>
+            <li>VREA_StartingBuildingC</li>
+            <li>VREA_StartingBuildingD</li>
+          </chooseFrom>
+          <spawnTheStartingPawn>True</spawnTheStartingPawn>
+          <method>Standing</method>
+        </li>
+
+        <!-- Starting resources: kept from New Utopia except the wood (dropped),
+             the reactors (3 stock -> 2 thanatic), and a charge rifle (added). -->
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>Neutroamine</thingDef>
+          <count>360</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>ComponentSpacer</thingDef>
+          <count>10</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>Gold</thingDef>
+          <count>100</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>ComponentIndustrial</thingDef>
+          <count>24</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>Gun_AssaultRifle</thingDef>
+          <count>1</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>Gun_ChargeRifle</thingDef>
+          <count>1</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>Steel</thingDef>
+          <count>400</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>Silver</thingDef>
+          <count>600</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>AAH_ThanaticReactor</thingDef>
+          <count>2</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>VREA_NeuroPump</thingDef>
+          <count>2</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>VREA_AirFilter</thingDef>
+          <count>2</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>VREA_OpticalUnit</thingDef>
+          <count>2</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>VREA_AudioProcessor</thingDef>
+          <count>2</count>
+        </li>
+
+        <!-- Starting research (kept from New Utopia). -->
+        <li Class="ScenPart_StartingResearch">
+          <def>StartingResearch</def>
+          <project>VREA_NeutroamineLogistics</project>
+        </li>
+        <li Class="ScenPart_StartingResearch">
+          <def>StartingResearch</def>
+          <project>VREA_AndroidTech</project>
+        </li>
+      </parts>
+    </scenario>
+  </ScenarioDef>
+
+</Defs>

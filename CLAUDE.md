@@ -24,6 +24,17 @@ _Inspirations:_
 
 - Self-Determination (`AAH_SelfDetermination`) — a mood-driven inspiration that lets an _awakened_ android temporarily reprogram its subroutines at VREA's behavior station (which normally permanently "refuses reprogramming" for awakened colonist androids). Pure enabler (no stat offsets): while active, the `BehavioristStation_AllowSelfDetermination` patch overrides the station's awakening refusal; finishing the reprogramming consumes the inspiration and grants the `AAH_SelfDeterminationFulfilled` mood memory (via the `BehavioristStation_ConsumeSelfDetermination` patch). Eligibility is gated to awakened androids carrying an AAH part by default, broadenable to all awakened androids via a setting. This works cleanly because VREA subroutine genes are _not_ `removeWhenAwakened` (only the "disabled-needs" hardware genes are), so re-selecting subroutines neither un-awakens the pawn nor is filtered by the dialog's `GeneValidator` — the station's `CanAcceptPawn` refusal is the only blocker. Worker + shared reflection helper live in `Source/1.6/Inspirations/`. The psychic transceiver is the permanent/reliable counterpart to this temporary inspiration (see its bullet above); both feed the same `BehavioristStation_AllowSelfDetermination` override.
 
+_Scenarios:_
+
+- Magus of the Abyss (`AAH_MagusOfTheAbyss`, `1.6/Defs/ScenarioDefs/`) — a dark inversion of VREA's New Utopia: one awakened android starting with a thanatic reactor pre-installed, framed around exterminating organic life rather than building a haven. Keeps New Utopia's research/derelict outpost/resources; drops the chased-android arrivals and wood, swaps 3 stock reactors for 2 thanatic reactors, adds a charge rifle, and starts all factions hostile. The starter is also fitted with an archotech arm (right shoulder), dark-grey marine armor (worn), and a 25% chance of red eyes.
+
+  Bespoke `ScenPart` classes live in `Source/1.6/Scenarios/`; their `ScenPartDef`s in `1.6/Defs/ScenPartDefs/` (one def per file). The four `ScenPart_PawnModifier` subclasses are generic/reusable (def-parameterised + editor-configurable via `DoEditInterface`) and all apply from `ModifyPawnPostGenerate` (`Notify_PawnGenerated`, the late hook) so changes show on the starting-pawn config screen and the hediffs' own PostAdd wiring (e.g. reactor companion genes) fires; all are idempotent across redress/re-roll:
+  - `ScenPart_StartingAndroidReactor` — fits a reactor hediff into the slot held by `VREA_Reactor` (post-`Gene_SyntheticBody.PostAdd`); our `Hediff_AddedPart` auto-evicts the stock reactor via vanilla `RestorePart`. Editor picker is driven by `AAHReactorDefs.All`.
+  - `ScenPart_StartingBodyPart` — installs an added-part hediff (e.g. vanilla `ArchotechArm`, Core) into a named part; `bodyPart` def + optional `bodyPartLabel` matched against `BodyPartRecord.untranslatedCustomLabel` (raw English "right shoulder", language-independent) to pick a side.
+  - `ScenPart_StartingApparelWorn` — wears (not stockpiles) an apparel def, optional stuff + `overrideColor`/`color` via `CompColorable`. Runs after vanilla gear gen, so it wears on top and drops layer conflicts.
+  - `ScenPart_StartingGene` — adds a gene using the inherited `chance` roll for partial odds. **Magus uses `VREA_Eyes_Red`, not vanilla `Eyes_Red`:** VREA's `GeneDefGenerator.ImpliedGeneDefs` postfix clones every convertable cosmetic gene into a `VREA_`-prefixed implied counterpart with the hardware-gene background + `allAndroidGenes` membership — that clone is what the creation/behaviorist station dialogs and the gene inspector show. Implied defs register before cross-refs resolve, so XML can reference `VREA_Eyes_Red` directly.
+  - `ScenPart_AllFactionsHostile` (`Rule` category, not a pawn modifier) — `PostGameStart` drives every goodwill faction to the −100 floor.
+
 **Key Technologies:** C# (.NET Framework 4.7.2), Harmony library (reflection-only, no VREA compile-time dependency), RimWorld modding API, XML definitions
 
 ## Build Commands
@@ -78,6 +89,7 @@ Source/1.6/
 ├── Motes/          # Reactor-glow / charge-aura mote classes
 ├── Patches/        # Harmony patches (VREA compatibility fixes) + AAHPartEjector helper
 ├── Rendering/      # Reactor-glow render-node worker + shared ReactorGlow opacity helper
+├── Scenarios/      # Bespoke ScenParts (Magus of the Abyss: reactor/body-part/apparel/gene swaps, all-factions-hostile)
 ├── Things/         # ThingWithComps subclasses (ThanaticReactorThing — stored energy)
 └── Properties/     # AssemblyInfo
 ```
@@ -146,7 +158,7 @@ All patches target VREA (or vanilla / Odyssey) classes via `AccessTools.TypeByNa
 
 - **`AlertAndroidsLowOnPower_Culprits`** — Prefix on VREA's `Alert_AndroidsLowOnPower.get_Culprits`, null-safe: Vanometric disables the power need, so VREA's original NREs on a null need's `.CurLevelPercentage`.
 
-- **`PawnHealthTracker_ShouldBeDowned`** — Postfix on `Pawn_HealthTracker.ShouldBeDowned` restoring capacity-based downing for pawns with an `AAH_` reactor. VREA force-downs androids it sees as reactor-less, and our reactors use `Hediff_AddedPart` (not VREA's reactor type). **Footgun: a new reactor-type hediff must be added to this patch's `ReactorHediffs` array.**
+- **`PawnHealthTracker_ShouldBeDowned`** — Postfix on `Pawn_HealthTracker.ShouldBeDowned` restoring capacity-based downing for pawns with an `AAH_` reactor. VREA force-downs androids it sees as reactor-less, and our reactors use `Hediff_AddedPart` (not VREA's reactor type). Reads the canonical reactor list `AAHReactorDefs.All` (`Core/`) — the single source of truth for "all reactor hediffs", also used by the starting-reactor scenpart picker. **Footgun: a new reactor-type hediff must be added to `AAHReactorDefs.All`.** (The energy-bar patch keeps a separate, narrower `IAAHReactorEnergy`-only list.)
 
 - **`RecipeInstallAndroidPart_ApplyOnPawn`** — Prefix+Postfix on VREA's `Recipe_InstallAndroidPart.ApplyOnPawn`. Routes `AAH_` hediff ejection through `AAHPartEjector.Eject` (→ `ICustomAAHEjection`, else `spawnThingOnRemoved`) and strips/cleans companion genes; VREA's `RestorePart()` would otherwise destroy hediffs without their `spawnThingOnRemoved`. Generic over `AAH_` hediffs via the defName = geneName convention. **Three patches share this target method (the two `*InstallEnergyTransfer` below are the others) — any new install-time hook must coexist.**
 
