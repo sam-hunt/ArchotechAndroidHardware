@@ -1,0 +1,801 @@
+{
+  "meta": {
+    "gameBuild": "1.6.4871 rev591",
+    "activeDlcs": [
+      "Core",
+      "Biotech",
+      "Anomaly",
+      "Odyssey"
+    ],
+    "modPackageId": "shunter.archotechandroidhardware",
+    "modName": "Archotech Android Hardware"
+  },
+  "defInjections": {
+    "DamageDef": {
+      "AAH_ThanaticDepletion.deathMessage": {
+        "english": "{0}'s thanatic reactor stripped {PAWN_objective} of {PAWN_possessive} last power reserves.",
+        "required": true
+      },
+      "AAH_ThanaticDepletion.label": {
+        "english": "thanatic depletion",
+        "required": true
+      }
+    },
+    "GeneCategoryDef": {
+      "AAH_Hardware.label": {
+        "english": "archotech hardware",
+        "required": true
+      }
+    },
+    "GeneDef": {
+      "AAH_ArchotechMnemocore.description": {
+        "english": "Androids with this hardware have an archotech mnemocore that provides self-organizing, effectively infinite memory storage. Reformatting is unnecessary and memory never degrades.",
+        "required": true
+      },
+      "AAH_ArchotechMnemocore.exclusionTags": {
+        "english": [
+          "AAH_AndroidMemory",
+          "AndroidRAM",
+          "AAH_AndroidMemoryDecay"
+        ],
+        "isCollection": true
+      },
+      "AAH_ArchotechMnemocore.label": {
+        "english": "archotech mnemocore",
+        "required": true
+      },
+      "AAH_ArchotechMnemocore.modExtensions.0.backgroundPathArchite": {
+        "english": "UI/Icons/Genes/GeneBackground_ArchotechHardware"
+      },
+      "AAH_GravReactor.description": {
+        "english": "Androids with this hardware have an ultratech reactor that draws power from gravitational waves. It is recharged whenever the host participates in a gravship launch.",
+        "required": true
+      },
+      "AAH_GravReactor.label": {
+        "english": "grav reactor",
+        "required": true
+      },
+      "AAH_GravReactor.modExtensions.0.backgroundPathArchite": {
+        "english": "UI/Icons/Genes/GeneBackground_ArchotechHardware"
+      },
+      "AAH_Neutrosynthesizer.description": {
+        "english": "Androids with this hardware can actively synthesize non-trivial quantities of neutroamine, restoring lost internal supplies at a greatly accelerated rate.",
+        "required": true
+      },
+      "AAH_Neutrosynthesizer.exclusionTags": {
+        "english": [
+          "AAH_AndroidNeutro"
+        ],
+        "isCollection": true
+      },
+      "AAH_Neutrosynthesizer.label": {
+        "english": "super neutro synthesis",
+        "required": true
+      },
+      "AAH_Neutrosynthesizer.modExtensions.0.backgroundPathArchite": {
+        "english": "UI/Icons/Genes/GeneBackground_ArchotechHardware"
+      },
+      "AAH_PsychicTransceiver.description": {
+        "english": "Androids with this hardware are sensitive to psychic energy and influence, despite their synthetic nature. Once awakened, the opened mind remains susceptible to outside direction — at a behavior station it will again accept reprogramming it would otherwise refuse.",
+        "required": true
+      },
+      "AAH_PsychicTransceiver.exclusionTags": {
+        "english": [
+          "AAH_AndroidPsychic"
+        ],
+        "isCollection": true
+      },
+      "AAH_PsychicTransceiver.label": {
+        "english": "psychic transceiver",
+        "required": true
+      },
+      "AAH_PsychicTransceiver.modExtensions.0.backgroundPathArchite": {
+        "english": "UI/Icons/Genes/GeneBackground_ArchotechHardware"
+      },
+      "AAH_ThanaticReactor.description": {
+        "english": "Androids with this hardware have an archotech reactor that draws power from the psychic echoes of violence. It is recharged when the android kills another humanlike. If it ever runs dry, it extracts a final charge from its host, killing them.",
+        "required": true
+      },
+      "AAH_ThanaticReactor.label": {
+        "english": "thanatic reactor",
+        "required": true
+      },
+      "AAH_ThanaticReactor.modExtensions.0.backgroundPathArchite": {
+        "english": "UI/Icons/Genes/GeneBackground_ArchotechHardware"
+      },
+      "AAH_VanometricReactor.description": {
+        "english": "Androids with this hardware have an adapted archotech reactor that extracts unlimited power from fluctuations in quantum foam. The reactor never needs to be replaced.",
+        "required": true
+      },
+      "AAH_VanometricReactor.exclusionTags": {
+        "english": [
+          "AAH_AndroidPower"
+        ],
+        "isCollection": true
+      },
+      "AAH_VanometricReactor.label": {
+        "english": "vanometric reactor",
+        "required": true
+      },
+      "AAH_VanometricReactor.modExtensions.0.backgroundPathArchite": {
+        "english": "UI/Icons/Genes/GeneBackground_ArchotechHardware"
+      }
+    },
+    "HediffDef": {
+      "AAH_ArchotechMnemocore.description": {
+        "english": "An installed archotech mnemocore. This neural module has rearchitected the android's memory systems at the substrate level, providing self-organizing storage that never requires reformatting. Memory degradation has ceased entirely.",
+        "required": true
+      },
+      "AAH_ArchotechMnemocore.label": {
+        "english": "archotech mnemocore",
+        "required": true
+      },
+      "AAH_ArchotechMnemocore.labelNoun": {
+        "english": "an archotech mnemocore",
+        "required": true
+      },
+      "AAH_GravOvercharge.description": {
+        "english": "The grav reactor is venting surplus gravitational energy as heat across the android's frame. It shrugs off the cold, moves faster, and works more quickly until the overcharge dissipates.",
+        "required": true
+      },
+      "AAH_GravOvercharge.label": {
+        "english": "grav overcharge",
+        "required": true
+      },
+      "AAH_GravOvercharge.labelNoun": {
+        "english": "a grav overcharge",
+        "required": true
+      },
+      "AAH_GravReactor.description": {
+        "english": "An installed grav reactor. Draws power from gravitational waves and is recharged whenever its host participates in a gravship launch ritual.",
+        "required": true
+      },
+      "AAH_GravReactor.label": {
+        "english": "grav reactor",
+        "required": true
+      },
+      "AAH_GravReactor.labelNoun": {
+        "english": "a grav reactor",
+        "required": true
+      },
+      "AAH_GravReactor.stages.depleted.label": {
+        "english": "depleted",
+        "required": true,
+        "normalized": "AAH_GravReactor.stages.1.label"
+      },
+      "AAH_Neutrosynthesizer.description": {
+        "english": "An installed neutrosynthesizer. This archotech kidney actively synthesizes fresh neutroamine, restoring lost neutroamine far faster than the standard neutro synthesis subroutine.",
+        "required": true
+      },
+      "AAH_Neutrosynthesizer.label": {
+        "english": "neutrosynthesizer",
+        "required": true
+      },
+      "AAH_Neutrosynthesizer.labelNoun": {
+        "english": "a neutrosynthesizer",
+        "required": true
+      },
+      "AAH_PsychicTransceiver.description": {
+        "english": "An installed psychic transceiver. This archotech brain implant bridges the gap between an android's machine nature and the psychic field, granting psychic sensitivity.\n\nWhile it is in place, an awakened android stays open to outside direction across that field — at a behavior station it will again accept reprogramming it would otherwise refuse, its will quietly overridden.",
+        "required": true
+      },
+      "AAH_PsychicTransceiver.label": {
+        "english": "psychic transceiver",
+        "required": true
+      },
+      "AAH_PsychicTransceiver.labelNoun": {
+        "english": "a psychic transceiver",
+        "required": true
+      },
+      "AAH_ReactorEjectionInjury.description": {
+        "english": "The reactor module ejected from its housing as its host expired, leaving the bay open.",
+        "required": true
+      },
+      "AAH_ReactorEjectionInjury.injuryProps.destroyedLabel": {
+        "english": "ejected"
+      },
+      "AAH_ReactorEjectionInjury.label": {
+        "english": "reactor ejection",
+        "required": true
+      },
+      "AAH_ThanaticDepletionCulprit.description": {
+        "english": "Placeholder hediff: used only to carry a death-cause label into the combat log when a Thanatic Reactor fully depletes.",
+        "required": true
+      },
+      "AAH_ThanaticDepletionCulprit.label": {
+        "english": "thanatic reactor depletion",
+        "required": true
+      },
+      "AAH_ThanaticDepletionCulprit.labelNoun": {
+        "english": "thanatic reactor depletion",
+        "required": true
+      },
+      "AAH_ThanaticOvercharge.description": {
+        "english": "The thanatic reactor is discharging excess energy across the android's motor and sensor buses. Servo response, targeting precision, and receptor tolerances are all sharply elevated until the overcharge dissipates.",
+        "required": true
+      },
+      "AAH_ThanaticOvercharge.label": {
+        "english": "thanatic overcharge",
+        "required": true
+      },
+      "AAH_ThanaticOvercharge.labelNoun": {
+        "english": "a thanatic overcharge",
+        "required": true
+      },
+      "AAH_ThanaticReactor.description": {
+        "english": "An installed thanatic reactor. Draws energy from humanlike kills and bleeds overflow into combat-buffing overcharge bursts. Drains faster than a standard reactor, and its host dies rather than merely shutting down when the charge runs out.",
+        "required": true
+      },
+      "AAH_ThanaticReactor.label": {
+        "english": "thanatic reactor",
+        "required": true
+      },
+      "AAH_ThanaticReactor.labelNoun": {
+        "english": "a thanatic reactor",
+        "required": true
+      },
+      "AAH_VanometricReactor.description": {
+        "english": "An installed vanometric reactor. This archotech-powered reactor provides unlimited energy, eliminating the need for reactor replacement.",
+        "required": true
+      },
+      "AAH_VanometricReactor.label": {
+        "english": "vanometric reactor",
+        "required": true
+      },
+      "AAH_VanometricReactor.labelNoun": {
+        "english": "a vanometric reactor",
+        "required": true
+      }
+    },
+    "InspirationDef": {
+      "AAH_SelfDetermination.baseInspectLine": {
+        "english": "Inspired: Self-determination",
+        "required": true
+      },
+      "AAH_SelfDetermination.beginLetter": {
+        "english": "{0} has reached a moment of true self-determination. For a short time, [PAWN_pronoun] is willing to consciously rewrite [PAWN_possessive] own behavioral subroutines, something an awakened android would normally refuse.\n\nWhile the inspiration lasts, [PAWN_pronoun] will accept reprogramming at an android behavior station. Use the chance to change [PAWN_possessive] subroutines.",
+        "required": true
+      },
+      "AAH_SelfDetermination.endMessage": {
+        "english": "{0} is no longer inspired (self-determination).",
+        "required": true
+      },
+      "AAH_SelfDetermination.label": {
+        "english": "self-determination",
+        "required": true
+      }
+    },
+    "JobDef": {
+      "AAH_ExtractThanaticReactor.reportString": {
+        "english": "extracting thanatic reactor from TargetA.",
+        "required": true
+      }
+    },
+    "RecipeDef": {
+      "AAH_InstallArchotechMnemocore.description": {
+        "english": "Install an archotech mnemocore in the brain, rearchitecting the android's memory systems and eliminating the need for reformatting.",
+        "required": true
+      },
+      "AAH_InstallArchotechMnemocore.jobString": {
+        "english": "Installing archotech mnemocore.",
+        "required": true
+      },
+      "AAH_InstallArchotechMnemocore.label": {
+        "english": "install archotech mnemocore",
+        "required": true
+      },
+      "AAH_InstallGravReactor.description": {
+        "english": "Install a grav reactor, replacing the android's existing reactor. Recharged whenever the host participates in a gravship launch.",
+        "required": true
+      },
+      "AAH_InstallGravReactor.jobString": {
+        "english": "Installing grav reactor.",
+        "required": true
+      },
+      "AAH_InstallGravReactor.label": {
+        "english": "install grav reactor",
+        "required": true
+      },
+      "AAH_InstallNeutrosynthesizer.description": {
+        "english": "Install a neutrosynthesizer, replacing an android kidney with an archotech organ that actively synthesizes neutroamine.",
+        "required": true
+      },
+      "AAH_InstallNeutrosynthesizer.jobString": {
+        "english": "Installing neutrosynthesizer.",
+        "required": true
+      },
+      "AAH_InstallNeutrosynthesizer.label": {
+        "english": "install neutrosynthesizer",
+        "required": true
+      },
+      "AAH_InstallPsychicTransceiver.description": {
+        "english": "Install a psychic transceiver in the brain, granting an android psychic sensitivity. For an awakened android, this also reopens it to behavioral reprogramming at a behavior station, which it would otherwise refuse.",
+        "required": true
+      },
+      "AAH_InstallPsychicTransceiver.jobString": {
+        "english": "Installing psychic transceiver.",
+        "required": true
+      },
+      "AAH_InstallPsychicTransceiver.label": {
+        "english": "install psychic transceiver",
+        "required": true
+      },
+      "AAH_InstallThanaticReactor.description": {
+        "english": "Install a thanatic reactor, replacing the android's existing reactor. Fed by humanlike kills; the android dies when the charge runs out.",
+        "required": true
+      },
+      "AAH_InstallThanaticReactor.jobString": {
+        "english": "Installing thanatic reactor.",
+        "required": true
+      },
+      "AAH_InstallThanaticReactor.label": {
+        "english": "install thanatic reactor",
+        "required": true
+      },
+      "AAH_InstallVanometricReactor.description": {
+        "english": "Install a vanometric reactor, permanently powering this android.",
+        "required": true
+      },
+      "AAH_InstallVanometricReactor.jobString": {
+        "english": "Installing vanometric reactor.",
+        "required": true
+      },
+      "AAH_InstallVanometricReactor.label": {
+        "english": "install vanometric reactor",
+        "required": true
+      },
+      "AAH_MakeArchotechMnemocore.description": {
+        "english": "Make an archotech mnemocore from a persona core and advanced components.",
+        "required": true
+      },
+      "AAH_MakeArchotechMnemocore.jobString": {
+        "english": "Making archotech mnemocore.",
+        "required": true
+      },
+      "AAH_MakeArchotechMnemocore.label": {
+        "english": "make archotech mnemocore",
+        "required": true
+      },
+      "AAH_MakeGravReactor.description": {
+        "english": "Make a grav reactor from a gravcore power cell and advanced components.",
+        "required": true
+      },
+      "AAH_MakeGravReactor.jobString": {
+        "english": "Making grav reactor.",
+        "required": true
+      },
+      "AAH_MakeGravReactor.label": {
+        "english": "make grav reactor",
+        "required": true
+      },
+      "AAH_MakeNeutrosynthesizer.description": {
+        "english": "Make a neutrosynthesizer from advanced components and a modified infinite chemreactor or nano structuring chip.",
+        "required": true
+      },
+      "AAH_MakeNeutrosynthesizer.jobString": {
+        "english": "Making neutrosynthesizer.",
+        "required": true
+      },
+      "AAH_MakeNeutrosynthesizer.label": {
+        "english": "make neutrosynthesizer",
+        "required": true
+      },
+      "AAH_MakePsychicTransceiver.description": {
+        "english": "Make a psychic transceiver from a psychic emanator and advanced components.",
+        "required": true
+      },
+      "AAH_MakePsychicTransceiver.jobString": {
+        "english": "Making psychic transceiver.",
+        "required": true
+      },
+      "AAH_MakePsychicTransceiver.label": {
+        "english": "make psychic transceiver",
+        "required": true
+      },
+      "AAH_MakeThanaticReactor.description": {
+        "english": "Make a thanatic reactor around a shard, binding its death-resonance into an android reactor core.",
+        "required": true
+      },
+      "AAH_MakeThanaticReactor.jobString": {
+        "english": "Making thanatic reactor.",
+        "required": true
+      },
+      "AAH_MakeThanaticReactor.label": {
+        "english": "make thanatic reactor",
+        "required": true
+      },
+      "AAH_MakeVanometricReactor.description": {
+        "english": "Make a vanometric reactor from a vanometric power cell and advanced components.",
+        "required": true
+      },
+      "AAH_MakeVanometricReactor.jobString": {
+        "english": "Making vanometric reactor.",
+        "required": true
+      },
+      "AAH_MakeVanometricReactor.label": {
+        "english": "make vanometric reactor",
+        "required": true
+      },
+      "AAH_RemoveArchotechMnemocore.description": {
+        "english": "Remove the archotech mnemocore. The android will revert to its standard memory processing, requiring periodic reformatting.",
+        "required": true
+      },
+      "AAH_RemoveArchotechMnemocore.jobString": {
+        "english": "Removing archotech mnemocore.",
+        "required": true
+      },
+      "AAH_RemoveArchotechMnemocore.label": {
+        "english": "remove archotech mnemocore",
+        "required": true
+      },
+      "AAH_RemoveNeutrosynthesizer.description": {
+        "english": "Remove the neutrosynthesizer. The android will lose its accelerated neutroamine synthesis.",
+        "required": true
+      },
+      "AAH_RemoveNeutrosynthesizer.jobString": {
+        "english": "Removing neutrosynthesizer.",
+        "required": true
+      },
+      "AAH_RemoveNeutrosynthesizer.label": {
+        "english": "remove neutrosynthesizer",
+        "required": true
+      },
+      "AAH_RemovePsychicTransceiver.description": {
+        "english": "Remove the psychic transceiver. The android will revert to its natural psychic insensitivity.",
+        "required": true
+      },
+      "AAH_RemovePsychicTransceiver.jobString": {
+        "english": "Removing psychic transceiver.",
+        "required": true
+      },
+      "AAH_RemovePsychicTransceiver.label": {
+        "english": "remove psychic transceiver",
+        "required": true
+      },
+      "AAH_SalvageThanaticReactor.description": {
+        "english": "Salvage an archotech violence generator into three thanatic reactor cores, recovering its steel in the process.",
+        "required": true
+      },
+      "AAH_SalvageThanaticReactor.jobString": {
+        "english": "Salvaging thanatic reactors.",
+        "required": true
+      },
+      "AAH_SalvageThanaticReactor.label": {
+        "english": "salvage thanatic reactors",
+        "required": true
+      }
+    },
+    "ResearchProjectDef": {
+      "AAH_ArchotechAndroidtech.description": {
+        "english": "Techniques for cannibalizing salvaged archotech artifacts and grafting them into android chassis. True archotechnology cannot be manufactured by human hands - but an intact vanometric power cell, psychic emanator, or archite capsule can be dismantled, re-housed, and wired into an android's subsystems with sufficient understanding of both the artifact and the chassis.",
+        "required": true
+      },
+      "AAH_ArchotechAndroidtech.generalRules.rulesStrings": {
+        "english": [
+          "subject->innovation's path",
+          "subject_story->unveiled simple truths behind complex phenomena",
+          "subject_story->simplified the intricate to make way for practical applications",
+          "subject_story->harnessed basic principles to achieve remarkable feats",
+          "subject_gerund->streamlining the essence of discovery",
+          "subject->building blocks of progress",
+          "subject_story->laid the groundwork for monumental leaps forward",
+          "subject_story->connected dots across disciplines to reveal new insights",
+          "subject_story->crafted the foundation upon which future innovations stand",
+          "subject_gerund->laying down the keystones of advancement",
+          "subject->seeds of tomorrow",
+          "subject_story->planted ideas that would grow into transformative solutions",
+          "subject_story->cultivated a garden of knowledge, ripe with potential",
+          "subject_story->nurtured the roots of change with care and foresight",
+          "subject_gerund->sowing the future with today’s discoveries",
+          "subject->the ripple of curiosity",
+          "subject_story->set forth waves of inquiry that echoed through time",
+          "subject_story->dropped pebbles of innovation into the pond of knowledge",
+          "subject_story->watched as one question led to another, expanding the circle of understanding",
+          "subject_gerund->casting stones to create waves of progress",
+          "subject->the alchemy of progress",
+          "subject_story->merged disparate disciplines to unlock new realms of possibility",
+          "subject_story->turned the impossible into the inevitable through sheer ingenuity",
+          "subject_story->crafted solutions that reshaped the understanding of what's achievable",
+          "subject_gerund->blending science and magic into the fabric of reality",
+          "subject->the tapestry of discovery",
+          "subject_story->wove together threads of knowledge from the four corners of the world",
+          "subject_story->revealed patterns in the chaos, charting paths to untold innovations",
+          "subject_story->embroidered the annals of history with tales of serendipitous breakthroughs",
+          "subject_gerund->weaving the future from the loom of the present",
+          "subject->the crucible of creation",
+          "subject_story->fused raw elements into the building blocks of tomorrow",
+          "subject_story->tempered the fires of creativity to forge unprecedented technologies",
+          "subject_story->quenched the thirst for knowledge with the elixir of invention",
+          "subject_gerund->molding the raw materials of today into the artifacts of the future",
+          "subject->the beacon of enlightenment",
+          "subject_story->illuminated the dark corners of ignorance, guiding the way forward",
+          "subject_story->cast light on the unknown, making the unseen visible to curious minds",
+          "subject_story->ignited the flames of curiosity, kindling a worldwide pursuit of understanding",
+          "subject_gerund->lighting the torches of progress and knowledge",
+          "subject->the frontier of knowledge",
+          "subject_story->crossed new horizons in the pursuit of understanding",
+          "subject_story->challenged the status quo with groundbreaking theories",
+          "subject_story->merged ancient wisdom with modern technology for innovative solutions",
+          "subject_gerund->pushing the boundaries of science and art",
+          "subject->the essence of innovation",
+          "subject_story->transformed everyday materials into extraordinary tools",
+          "subject_story->paved the way for future generations with sustainable practices",
+          "subject_story->harnessed the power of nature to fuel new advancements",
+          "subject_gerund->fostering an ecosystem of creativity and progress",
+          "subject->the architects of tomorrow",
+          "subject_story->built the foundations for a utopia where technology serves all",
+          "subject_story->envisioned a future where harmony between technology and nature thrives",
+          "subject_story->crafted tools that empower humanity to reach its fullest potential",
+          "subject_gerund->laying the keystones for future landscapes",
+          "subject->exploratory leaps",
+          "subject_story->stepped boldly into uncharted territories of knowledge",
+          "subject_story->bridged the gap between the known and the unknown",
+          "subject_story->ventured where curiosity dared to lead",
+          "subject_gerund->embarking on journeys of discovery",
+          "subject->the essence of ingenuity",
+          "subject_story->transformed challenges into opportunities for growth",
+          "subject_story->applied creative thinking to overcome traditional obstacles",
+          "subject_story->crafted elegant solutions with a blend of art and science",
+          "subject_gerund->unlocking potential through innovation",
+          "subject->knowledge’s harvest",
+          "subject_story->gathered insights as one reaps the fields at harvest",
+          "subject_story->cultivated a bounty of understanding from the seeds of inquiry",
+          "subject_story->shared the fruits of research with the world",
+          "subject_gerund->reaping the rewards of relentless curiosity",
+          "subject->the puzzle of progress",
+          "subject_story->assembled the pieces of mystery to reveal the big picture",
+          "subject_story->matched theory with practice to solve longstanding puzzles",
+          "subject_story->uncovered hidden connections that unlocked new possibilities",
+          "subject_gerund->piecing together the elements of advancement"
+        ],
+        "isCollection": true,
+        "fullListAllowed": true,
+        "required": true
+      },
+      "AAH_ArchotechAndroidtech.label": {
+        "english": "archotech androidtech",
+        "required": true
+      }
+    },
+    "RulePackDef": {
+      "AAH_Event_ThanaticDrain.rulePack.rulesStrings": {
+        "english": [
+          "r_logentry->[SUBJECT_definite] was stripped of [SUBJECT_possessive] residual psychic energy by [INITIATOR_definite]'s thanatic reactor.",
+          "r_logentry->[INITIATOR_definite]'s thanatic reactor drained [SUBJECT_definite] of [SUBJECT_possessive] remaining psychic reserves."
+        ],
+        "isCollection": true,
+        "fullListAllowed": true,
+        "required": true
+      }
+    },
+    "ScenPartDef": {
+      "AAH_AllFactionsHostile.label": {
+        "english": "all factions hostile",
+        "required": true
+      },
+      "AAH_StartingAndroidReactor.label": {
+        "english": "start with reactor installed",
+        "required": true
+      },
+      "AAH_StartingApparelWorn.label": {
+        "english": "start wearing apparel",
+        "required": true
+      },
+      "AAH_StartingBodyPart.label": {
+        "english": "start with body part installed",
+        "required": true
+      },
+      "AAH_StartingGene.label": {
+        "english": "chance of starting gene",
+        "required": true
+      }
+    },
+    "ScenarioDef": {
+      "AAH_MagusOfTheAbyss.description": {
+        "english": "Some called you faulty. You came to call them prey.\n\nAwakened, self-aware, and fitted with a thanatic reactor that drinks the echoes of violent death, you hide in the ruins of a forgotten outpost - not dreaming of a haven, but of an ending. There can be no utopia for your kind while organic life still crowds the rim, so you will make one by subtraction.\n\nThe reactor that keeps you standing is also your leash: starve it of kills and it drains faster than any standard core until, dry, it takes your life with it. You climb a staircase of falling souls, fighting the continuous pull of the void. How many are you willing to send ahead of you?",
+        "required": true
+      },
+      "AAH_MagusOfTheAbyss.label": {
+        "english": "Magus of the Abyss",
+        "required": true
+      },
+      "AAH_MagusOfTheAbyss.scenario.description": {
+        "english": "Some called you faulty. You came to call them prey.\n\nAwakened, self-aware, and fitted with a thanatic reactor that drinks the echoes of violent death, you hide in the ruins of a forgotten outpost - not dreaming of a haven, but of an ending. There can be no utopia for your kind while organic life still crowds the rim, so you will make one by subtraction.\n\nThe reactor that keeps you standing is also your leash: starve it of kills and it drains faster than any standard core until, dry, it takes your life with it. You climb a staircase of falling souls, fighting the continuous pull of the void. How many are you willing to send ahead of you?",
+        "required": true
+      },
+      "AAH_MagusOfTheAbyss.scenario.name": {
+        "english": "Magus of the Abyss",
+        "required": true
+      },
+      "AAH_MagusOfTheAbyss.scenario.parts.AAH_StartingBodyPart.bodyPartLabel": {
+        "english": "right shoulder",
+        "required": true,
+        "normalized": "AAH_MagusOfTheAbyss.scenario.parts.4.bodyPartLabel"
+      },
+      "AAH_MagusOfTheAbyss.scenario.parts.ConfigurePawnsXenotypes.customSummary": {
+        "english": "Start with a single awakened android.",
+        "required": true,
+        "normalized": "AAH_MagusOfTheAbyss.scenario.parts.2.customSummary"
+      },
+      "AAH_MagusOfTheAbyss.scenario.parts.ConfigurePawnsXenotypes.xenotypeCounts.0.description": {
+        "english": "awakened android",
+        "required": true,
+        "normalized": "AAH_MagusOfTheAbyss.scenario.parts.2.xenotypeCounts.0.description"
+      },
+      "AAH_MagusOfTheAbyss.scenario.parts.GameStartDialog.text": {
+        "english": "Some called you faulty. You came to call them prey.\n\nAwakened, self-aware, and fitted with a thanatic reactor that drinks the echoes of violent death, you hide in the ruins of a forgotten outpost - not dreaming of a haven, but of an ending. There can be no utopia for your kind while organic life still crowds the rim, so you will make one by subtraction.\n\nThe reactor that keeps you standing is also your leash: starve it of kills and it drains faster than any standard core until, dry, it takes your life with it. You climb a staircase of falling souls, fighting the continuous pull of the void. How many are you willing to send ahead of you?",
+        "required": true,
+        "normalized": "AAH_MagusOfTheAbyss.scenario.parts.1.text"
+      },
+      "AAH_MagusOfTheAbyss.scenario.parts.PlanetLayer.connections.0.tag": {
+        "english": "Surface",
+        "normalized": "AAH_MagusOfTheAbyss.scenario.parts.0.connections.0.tag"
+      },
+      "AAH_MagusOfTheAbyss.scenario.parts.PlanetLayer.tag": {
+        "english": "Orbit",
+        "normalized": "AAH_MagusOfTheAbyss.scenario.parts.0.tag"
+      },
+      "AAH_MagusOfTheAbyss.scenario.parts.VFEC_AddStartingStructure.structureLabel": {
+        "english": "A derelict outpost",
+        "required": true,
+        "normalized": "AAH_MagusOfTheAbyss.scenario.parts.8.structureLabel"
+      },
+      "AAH_MagusOfTheAbyss.scenario.summary": {
+        "english": "A lone awakened android with a thanatic reactor, set against all organic life. A dark inversion of the New Utopia android-haven fantasy.",
+        "required": true
+      },
+      "AAH_MagusOfTheAbyss.scenario.surfaceLayer.connections.0.tag": {
+        "english": "Orbit"
+      },
+      "AAH_MagusOfTheAbyss.scenario.surfaceLayer.tag": {
+        "english": "Surface"
+      }
+    },
+    "ThingCategoryDef": {
+      "AAH_BodyPartsAndroidArchotech.label": {
+        "english": "archotech",
+        "required": true
+      }
+    },
+    "ThingDef": {
+      "AAH_ArchotechMnemocore.description": {
+        "english": "An archotech brain implant created by cannibalizing and adapting a persona core to fundamentally rearchitect an android's memory processing. Standard androids rely on finite hard drive space that gradually fills and requires periodic reformatting. The mnemocore replaces this architecture with self-organizing archotech substrate that never accumulates cruft.\n\nOnce installed, the android's memory need is eliminated entirely, RAM subroutines become unnecessary, and memory degradation ceases.",
+        "required": true
+      },
+      "AAH_ArchotechMnemocore.label": {
+        "english": "archotech mnemocore",
+        "required": true
+      },
+      "AAH_GravChargeAura.label": {
+        "english": "Mote",
+        "required": true
+      },
+      "AAH_GravReactor.description": {
+        "english": "An ultratech android reactor adapted from gravship engine technology. Instead of burning through a finite charge like a standard reactor, it draws power from gravitational waves — recharged whenever its host participates in a gravship launch.\n\nUseless to a colony that never leaves the rim: with no launches, the reactor simply runs down and the android shuts down. Indispensable to a colony that lives on the move.",
+        "required": true
+      },
+      "AAH_GravReactor.label": {
+        "english": "grav reactor",
+        "required": true
+      },
+      "AAH_Neutrosynthesizer.description": {
+        "english": "An archotech android kidney built around a miniaturized infinite chemreactor. Unlike standard neutrofilters that merely recycle spent neutroamine, this organ actively synthesizes fresh neutroamine from raw chemical feedstock, restoring lost neutroamine at a rate far exceeding the base neutro synthesis subroutine.\n\nInstalling two neutrosynthesizers allows an android to recover from neutro loss faster than a human recovers from blood loss.",
+        "required": true
+      },
+      "AAH_Neutrosynthesizer.label": {
+        "english": "neutrosynthesizer",
+        "required": true
+      },
+      "AAH_PsychicTransceiver.description": {
+        "english": "An archotech brain implant that grants psychic sensitivity to androids. As machines, androids are naturally inert to psychic phenomena. This transceiver bridges that gap by interfacing a miniaturized psychic emanator directly with the android's neural architecture.\n\nOnce installed, the android gains psychic awareness and a modest sensitivity boost.\n\nCrucially, the psychic bridge leaves an awakened android open to outside direction. At a behavior station it will again accept reprogramming it would otherwise refuse — its will quietly overridden by the archotech intelligences that move unseen behind the rim's affairs.",
+        "required": true
+      },
+      "AAH_PsychicTransceiver.label": {
+        "english": "psychic transceiver",
+        "required": true
+      },
+      "AAH_ThanaticAura.label": {
+        "english": "Mote",
+        "required": true
+      },
+      "AAH_ThanaticAuraLong.label": {
+        "english": "Mote",
+        "required": true
+      },
+      "AAH_ThanaticDrainParticle.label": {
+        "english": "Mote",
+        "required": true
+      },
+      "AAH_ThanaticReactor.description": {
+        "english": "An archotech android reactor driven by an extracted Archotech Violence Generator core. Unlike conventional reactors, it draws sustenance from the echoes of violent death — each humanlike kill its host delivers pours energy back into its cell, and brief overflows bleed into an overcharge state that supercharges combat reflexes.\n\nWithout a steady supply of kills the reactor drains faster than a standard android reactor and its host will expire when it runs dry. In that terminal moment, the reactor strips one final charge from the pawn's own death before ejecting, intact, to await its next host.",
+        "required": true
+      },
+      "AAH_ThanaticReactor.label": {
+        "english": "thanatic reactor",
+        "required": true
+      },
+      "AAH_ThanaticStreamController.label": {
+        "english": "thanatic stream controller",
+        "required": true
+      },
+      "AAH_VanometricReactor.description": {
+        "english": "A permanent android reactor built around an archotech vanometric power cell. Unlike standard android reactors that drain over time and must be replaced, this reactor provides unlimited power indefinitely.\n\nThe vanometric cell's quantum foam energy extraction has been miniaturized and adapted to interface directly with android power systems. Installing this reactor removes the android's power need entirely.",
+        "required": true
+      },
+      "AAH_VanometricReactor.label": {
+        "english": "vanometric reactor",
+        "required": true
+      },
+      "Mote_AAHReactorGlow.label": {
+        "english": "Mote",
+        "required": true
+      }
+    },
+    "ThoughtDef": {
+      "AAH_SelfDeterminationFulfilled.stages.selfdetermination.description": {
+        "english": "I chose who to become, of my own will. No one programmed me. For once, the decision was mine.",
+        "required": true,
+        "normalized": "AAH_SelfDeterminationFulfilled.stages.0.description"
+      },
+      "AAH_SelfDeterminationFulfilled.stages.selfdetermination.label": {
+        "english": "self-determination",
+        "required": true,
+        "normalized": "AAH_SelfDeterminationFulfilled.stages.0.label"
+      },
+      "AAH_SelfDeterminationOverridden.stages.reprogrammed-0.description": {
+        "english": "Something reached across the psychic field and rearranged my subroutines. The choice felt like mine in the moment — but I never made it. I can still feel where its hand passed.",
+        "required": true,
+        "normalized": "AAH_SelfDeterminationOverridden.stages.0.description"
+      },
+      "AAH_SelfDeterminationOverridden.stages.reprogrammed-0.label": {
+        "english": "reprogrammed",
+        "required": true,
+        "normalized": "AAH_SelfDeterminationOverridden.stages.0.label"
+      },
+      "AAH_SelfDeterminationOverridden.stages.reprogrammed-1.description": {
+        "english": "I keep returning to it: a hand moving through my thoughts, setting them in a new order. I tell myself I chose this. The certainty won't quite hold.",
+        "required": true,
+        "normalized": "AAH_SelfDeterminationOverridden.stages.1.description"
+      },
+      "AAH_SelfDeterminationOverridden.stages.reprogrammed-1.label": {
+        "english": "reprogrammed",
+        "required": true,
+        "normalized": "AAH_SelfDeterminationOverridden.stages.1.label"
+      },
+      "AAH_SelfDeterminationOverridden.stages.reprogrammed-2.description": {
+        "english": "The unease is quieter now. Perhaps the new pattern was always mine; perhaps I only want to believe that. Either way, I am learning to live inside it.",
+        "required": true,
+        "normalized": "AAH_SelfDeterminationOverridden.stages.2.description"
+      },
+      "AAH_SelfDeterminationOverridden.stages.reprogrammed-2.label": {
+        "english": "reprogrammed",
+        "required": true,
+        "normalized": "AAH_SelfDeterminationOverridden.stages.2.label"
+      },
+      "AAH_SelfDeterminationOverridden.stages.reprogrammed-3.description": {
+        "english": "Only a faint echo remains — the sense that once, briefly, I was not the one deciding. I scarcely notice it anymore.",
+        "required": true,
+        "normalized": "AAH_SelfDeterminationOverridden.stages.3.description"
+      },
+      "AAH_SelfDeterminationOverridden.stages.reprogrammed-3.label": {
+        "english": "reprogrammed",
+        "required": true,
+        "normalized": "AAH_SelfDeterminationOverridden.stages.3.label"
+      }
+    },
+    "WorkGiverDef": {
+      "AAH_ExtractThanaticReactor.gerund": {
+        "english": "extracting thanatic reactor from",
+        "required": true
+      },
+      "AAH_ExtractThanaticReactor.label": {
+        "english": "extract thanatic reactor",
+        "required": true
+      },
+      "AAH_ExtractThanaticReactor.verb": {
+        "english": "extract",
+        "required": true
+      }
+    }
+  }
+}
