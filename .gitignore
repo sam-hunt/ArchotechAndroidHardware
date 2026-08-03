@@ -1,5 +1,6 @@
-# Claude Code
-.claude
+# Claude Code (skills are shared/tracked; hooks and local settings stay machine-local)
+.claude/*
+!.claude/skills/
 
 # Visual Studio
 .vs/
@@ -12,6 +13,9 @@
 # Build results
 **/bin/
 **/obj/
+Tests/*/Tools/*.dll
+Tests/*/Tools/*.exe
+Tests/*/Tools/*.pdb
 *.cache
 *.zip
 
@@ -26,6 +30,9 @@ _ReSharper*/
 # Build artifacts
 */Assemblies/*.dll
 */Assemblies/*.pdb
+
+# Python bytecode (translation tooling)
+__pycache__/
 
 # RimWorld local testing
 *.rws
