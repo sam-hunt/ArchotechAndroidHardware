@@ -1,0 +1,6 @@
+# Revisions git blame should skip (formatting-only sweeps).
+# GitHub picks this file up automatically; for local blame, run once:
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# style: Convert XML doc comments to plain // comments
+858bd7bd83cb945c8ebb08877b5341ee6421b4e1
