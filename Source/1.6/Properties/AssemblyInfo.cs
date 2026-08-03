@@ -1,5 +1,8 @@
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+
+[assembly: InternalsVisibleTo("ArchotechAndroidHardware.Tests")]
 
 [assembly: AssemblyTitle("ArchotechAndroidHardware")]
 [assembly: AssemblyDescription("Archotech hardware for VREA androids")]

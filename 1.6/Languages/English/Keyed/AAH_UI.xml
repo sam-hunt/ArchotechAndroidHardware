@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+
+  <AAH_SettingsCategory>Archotech Android Hardware</AAH_SettingsCategory>
+  <AAH_ResetToDefaults>Reset to defaults</AAH_ResetToDefaults>
+  <AAH_DefaultSuffix> (default)</AAH_DefaultSuffix>
+
+  <AAH_SectionReactors>Reactors</AAH_SectionReactors>
+  <AAH_SectionThanaticReactor>Thanatic Reactor</AAH_SectionThanaticReactor>
+  <AAH_SectionGravReactor>Grav Reactor</AAH_SectionGravReactor>
+  <AAH_SectionPsychicTransceiver>Psychic Transceiver</AAH_SectionPsychicTransceiver>
+  <AAH_SectionMiscellaneous>Miscellaneous</AAH_SectionMiscellaneous>
+
+  <AAH_RenderAahAttachments>Render archotech reactor body attachments</AAH_RenderAahAttachments>
+  <AAH_RenderAahAttachmentsDesc>When enabled, androids display the chest housing and core glow for installed archotech reactors (the vanometric, thanatic, and grav reactors added by this mod). When disabled, those reactors render no hardware on the body — they still function, they just stay hidden.</AAH_RenderAahAttachmentsDesc>
+  <AAH_RenderVreaAttachment>Render VREA reactor body attachment</AAH_RenderVreaAttachment>
+  <AAH_RenderVreaAttachmentDesc>When enabled, androids display a chest housing and core glow for VREA's standard reactor. This visual is added by Archotech Android Hardware so a stock android matches one with archotech hardware installed; disable it to restore the plain VREA appearance.</AAH_RenderVreaAttachmentDesc>
+  <AAH_ReactorGlowMote>Render reactor glow mote (experimental)</AAH_ReactorGlowMote>
+  <AAH_ReactorGlowMoteDesc>When enabled, an extra glow layer is rendered for the reactor core at a very high render order, piercing night, and unnatural darkness. Because it draws above almost everything, it may also render over some overlays (weapons, stun text, weather effects etc), which some players find jarring. Rarely, it may also misalign during heavy animation or if the pawn moves between game ticks.</AAH_ReactorGlowMoteDesc>
+  <AAH_ScaleGlowByPower>Scale reactor glow opacity by power need level</AAH_ScaleGlowByPower>
+  <AAH_ScaleGlowByPowerDesc>When enabled, the reactor core glows at full strength when the power need meter is full, and dims as the level drops. When disabled, the glow stays at a constant full brightness.</AAH_ScaleGlowByPowerDesc>
+
+  <AAH_ThanaticRefill>Refill per humanlike kill: {0} (fraction of max energy)</AAH_ThanaticRefill>
+  <AAH_ThanaticRefillDesc>How much of the reactor's max energy is restored by each humanlike kill. Default: {0}</AAH_ThanaticRefillDesc>
+  <AAH_ThanaticOverchargeHours>Thanatic Overcharge hours per kill when power meter is full: {0}h</AAH_ThanaticOverchargeHours>
+  <AAH_ThanaticOverchargeHoursDesc>Buff duration granted per unit of overflow energy from a kill, at full power meter. Default: {0}h</AAH_ThanaticOverchargeHoursDesc>
+  <AAH_ThanaticOverchargeCapHours>Thanatic Overcharge duration cap: {0}h</AAH_ThanaticOverchargeCapHours>
+  <AAH_ThanaticOverchargeCapUnlimited>Thanatic Overcharge duration cap: Unlimited (kills stack without limit)</AAH_ThanaticOverchargeCapUnlimited>
+  <AAH_ThanaticOverchargeCapDesc>Maximum stacked duration of the Thanatic Overcharge buff. The slider's top notch removes the cap entirely. Default: {0}h</AAH_ThanaticOverchargeCapDesc>
+  <AAH_ViolenceGeneratorSalvage>Replace Archotech Violence Generator costList</AAH_ViolenceGeneratorSalvage>
+  <AAH_ViolenceGeneratorSalvageDesc>When enabled, deconstructing a VFEPower Archotech Violence Generator returns 250 steel and 3 thanatic reactors instead of its usual 275 steel + 9 Advanced Components. Takes effect on game restart.</AAH_ViolenceGeneratorSalvageDesc>
+
+  <AAH_GravRefill>Refill per grav launch: {0} (fraction of max energy)</AAH_GravRefill>
+  <AAH_GravRefillDesc>How much of the reactor's max energy is restored when its host lands after a gravship launch. Default: {0}</AAH_GravRefillDesc>
+  <AAH_GravOverchargeHours>Grav Overcharge hours per launch when power meter is full: {0}h</AAH_GravOverchargeHours>
+  <AAH_GravOverchargeHoursDesc>Buff duration granted per unit of overflow energy from a launch, at full power meter. Default: {0}h</AAH_GravOverchargeHoursDesc>
+  <AAH_GravOverchargeCapHours>Grav Overcharge duration cap: {0}h</AAH_GravOverchargeCapHours>
+  <AAH_GravOverchargeCapDays>Grav Overcharge duration cap: {0} days</AAH_GravOverchargeCapDays>
+  <AAH_GravOverchargeCapUnlimited>Grav Overcharge duration cap: Unlimited (launches stack without limit)</AAH_GravOverchargeCapUnlimited>
+  <AAH_GravOverchargeCapDesc>Maximum stacked duration of the Grav Overcharge buff. The slider's top notch removes the cap entirely. Default: {0}h</AAH_GravOverchargeCapDesc>
+
+  <AAH_TransceiverSensitivity>Psychic sensitivity offset: {0}</AAH_TransceiverSensitivity>
+  <AAH_TransceiverSensitivityDesc>Offset applied to Psychic Sensitivity after suppressing the default Psychically Deaf android hardware, restoring net sensitivity to 100% + this value (e.g. +0.25 = 125%)</AAH_TransceiverSensitivityDesc>
+  <AAH_TransceiverReprogramming>Psychic transceiver re-enables reprogramming</AAH_TransceiverReprogramming>
+  <AAH_TransceiverReprogrammingDesc>When enabled, an awakened android with a psychic transceiver installed will accept reprogramming at an android behavior station, which it would otherwise refuse: the implant's psychic bridge leaves it open to outside influence. Reprogramming an android this way leaves it with a lingering unease that fades over the following weeks.\n\nWhen disabled, the transceiver is purely a psychic-sensitivity implant with no effect on behavior station usability.</AAH_TransceiverReprogrammingDesc>
+
+  <AAH_EnableSelfDetermination>Enable Self-Determination inspiration</AAH_EnableSelfDetermination>
+  <AAH_EnableSelfDeterminationDesc>Awakened androids may occasionally gain a Self-Determination inspiration, during which subroutine reprogramming at an android behavior station is accepted (which it would otherwise refuse).</AAH_EnableSelfDeterminationDesc>
+  <AAH_CommonalityWithPart>Commonality (AAH augmented): {0}</AAH_CommonalityWithPart>
+  <AAH_CommonalityWithPartDesc>How likely this inspiration is picked among eligible inspirations for awakened androids with at least one Archotech Android Hardware body part installed.</AAH_CommonalityWithPartDesc>
+  <AAH_CommonalityWithoutPart>Commonality (VREA stock): {0}</AAH_CommonalityWithoutPart>
+  <AAH_CommonalityWithoutPartDesc>How likely this inspiration is picked among eligible inspirations for awakened androids without any Archotech Android Hardware body parts installed.</AAH_CommonalityWithoutPartDesc>
+
+  <AAH_TagDefault>default</AAH_TagDefault>
+  <AAH_TagPsychicallyDeaf>psychically deaf</AAH_TagPsychicallyDeaf>
+  <AAH_TagPsychicallyDull>psychically dull</AAH_TagPsychicallyDull>
+  <AAH_TagBaseliner>baseliner</AAH_TagBaseliner>
+  <AAH_TagPsychicallySensitive>psychically sensitive</AAH_TagPsychicallySensitive>
+  <AAH_TagPsychicallyHypersensitive>psychically hypersensitive</AAH_TagPsychicallyHypersensitive>
+  <AAH_TagOff>off</AAH_TagOff>
+  <AAH_TagNoPassion>no passion</AAH_TagNoPassion>
+  <AAH_TagMinorPassion>minor passion</AAH_TagMinorPassion>
+  <AAH_TagMajorPassion>major passion</AAH_TagMajorPassion>
+  <AAH_TagRecommended>recommended</AAH_TagRecommended>
+
+</LanguageData>

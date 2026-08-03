@@ -4,10 +4,8 @@ using Verse;
 
 namespace ArchotechAndroidHardware;
 
-/// <summary>
-/// "Miscellaneous" settings section — currently the Self-Determination
-/// inspiration knobs.
-/// </summary>
+// "Miscellaneous" settings section — currently the Self-Determination
+// inspiration knobs.
 public partial class ArchotechAndroidHardwareSettings
 {
     // Self-Determination inspiration: lets an awakened android voluntarily
@@ -23,38 +21,37 @@ public partial class ArchotechAndroidHardwareSettings
     //   WithoutPart — default 0.0 / recommended 1.0. 0 keeps parity with VREA
     //     balance (no inspiration for vanilla androids); 1.0 matches a plain
     //     vanilla inspiration weight if you want to broaden it.
-    public bool enableSelfDeterminationInspiration = true;
-    public float selfDeterminationCommonalityWithPart = WithPartDefault;
-    public float selfDeterminationCommonalityWithoutPart = WithoutPartDefault;
+    public bool enableSelfDeterminationInspiration = DefaultEnableSelfDeterminationInspiration;
+    public float selfDeterminationCommonalityWithPart = DefaultSelfDeterminationCommonalityWithPart;
+    public float selfDeterminationCommonalityWithoutPart = DefaultSelfDeterminationCommonalityWithoutPart;
 
-    private const float WithPartDefault = 3f;
-    private const float WithPartRecommended = 3f;
-    private const float WithoutPartDefault = 0f;
-    private const float WithoutPartRecommended = 1f;
+    private const bool DefaultEnableSelfDeterminationInspiration = true;
+    private const float DefaultSelfDeterminationCommonalityWithPart = 3f;
+    private const float RecommendedSelfDeterminationCommonalityWithPart = 3f;
+    private const float DefaultSelfDeterminationCommonalityWithoutPart = 0f;
+    private const float RecommendedSelfDeterminationCommonalityWithoutPart = 1f;
 
     private void ExposeSelfDeterminationSettings()
     {
-        Scribe_Values.Look(ref enableSelfDeterminationInspiration, "enableSelfDeterminationInspiration", true);
-        Scribe_Values.Look(ref selfDeterminationCommonalityWithPart, "selfDeterminationCommonalityWithPart", WithPartDefault);
-        Scribe_Values.Look(ref selfDeterminationCommonalityWithoutPart, "selfDeterminationCommonalityWithoutPart", WithoutPartDefault);
+        Scribe_Values.Look(ref enableSelfDeterminationInspiration, "enableSelfDeterminationInspiration", DefaultEnableSelfDeterminationInspiration);
+        Scribe_Values.Look(ref selfDeterminationCommonalityWithPart, "selfDeterminationCommonalityWithPart", DefaultSelfDeterminationCommonalityWithPart);
+        Scribe_Values.Look(ref selfDeterminationCommonalityWithoutPart, "selfDeterminationCommonalityWithoutPart", DefaultSelfDeterminationCommonalityWithoutPart);
     }
 
     private void ResetSelfDeterminationSettings()
     {
-        enableSelfDeterminationInspiration = true;
-        selfDeterminationCommonalityWithPart = WithPartDefault;
-        selfDeterminationCommonalityWithoutPart = WithoutPartDefault;
+        enableSelfDeterminationInspiration = DefaultEnableSelfDeterminationInspiration;
+        selfDeterminationCommonalityWithPart = DefaultSelfDeterminationCommonalityWithPart;
+        selfDeterminationCommonalityWithoutPart = DefaultSelfDeterminationCommonalityWithoutPart;
     }
 
     private void DrawMiscellaneousSection(Listing_Standard listing)
     {
-        SectionHeader(listing, "Miscellaneous");
+        SectionHeader(listing, "AAH_SectionMiscellaneous".Translate());
 
-        listing.CheckboxLabeled("Enable Self-Determination inspiration",
+        listing.CheckboxLabeled("AAH_EnableSelfDetermination".Translate(),
             ref enableSelfDeterminationInspiration,
-            "Awakened androids may occasionally gain a Self-Determination inspiration, " +
-            "during which subroutine reprogramming at an android behavior station is accepted " +
-            "(which it would otherwise refuse).");
+            "AAH_EnableSelfDeterminationDesc".Translate());
         listing.Gap(12f);
 
         // Grey out + freeze the sliders while the inspiration is disabled; their
@@ -74,21 +71,19 @@ public partial class ArchotechAndroidHardwareSettings
         listing.Indent(sliderIndent);
         listing.ColumnWidth -= sliderIndent;
 
-        listing.Label(CommonalitySliderLabel("Commonality (AAH augmented)",
-                selfDeterminationCommonalityWithPart, WithPartDefault, WithPartRecommended),
-            tooltip: "How likely this inspiration is picked among eligible inspirations for awakened androids " +
-                "with at least one Archotech Android Hardware body part installed.");
-        selfDeterminationCommonalityWithPart = SnapCommonality(
-            listing.Slider(selfDeterminationCommonalityWithPart, 0f, 10f));
+        selfDeterminationCommonalityWithPart = SliderRow(listing,
+            CommonalitySliderLabel(selfDeterminationCommonalityWithPart,
+                DefaultSelfDeterminationCommonalityWithPart, RecommendedSelfDeterminationCommonalityWithPart, withPart: true),
+            "AAH_CommonalityWithPartDesc".Translate(),
+            selfDeterminationCommonalityWithPart, 0f, 10f, step: 0.5f);
 
         listing.Gap(8f);
 
-        listing.Label(CommonalitySliderLabel("Commonality (VREA stock)",
-                selfDeterminationCommonalityWithoutPart, WithoutPartDefault, WithoutPartRecommended),
-            tooltip: "How likely this inspiration is picked among eligible inspirations for awakened androids " +
-                "without any Archotech Android Hardware body parts installed.");
-        selfDeterminationCommonalityWithoutPart = SnapCommonality(
-            listing.Slider(selfDeterminationCommonalityWithoutPart, 0f, 10f));
+        selfDeterminationCommonalityWithoutPart = SliderRow(listing,
+            CommonalitySliderLabel(selfDeterminationCommonalityWithoutPart,
+                DefaultSelfDeterminationCommonalityWithoutPart, RecommendedSelfDeterminationCommonalityWithoutPart, withPart: false),
+            "AAH_CommonalityWithoutPartDesc".Translate(),
+            selfDeterminationCommonalityWithoutPart, 0f, 10f, step: 0.5f);
 
         listing.ColumnWidth += sliderIndent;
         listing.Outdent(sliderIndent);
@@ -97,24 +92,22 @@ public partial class ArchotechAndroidHardwareSettings
         listing.Gap(60f);
     }
 
-    // Snap to 0.5 increments; 0 disables that group.
-    private static float SnapCommonality(float raw) => Mathf.Round(raw * 2f) / 2f;
-
-    // Composes "<title>: <value> (<annotations…>)" with inline parenthesized
-    // suffixes for the value's notable meanings.
-    private static string CommonalitySliderLabel(string title, float value, float defaultValue, float recommendedValue)
+    // Composes "<title>: <value><tags>" with inline parenthesized suffixes for
+    // the value's notable meanings.
+    private static string CommonalitySliderLabel(float value, float defaultValue, float recommendedValue, bool withPart)
     {
         var tags = new List<string>();
-        if (value <= 0f) tags.Add("off");
-        if (Mathf.Approximately(value, 1f)) tags.Add("no passion");
-        else if (Mathf.Approximately(value, 2.5f)) tags.Add("minor passion");
-        else if (Mathf.Approximately(value, 5f)) tags.Add("major passion");
-        if (Mathf.Approximately(value, defaultValue)) tags.Add("default");
+        if (value <= 0f) tags.Add("AAH_TagOff".Translate());
+        if (Mathf.Approximately(value, 1f)) tags.Add("AAH_TagNoPassion".Translate());
+        else if (Mathf.Approximately(value, 2.5f)) tags.Add("AAH_TagMinorPassion".Translate());
+        else if (Mathf.Approximately(value, 5f)) tags.Add("AAH_TagMajorPassion".Translate());
+        if (Mathf.Approximately(value, defaultValue)) tags.Add("AAH_TagDefault".Translate());
         // Skip "recommended" when it coincides with "default" to avoid redundancy.
         if (Mathf.Approximately(value, recommendedValue) && !Mathf.Approximately(recommendedValue, defaultValue))
-            tags.Add("recommended");
+            tags.Add("AAH_TagRecommended".Translate());
 
         string suffix = tags.Count > 0 ? $" ({string.Join(", ", tags)})" : "";
-        return $"{title}: {value:F1}{suffix}";
+        string titleKey = withPart ? "AAH_CommonalityWithPart" : "AAH_CommonalityWithoutPart";
+        return titleKey.Translate(value.ToString("F1")) + suffix;
     }
 }

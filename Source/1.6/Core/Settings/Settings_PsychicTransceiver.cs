@@ -6,7 +6,7 @@ using Verse;
 
 namespace ArchotechAndroidHardware;
 
-/// <summary>"Psychic Transceiver" settings section.</summary>
+// "Psychic Transceiver" settings section.
 public partial class ArchotechAndroidHardwareSettings
 {
     // Psychic sensitivity offset granted by the implant. The companion gene first
@@ -18,7 +18,7 @@ public partial class ArchotechAndroidHardwareSettings
     // vanilla psychic-sensitivity trait degrees as reference points (an offset equal
     // to a degree's gives the same net sensitivity a human with that trait would
     // have — verified vs Core Traits_Spectrum.xml).
-    public float transceiverSensitivityOffset = TransceiverSensitivityOffsetDefault;
+    public float transceiverSensitivityOffset = DefaultTransceiverSensitivityOffset;
 
     // Psychic transceiver reprogramming unlock: when on (default), an awakened
     // android with the AAH_PsychicTransceiver implant permanently accepts
@@ -26,29 +26,28 @@ public partial class ArchotechAndroidHardwareSettings
     // The reliable, prerequisite-gated counterpart to the random inspiration —
     // the implant opens the android to outside (archotech) influence. Off makes
     // the transceiver a pure psychic-sensitivity implant with no station effect.
-    public bool enableTransceiverReprogramming = true;
+    public bool enableTransceiverReprogramming = DefaultEnableTransceiverReprogramming;
 
-    private const float TransceiverSensitivityOffsetDefault = 0.25f;
+    private const float DefaultTransceiverSensitivityOffset = 0.25f;
+    private const bool DefaultEnableTransceiverReprogramming = true;
 
     private void ExposePsychicTransceiverSettings()
     {
-        Scribe_Values.Look(ref transceiverSensitivityOffset, "transceiverSensitivityOffset", TransceiverSensitivityOffsetDefault);
-        Scribe_Values.Look(ref enableTransceiverReprogramming, "enableTransceiverReprogramming", true);
+        Scribe_Values.Look(ref transceiverSensitivityOffset, "transceiverSensitivityOffset", DefaultTransceiverSensitivityOffset);
+        Scribe_Values.Look(ref enableTransceiverReprogramming, "enableTransceiverReprogramming", DefaultEnableTransceiverReprogramming);
     }
 
     private void ResetPsychicTransceiverSettings()
     {
-        transceiverSensitivityOffset = TransceiverSensitivityOffsetDefault;
-        enableTransceiverReprogramming = true;
+        transceiverSensitivityOffset = DefaultTransceiverSensitivityOffset;
+        enableTransceiverReprogramming = DefaultEnableTransceiverReprogramming;
     }
 
-    /// <summary>
-    /// Push <see cref="transceiverSensitivityOffset"/> into the implant hediff's
-    /// PsychicSensitivity stat offset. The offset is a single global value, so
-    /// mutating the shared <see cref="HediffStage"/> StatModifier in place is correct
-    /// (and cheaper than a per-pawn override). Called once at startup and on every
-    /// settings write, so a live game picks up changes on the next stat query.
-    /// </summary>
+    // Push transceiverSensitivityOffset into the implant hediff's
+    // PsychicSensitivity stat offset. The offset is a single global value, so
+    // mutating the shared HediffStage StatModifier in place is correct (and
+    // cheaper than a per-pawn override). Called once at startup and on every
+    // settings write, so a live game picks up changes on the next stat query.
     public void ApplyTransceiverSensitivityOffset()
     {
         HediffStage stage = AAH_HediffDefOf.AAH_PsychicTransceiver?.stages?.FirstOrDefault();
@@ -66,48 +65,38 @@ public partial class ArchotechAndroidHardwareSettings
 
     private void DrawPsychicTransceiverSection(Listing_Standard listing)
     {
-        SectionHeader(listing, "Psychic Transceiver");
+        SectionHeader(listing, "AAH_SectionPsychicTransceiver".Translate());
 
-        listing.Label(SensitivityOffsetLabel("Psychic sensitivity offset", transceiverSensitivityOffset),
-            tooltip: "Offset applied to Psychic Sensitivity after suppressing the default " +
-                "Psychically Deaf android hardware, restoring net sensitivity to 100% + this value " +
-                "(e.g. +0.25 = 125%)");
-        transceiverSensitivityOffset = SnapSensitivityOffset(
-            listing.Slider(transceiverSensitivityOffset, -1.0f, 2.0f));
+        // Step 0.05 so every notable notch — the four trait-degree offsets
+        // (−1.0, −0.5, 0.4, 0.8) and the default — is exactly reachable while
+        // still allowing fine adjustment.
+        transceiverSensitivityOffset = SliderRow(listing, SensitivityOffsetLabel(transceiverSensitivityOffset),
+            "AAH_TransceiverSensitivityDesc".Translate(),
+            transceiverSensitivityOffset, -1.0f, 2.0f, step: 0.05f);
 
         listing.Gap(18f);
 
-        listing.CheckboxLabeled("Psychic transceiver re-enables reprogramming",
+        listing.CheckboxLabeled("AAH_TransceiverReprogramming".Translate(),
             ref enableTransceiverReprogramming,
-            "When enabled, an awakened android with a psychic transceiver installed will accept " +
-            "reprogramming at an android behavior station, which it would otherwise refuse: the " +
-            "implant's psychic bridge leaves it open to outside influence. Reprogramming " +
-            "an android this way leaves it with a lingering unease that fades over the following weeks.\n\n" +
-            "When disabled, the transceiver is purely a psychic-sensitivity implant with no effect " +
-            "on behavior station usability.");
+            "AAH_TransceiverReprogrammingDesc".Translate());
 
         listing.Gap(30f);
     }
 
-    // Snap to 0.05 increments so every notable notch — the four trait-degree
-    // offsets (−1.0, −0.5, 0.4, 0.8) and the default — is exactly reachable while
-    // still allowing fine adjustment.
-    private static float SnapSensitivityOffset(float raw) => Mathf.Round(raw * 20f) / 20f;
-
-    // Composes "<title>: <±value> (<annotations…>)". Tags the four vanilla
+    // Composes "<title>: <±value><tags>". Tags the four vanilla
     // psychic-sensitivity trait degrees and the mod default at their offsets.
-    private static string SensitivityOffsetLabel(string title, float value)
+    private static string SensitivityOffsetLabel(float value)
     {
         var tags = new List<string>();
-        if (Mathf.Approximately(value, -1.0f)) tags.Add("psychically deaf");
-        else if (Mathf.Approximately(value, -0.5f)) tags.Add("psychically dull");
-        else if (Mathf.Approximately(value, 0f)) tags.Add("baseliner");
-        else if (Mathf.Approximately(value, 0.4f)) tags.Add("psychically sensitive");
-        else if (Mathf.Approximately(value, 0.8f)) tags.Add("psychically hypersensitive");
-        if (Mathf.Approximately(value, TransceiverSensitivityOffsetDefault)) tags.Add("default");
+        if (Mathf.Approximately(value, -1.0f)) tags.Add("AAH_TagPsychicallyDeaf".Translate());
+        else if (Mathf.Approximately(value, -0.5f)) tags.Add("AAH_TagPsychicallyDull".Translate());
+        else if (Mathf.Approximately(value, 0f)) tags.Add("AAH_TagBaseliner".Translate());
+        else if (Mathf.Approximately(value, 0.4f)) tags.Add("AAH_TagPsychicallySensitive".Translate());
+        else if (Mathf.Approximately(value, 0.8f)) tags.Add("AAH_TagPsychicallyHypersensitive".Translate());
+        if (Mathf.Approximately(value, DefaultTransceiverSensitivityOffset)) tags.Add("AAH_TagDefault".Translate());
 
         string sign = value > 0f ? "+" : "";
         string suffix = tags.Count > 0 ? $" ({string.Join(", ", tags)})" : "";
-        return $"{title}: {sign}{value:F2}{suffix}";
+        return "AAH_TransceiverSensitivity".Translate($"{sign}{value:F2}") + suffix;
     }
 }
