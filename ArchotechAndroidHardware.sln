@@ -7,6 +7,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1.6", "1.6", "{16000000-000
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArchotechAndroidHardware", "Source\1.6\ArchotechAndroidHardware.csproj", "{A1B2C3D4-E5F6-7890-AB12-CD34EF567890}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArchotechAndroidHardware.Tests", "Tests\1.6\ArchotechAndroidHardware.Tests.csproj", "{253DCC2E-B585-415A-B214-FF2037F9C3DB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,11 +19,16 @@ Global
 		{A1B2C3D4-E5F6-7890-AB12-CD34EF567890}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1B2C3D4-E5F6-7890-AB12-CD34EF567890}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1B2C3D4-E5F6-7890-AB12-CD34EF567890}.Release|Any CPU.Build.0 = Release|Any CPU
+		{253DCC2E-B585-415A-B214-FF2037F9C3DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{253DCC2E-B585-415A-B214-FF2037F9C3DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{253DCC2E-B585-415A-B214-FF2037F9C3DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{253DCC2E-B585-415A-B214-FF2037F9C3DB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A1B2C3D4-E5F6-7890-AB12-CD34EF567890} = {16000000-0000-0000-0000-000000000000}
+		{253DCC2E-B585-415A-B214-FF2037F9C3DB} = {16000000-0000-0000-0000-000000000000}
 	EndGlobalSection
 EndGlobal

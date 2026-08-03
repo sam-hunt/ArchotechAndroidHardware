@@ -1,0 +1,119 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <IsPackable>false</IsPackable>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <!-- Tests are pure-data: they construct ArchotechAndroidHardwareSettings
+         instances directly and exercise SurgeryState's internal static field.
+         No live RimWorld game context, no maps, no Find.*, no DefDatabase
+         writes, and deliberately no touching of any [DefOf] class (see
+         ReactorGlowTests.cs / the docblock in this repo's Rendering code for
+         why that's out of scope headless). -->
+  </PropertyGroup>
+
+  <!-- Mirror the main csproj's RimWorld install detection. The post-build
+       copy step prefers the live install's runtime DLLs over Krafs's ref/
+       stubs because the latter are stamped [assembly: ReferenceAssembly]
+       and the CLR throws BadImageFormatException when the JIT tries to
+       resolve types from them at test execution time. -->
+  <PropertyGroup>
+    <RimWorldPath Condition="'$(RimWorldPath)' == ''">$(RIMWORLD_PATH)</RimWorldPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(RimWorldPath)' == '' And $([MSBuild]::IsOSPlatform('Windows'))">
+    <RimWorldPath>C:\Program Files (x86)\Steam\steamapps\common\RimWorld</RimWorldPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(RimWorldPath)' == '' And $([MSBuild]::IsOSPlatform('Linux'))">
+    <RimWorldPath>$(HOME)/.local/share/Steam/steamapps/common/RimWorld</RimWorldPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(RimWorldPath)' == '' And $([MSBuild]::IsOSPlatform('OSX'))">
+    <RimWorldPath>$(HOME)/Library/Application Support/Steam/steamapps/common/RimWorld</RimWorldPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RimWorldDataFolder Condition="'$(RimWorldDataFolder)' == ''">$(RIMWORLD_DATA_FOLDER)</RimWorldDataFolder>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(RimWorldDataFolder)' == '' And $([MSBuild]::IsOSPlatform('Windows'))">
+    <RimWorldDataFolder>RimWorldWin64_Data</RimWorldDataFolder>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(RimWorldDataFolder)' == '' And $([MSBuild]::IsOSPlatform('Linux'))">
+    <RimWorldDataFolder>RimWorldLinux_Data</RimWorldDataFolder>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(RimWorldDataFolder)' == '' And $([MSBuild]::IsOSPlatform('OSX'))">
+    <RimWorldDataFolder>RimWorldMac_Data</RimWorldDataFolder>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(RimWorldPath)' != '' And !Exists('$(RimWorldPath)/$(RimWorldDataFolder)/Managed/Assembly-CSharp.dll') And Exists('$(RimWorldPath)/RimWorldWin64_Data/Managed/Assembly-CSharp.dll')">
+    <RimWorldDataFolder>RimWorldWin64_Data</RimWorldDataFolder>
+  </PropertyGroup>
+  <PropertyGroup>
+    <UseLocalRimWorld Condition="Exists('$(RimWorldPath)/$(RimWorldDataFolder)/Managed/Assembly-CSharp.dll')">true</UseLocalRimWorld>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- GeneratePathProperty exposes $(PkgKrafs_Rimworld_Ref) so the
+         post-build target below can locate the package's ref/ folder as
+         a CI fallback when no local RimWorld install is detected. -->
+    <PackageReference Include="Krafs.Rimworld.Ref" Version="1.6.*" GeneratePathProperty="true" />
+    <PackageReference Include="xunit" Version="2.9.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <!-- xunit.runner.console is the standalone runner; on Linux/WSL we drive
+         it via Mono since `dotnet test` for net472 requires a .NET Framework
+         host that isn't present out of the box. On Windows, Visual Studio's
+         test explorer or `dotnet test` with the .NET Framework Developer
+         Pack installed both work without invoking the console runner. -->
+    <PackageReference Include="xunit.runner.console" Version="2.9.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Source\1.6\ArchotechAndroidHardware.csproj" />
+  </ItemGroup>
+
+  <!-- Copy RimWorld runtime assemblies into the test output so the test
+       runner can resolve Verse.* / RimWorld.* / UnityEngine.* types at JIT
+       time. Prefer the live install's Managed/ folder (real runtime DLLs);
+       fall back to Krafs's ref/ folder only when no install is detected.
+       The Krafs fallback is non-functional at runtime — its DLLs are
+       reference-only — but keeps `dotnet build` green on CI without an
+       install present. Tests can't actually run in that mode. -->
+  <Target Name="CopyRimWorldAssembliesToTestOutput" AfterTargets="Build">
+    <ItemGroup Condition="'$(UseLocalRimWorld)' == 'true'">
+      <_RimWorldAssemblies Include="$(RimWorldPath)/$(RimWorldDataFolder)/Managed/Assembly-CSharp.dll" />
+      <_RimWorldAssemblies Include="$(RimWorldPath)/$(RimWorldDataFolder)/Managed/UnityEngine*.dll" />
+      <!-- Unity.Burst and friends: assembly-level attributes on Assembly-CSharp
+           reference them, so anything that reflects over the assembly's
+           attributes (xunit does, when serializing a RimWorld enum used as a
+           [InlineData] argument) loads them. The ref-only copies throw
+           BadImageFormatException there and break test discovery. -->
+      <_RimWorldAssemblies Include="$(RimWorldPath)/$(RimWorldDataFolder)/Managed/Unity.*.dll" />
+      <!-- Assembly-CSharp's manifest refs netstandard 2.1 — RimWorld ships
+           those facades from its bundled Mono runtime. The default test
+           output picks up Microsoft.NETFramework.ReferenceAssemblies'
+           ref-only stubs which fail strong-name verification at runtime.
+           Copying RimWorld's runtime versions over the top fixes that. -->
+      <_RimWorldAssemblies Include="$(RimWorldPath)/$(RimWorldDataFolder)/Managed/netstandard.dll" />
+      <_RimWorldAssemblies Include="$(RimWorldPath)/$(RimWorldDataFolder)/Managed/System.Runtime.dll" />
+      <!-- Steamworks for the same reason: RimWorld.Scenario implements
+           WorkshopUploadable, so JITting anything that mentions Scenario (e.g.
+           StatWorker.FinalizeValue, which every stat lookup goes through) makes
+           the CLR load this assembly. Krafs's ref-only copy fails there with
+           BadImageFormatException. -->
+      <_RimWorldAssemblies Include="$(RimWorldPath)/$(RimWorldDataFolder)/Managed/com.rlabrecque.steamworks.net.dll" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(UseLocalRimWorld)' != 'true'">
+      <_RimWorldAssemblies Include="$(PkgKrafs_Rimworld_Ref)\ref\net472\*.dll" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_RimWorldAssemblies)"
+          DestinationFolder="$(OutputPath)"
+          SkipUnchangedFiles="true" />
+  </Target>
+</Project>
