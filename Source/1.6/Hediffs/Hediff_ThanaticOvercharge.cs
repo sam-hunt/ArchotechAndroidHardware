@@ -4,31 +4,27 @@ using Verse;
 
 namespace ArchotechAndroidHardware;
 
-/// <summary>
-/// Whole-body combat buff applied when a Thanatic Reactor kill overflows the
-/// reactor's energy meter. Mirrors vanilla <c>GoJuiceHigh</c>'s stat envelope
-/// (capMods / statOffsets live in XML).
-///
-/// Duration is managed via <see cref="HediffComp_Disappears"/>. Additional
-/// overflow while the buff is active *extends* <c>ticksToDisappear</c> (capped
-/// by <see cref="ArchotechAndroidHardwareSettings.thanaticOverchargeCapHours"/>)
-/// rather than re-applying the hediff fresh.
-///
-/// Psyfocus bump (Royalty-gated): +0.15 applies only on the INITIAL application,
-/// not on subsequent duration extensions. The magnitude matches go-juice's
-/// <c>IngestionOutcomeDoer_OffsetPsyfocus</c> offset; applying it once per buff
-/// window also prevents psyfocus farming by chaining small kills — the player
-/// has to let the buff expire before they can bank another psyfocus bump.
-/// </summary>
+// Whole-body combat buff applied when a Thanatic Reactor kill overflows the
+// reactor's energy meter. Mirrors vanilla GoJuiceHigh's stat envelope
+// (capMods / statOffsets live in XML).
+//
+// Duration is managed via HediffComp_Disappears. Additional
+// overflow while the buff is active *extends* ticksToDisappear (capped
+// by ArchotechAndroidHardwareSettings.thanaticOverchargeCapHours)
+// rather than re-applying the hediff fresh.
+//
+// Psyfocus bump (Royalty-gated): +0.15 applies only on the INITIAL application,
+// not on subsequent duration extensions. The magnitude matches go-juice's
+// IngestionOutcomeDoer_OffsetPsyfocus offset; applying it once per buff
+// window also prevents psyfocus farming by chaining small kills — the player
+// has to let the buff expire before they can bank another psyfocus bump.
 public class Hediff_ThanaticOvercharge : HediffWithComps
 {
     // Matches go-juice's instant psyfocus offset (Core Drugs/GoJuice.xml).
     private const float PsyfocusBumpOnInitialApply = 0.15f;
 
-    /// <summary>
-    /// Apply or extend Thanatic Overcharge on the given pawn.
-    /// </summary>
-    /// <param name="overflow">Fraction [0,1] of reactor energy that overflowed past max.</param>
+    // Apply or extend Thanatic Overcharge on the given pawn.
+    // overflow: Fraction [0,1] of reactor energy that overflowed past max.
     public static void ApplyOrExtend(Pawn pawn, float overflow, ArchotechAndroidHardwareSettings settings)
     {
         if (pawn == null || overflow <= 0f) return;

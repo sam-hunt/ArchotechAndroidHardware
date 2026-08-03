@@ -6,16 +6,14 @@ using Verse.AI;
 
 namespace ArchotechAndroidHardware;
 
-/// <summary>
-/// Walks a colonist to a marked android corpse and extracts the installed
-/// thanatic reactor. Mirrors the vanilla skull-extraction flow
-/// (JobDriver_ExtractSkull): reserve + goto + wait-with-progress-bar + do.
-///
-/// The actual reactor recovery (spawning the item with preserved energy,
-/// removing the hediff, labeling the missing body part) is delegated to
-/// <see cref="Hediff_ThanaticReactor.ExtractFromCorpse"/> so this driver
-/// stays purely about job control flow.
-/// </summary>
+// Walks a colonist to a marked android corpse and extracts the installed
+// thanatic reactor. Mirrors the vanilla skull-extraction flow
+// (JobDriver_ExtractSkull): reserve + goto + wait-with-progress-bar + do.
+//
+// The actual reactor recovery (spawning the item with preserved energy,
+// removing the hediff, labeling the missing body part) is delegated to
+// Hediff_ThanaticReactor.ExtractFromCorpse so this driver
+// stays purely about job control flow.
 public class JobDriver_ExtractThanaticReactor : JobDriver
 {
     private const int ExtractionTimeTicks = 480; // 8 seconds — slower than skull (180) to read as deliberate archotech work

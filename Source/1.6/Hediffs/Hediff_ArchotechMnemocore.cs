@@ -4,24 +4,22 @@ using Verse;
 
 namespace ArchotechAndroidHardware;
 
-/// <summary>
-/// Core hediff for the archotech mnemocore. Manages a companion gene lifecycle:
-///
-/// Gene mechanism: A companion gene (AAH_ArchotechMnemocore) shares exclusion tags
-/// with VREA_MemoryProcessing (AAH_AndroidMemory), VREA_FastRAM/VREA_SlowRAM
-/// (AndroidRAM), and VREA_MemoryDecay (AAH_AndroidMemoryDecay). Biotech's gene
-/// override system suppresses those genes while ours is active. With
-/// VREA_MemoryProcessing suppressed, its enablesNeeds for VREA_MemorySpace doesn't
-/// fire. The hediff's disablesNeeds provides a belt-and-suspenders safety net.
-///
-/// Lifecycle:
-///   Install  (PostAdd)         -> adds companion gene as xenogene
-///   Removal  (PostRemoved)     -> removes companion gene
-///   Load     (PostLoadInit)    -> re-asserts gene presence if missing (invariant defense)
-///
-/// Note: extends HediffWithComps (not Hediff_AddedPart) because this is a brain
-/// implant, not a body part replacement. The brain stays intact when this is removed.
-/// </summary>
+// Core hediff for the archotech mnemocore. Manages a companion gene lifecycle:
+//
+// Gene mechanism: A companion gene (AAH_ArchotechMnemocore) shares exclusion tags
+// with VREA_MemoryProcessing (AAH_AndroidMemory), VREA_FastRAM/VREA_SlowRAM
+// (AndroidRAM), and VREA_MemoryDecay (AAH_AndroidMemoryDecay). Biotech's gene
+// override system suppresses those genes while ours is active. With
+// VREA_MemoryProcessing suppressed, its enablesNeeds for VREA_MemorySpace doesn't
+// fire. The hediff's disablesNeeds provides a belt-and-suspenders safety net.
+//
+// Lifecycle:
+//   Install  (PostAdd)         -> adds companion gene as xenogene
+//   Removal  (PostRemoved)     -> removes companion gene
+//   Load     (PostLoadInit)    -> re-asserts gene presence if missing (invariant defense)
+//
+// Note: extends HediffWithComps (not Hediff_AddedPart) because this is a brain
+// implant, not a body part replacement. The brain stays intact when this is removed.
 public class Hediff_ArchotechMnemocore : HediffWithComps
 {
     private static GeneDef MnemocoreGene => AAH_GeneDefOf.AAH_ArchotechMnemocore;

@@ -3,15 +3,13 @@ using Verse;
 
 namespace ArchotechAndroidHardware;
 
-/// <summary>
-/// Item form of the grav reactor. Stores its current energy level so the
-/// reactor is transferable between android pawns: install → hediff inherits
-/// storedEnergy; eject → new item carries the hediff's current energy.
-///
-/// Same shape as <see cref="ThanaticReactorThing"/>. The two classes are kept
-/// separate (rather than a shared base) so that GetInspectString and any
-/// future per-reactor cosmetic / behavioural details can diverge cleanly.
-/// </summary>
+// Item form of the grav reactor. Stores its current energy level so the
+// reactor is transferable between android pawns: install → hediff inherits
+// storedEnergy; eject → new item carries the hediff's current energy.
+//
+// Same shape as ThanaticReactorThing. The two classes are kept
+// separate (rather than a shared base) so that GetInspectString and any
+// future per-reactor cosmetic / behavioural details can diverge cleanly.
 public class GravReactorThing : ThingWithComps
 {
     public float storedEnergy = 1f;

@@ -5,31 +5,29 @@ using Verse;
 
 namespace ArchotechAndroidHardware.VREAPatches;
 
-/// <summary>
-/// Lets an awakened android use VREA's Android Behavior Station when one of two
-/// triggers is present: the temporary <c>AAH_SelfDetermination</c> inspiration (the
-/// android's own will) or a permanently installed psychic transceiver (the android
-/// opened to outside/archotech influence — see
-/// <see cref="SelfDeterminationUtility.HasReprogrammingImplant"/>).
-///
-/// VREA's <c>Building_AndroidBehavioristStation.CanAcceptPawn(Pawn)</c> permanently
-/// refuses awakened colonist androids:
-/// <code>if (selPawn.IsAwakened() &amp;&amp; selPawn.IsColonist &amp;&amp; !selPawn.IsPrisoner)
-///         return Translate("VREA.RefusesReprogramming");</code>
-/// While either trigger holds we flip that refusal to "accepted". Once inside,
-/// no further patching is needed: the modification dialog's <c>GeneValidator</c>
-/// already lets awakened androids toggle every non-<c>removeWhenAwakened</c> gene
-/// (which is all subroutines), and re-selecting subroutines doesn't un-awaken the
-/// pawn (awakened == "no removeWhenAwakened gene present"; no subroutine is one).
-///
-/// We only override the awakening refusal — never the no-power / quest-lodger
-/// refusals — by confirming the pawn is awakened and then re-validating the gates
-/// that VREA checks <i>after</i> the awakening line (those never ran, because the
-/// awakening check returned first).
-///
-/// Reflection-only: target resolved via <c>AccessTools.TypeByName</c>; the patch is
-/// silently skipped if VREA is absent.
-/// </summary>
+// Lets an awakened android use VREA's Android Behavior Station when one of two
+// triggers is present: the temporary AAH_SelfDetermination inspiration (the
+// android's own will) or a permanently installed psychic transceiver (the android
+// opened to outside/archotech influence — see
+// SelfDeterminationUtility.HasReprogrammingImplant).
+//
+// VREA's Building_AndroidBehavioristStation.CanAcceptPawn(Pawn) permanently
+// refuses awakened colonist androids:
+// if (selPawn.IsAwakened() && selPawn.IsColonist && !selPawn.IsPrisoner)
+//         return Translate("VREA.RefusesReprogramming");
+// While either trigger holds we flip that refusal to "accepted". Once inside,
+// no further patching is needed: the modification dialog's GeneValidator
+// already lets awakened androids toggle every non-removeWhenAwakened gene
+// (which is all subroutines), and re-selecting subroutines doesn't un-awaken the
+// pawn (awakened == "no removeWhenAwakened gene present"; no subroutine is one).
+//
+// We only override the awakening refusal — never the no-power / quest-lodger
+// refusals — by confirming the pawn is awakened and then re-validating the gates
+// that VREA checks after the awakening line (those never ran, because the
+// awakening check returned first).
+//
+// Reflection-only: target resolved via AccessTools.TypeByName; the patch is
+// silently skipped if VREA is absent.
 [HarmonyPatch]
 public static class BehavioristStation_AllowSelfDetermination_Patch
 {

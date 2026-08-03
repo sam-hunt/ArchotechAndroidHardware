@@ -6,21 +6,19 @@ using Verse;
 
 namespace ArchotechAndroidHardware;
 
-/// <summary>
-/// Scenario part that puts a piece of apparel <em>on</em> each starting colonist
-/// (worn, not dropped into the stockpile — which is all vanilla's
-/// <c>ScenPart_StartingThing_Defined</c> can do). Used by "Magus of the Abyss" to
-/// dress its starter in dark-grey marine (power) armor.
-///
-/// Generic over the apparel def, optional stuff, and an optional override colour
-/// (<c>overrideColor</c> + <c>color</c>, applied via the apparel's
-/// <c>CompColorable</c>; left at the generated colour otherwise).
-///
-/// Runs from <see cref="ModifyPawnPostGenerate"/> so it lands <em>after</em> vanilla
-/// gear generation (we wear on top, dropping any layer-conflicting piece) and is
-/// visible on the starting-pawn config screen. Idempotent across redress / re-roll.
-/// Scope it to <c>PlayerStarter</c> in XML.
-/// </summary>
+// Scenario part that puts a piece of apparel on each starting colonist
+// (worn, not dropped into the stockpile — which is all vanilla's
+// ScenPart_StartingThing_Defined can do). Used by "Magus of the Abyss" to
+// dress its starter in dark-grey marine (power) armor.
+//
+// Generic over the apparel def, optional stuff, and an optional override colour
+// (overrideColor + color, applied via the apparel's
+// CompColorable; left at the generated colour otherwise).
+//
+// Runs from ModifyPawnPostGenerate so it lands after vanilla
+// gear generation (we wear on top, dropping any layer-conflicting piece) and is
+// visible on the starting-pawn config screen. Idempotent across redress / re-roll.
+// Scope it to PlayerStarter in XML.
 public class ScenPart_StartingApparelWorn : ScenPart_PawnModifier
 {
     private ThingDef apparelDef;

@@ -4,28 +4,26 @@ using Verse;
 
 namespace ArchotechAndroidHardware;
 
-/// <summary>
-/// Core hediff for the neutrosynthesizer. Manages a companion gene lifecycle and
-/// drives neutroamine recovery.
-///
-/// Gene mechanism: A companion gene (AAH_Neutrosynthesizer) shares an exclusion
-/// tag with VREA_NeutroSynthesis. Biotech's gene override system suppresses
-/// VREA_NeutroSynthesis while our gene is active, replacing the subroutine's
-/// slow 0.05/day recovery with this hediff's 0.3/day per kidney.
-///
-/// Neutro recovery: Each tick, reduces VREA_NeutroLoss severity by 0.3/day.
-/// With two kidneys replaced, each hediff ticks independently for 0.6/day total,
-/// exceeding human blood recovery (0.5/day).
-///
-/// Lifecycle:
-///   Install  (PostAdd)         -> adds companion gene as xenogene
-///   Runtime  (Tick)            -> reduces VREA_NeutroLoss severity
-///   Removal  (PostRemoved)     -> removes companion gene, destroys kidney body part
-///   Load     (PostLoadInit)    -> re-asserts gene presence if missing (invariant defense)
-///
-/// Note: extends Hediff_AddedPart because this is a kidney replacement (like VREA's
-/// neutrofilter). On removal, the kidney slot becomes missing.
-/// </summary>
+// Core hediff for the neutrosynthesizer. Manages a companion gene lifecycle and
+// drives neutroamine recovery.
+//
+// Gene mechanism: A companion gene (AAH_Neutrosynthesizer) shares an exclusion
+// tag with VREA_NeutroSynthesis. Biotech's gene override system suppresses
+// VREA_NeutroSynthesis while our gene is active, replacing the subroutine's
+// slow 0.05/day recovery with this hediff's 0.3/day per kidney.
+//
+// Neutro recovery: Each tick, reduces VREA_NeutroLoss severity by 0.3/day.
+// With two kidneys replaced, each hediff ticks independently for 0.6/day total,
+// exceeding human blood recovery (0.5/day).
+//
+// Lifecycle:
+//   Install  (PostAdd)         -> adds companion gene as xenogene
+//   Runtime  (Tick)            -> reduces VREA_NeutroLoss severity
+//   Removal  (PostRemoved)     -> removes companion gene, destroys kidney body part
+//   Load     (PostLoadInit)    -> re-asserts gene presence if missing (invariant defense)
+//
+// Note: extends Hediff_AddedPart because this is a kidney replacement (like VREA's
+// neutrofilter). On removal, the kidney slot becomes missing.
 public class Hediff_Neutrosynthesizer : Hediff_AddedPart
 {
     private const float SeverityPerDay = 0.3f;

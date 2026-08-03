@@ -5,55 +5,53 @@ using Verse;
 
 namespace ArchotechAndroidHardware;
 
-/// <summary>
-/// Shared maintenance for the reactor core glow mote. Each reactor hediff owns
-/// a Mote reference and calls Maintain() from its tick path; this helper
-/// (re)creates the mote when missing, applies per-pawn body-size scaling, and
-/// drives colour/alpha each tick.
-///
-/// Why a mote instead of another PawnRenderNode: render nodes draw at the
-/// pawn's altitude band and are occluded by the unnatural-darkness section
-/// layer. The mote at AltitudeLayer.Darkness draws above that overlay (the
-/// same trick CompNoctolEyes uses for noctol eye glow). In normal lighting
-/// the mote renders as an additive layer over the chest body attachment;
-/// in unnatural darkness the body is hidden but the glow punches through.
-///
-/// Sizing parity: the mote texture is 256x256 with a 40px hot core and a
-/// baked halo gradient filling the remaining canvas. The body attachment is
-/// 128x128 with a 40px core. The mote def's drawSize is tuned empirically
-/// (not by pure math) — PawnRenderNodeWorker_AttachmentBody composes scale
-/// factors beyond bodyGraphicScale (chest-specific drawData scale, root
-/// pawn graphic scale, etc.) that we don't replicate here, so the cleanest
-/// path is matching by eye against the chest core on a reference pawn.
-/// The bodyGraphicScale average is still applied via Mote.Scale so the
-/// glow tracks body-type variation (Thin/Hulk/Fat).
-///
-/// Positional parity: the body attachment renders with a downward offset
-/// onto the chest, not at the pawn's pivot. ChestOffset replicates this so
-/// the mote's hot center sits on the chest core rather than the pawn's
-/// vertical centre. Negative Z = south on screen.
-///
-/// Facing parity: south-only, matching the reactor chest body attachment's
-/// visibleFacing. The reactor is inset into the chest and only visible from
-/// the front; its glow shouldn't show through the body from the back/sides.
-/// Implemented as alpha=0 rather than destroy/recreate so a facing change
-/// fades in/out without allocation churn. For non-standing postures the
-/// facing is read from <c>PawnRenderer.LayingFacing</c> (matches how
-/// MoteAttached gates attached-to-head visibility) so the glow correctly
-/// hides on a face-down / face-away prone body.
-///
-/// Posture tracking: positioning through laying / bed / downed postures is
-/// handled by <see cref="Mote_ReactorGlow"/>, which mirrors the body's draw
-/// position and rotation each tick. This helper just seeds the chest offset
-/// onto the mote at creation time and drives the per-tick colour/alpha.
-///
-/// Call from Hediff.Tick — NOT Hediff.TickInterval. In 1.6, Thing.DoTick
-/// batches TickInterval at UpdateRateTicks (variable, larger when the pawn
-/// is offscreen), which can exceed the mote's solidTime=600 and cause the
-/// mote to despawn between maintenance calls. Hediff.Tick fires every game
-/// tick regardless of distance — the same cadence CompNoctolEyes uses via
-/// CompTick for the noctol eye glow.
-/// </summary>
+// Shared maintenance for the reactor core glow mote. Each reactor hediff owns
+// a Mote reference and calls Maintain() from its tick path; this helper
+// (re)creates the mote when missing, applies per-pawn body-size scaling, and
+// drives colour/alpha each tick.
+//
+// Why a mote instead of another PawnRenderNode: render nodes draw at the
+// pawn's altitude band and are occluded by the unnatural-darkness section
+// layer. The mote at AltitudeLayer.Darkness draws above that overlay (the
+// same trick CompNoctolEyes uses for noctol eye glow). In normal lighting
+// the mote renders as an additive layer over the chest body attachment;
+// in unnatural darkness the body is hidden but the glow punches through.
+//
+// Sizing parity: the mote texture is 256x256 with a 40px hot core and a
+// baked halo gradient filling the remaining canvas. The body attachment is
+// 128x128 with a 40px core. The mote def's drawSize is tuned empirically
+// (not by pure math) — PawnRenderNodeWorker_AttachmentBody composes scale
+// factors beyond bodyGraphicScale (chest-specific drawData scale, root
+// pawn graphic scale, etc.) that we don't replicate here, so the cleanest
+// path is matching by eye against the chest core on a reference pawn.
+// The bodyGraphicScale average is still applied via Mote.Scale so the
+// glow tracks body-type variation (Thin/Hulk/Fat).
+//
+// Positional parity: the body attachment renders with a downward offset
+// onto the chest, not at the pawn's pivot. ChestOffset replicates this so
+// the mote's hot center sits on the chest core rather than the pawn's
+// vertical centre. Negative Z = south on screen.
+//
+// Facing parity: south-only, matching the reactor chest body attachment's
+// visibleFacing. The reactor is inset into the chest and only visible from
+// the front; its glow shouldn't show through the body from the back/sides.
+// Implemented as alpha=0 rather than destroy/recreate so a facing change
+// fades in/out without allocation churn. For non-standing postures the
+// facing is read from PawnRenderer.LayingFacing (matches how
+// MoteAttached gates attached-to-head visibility) so the glow correctly
+// hides on a face-down / face-away prone body.
+//
+// Posture tracking: positioning through laying / bed / downed postures is
+// handled by Mote_ReactorGlow, which mirrors the body's draw
+// position and rotation each tick. This helper just seeds the chest offset
+// onto the mote at creation time and drives the per-tick colour/alpha.
+//
+// Call from Hediff.Tick — NOT Hediff.TickInterval. In 1.6, Thing.DoTick
+// batches TickInterval at UpdateRateTicks (variable, larger when the pawn
+// is offscreen), which can exceed the mote's solidTime=600 and cause the
+// mote to despawn between maintenance calls. Hediff.Tick fires every game
+// tick regardless of distance — the same cadence CompNoctolEyes uses via
+// CompTick for the noctol eye glow.
 public static class ReactorGlowMote
 {
     // Empirically-tuned chest offset. Pawn DrawPos sits at the cell centre /
@@ -116,12 +114,10 @@ public static class ReactorGlowMote
         mote.Maintain();
     }
 
-    /// <summary>
-    /// Whether the reactor chest core is presented to the camera and should glow.
-    /// The reactor is inset into the front of the torso, so the glow is only ever
-    /// visible from the south face of the body, and only when the body is actually
-    /// drawn and unobstructed by what the pawn is carrying.
-    /// </summary>
+    // Whether the reactor chest core is presented to the camera and should glow.
+    // The reactor is inset into the front of the torso, so the glow is only ever
+    // visible from the south face of the body, and only when the body is actually
+    // drawn and unobstructed by what the pawn is carrying.
     private static bool IsChestVisible(Pawn pawn)
     {
         // Crawling: the torso is face-down against the ground, so the front-set
@@ -169,10 +165,8 @@ public static class ReactorGlowMote
         return facing == Rot4.South;
     }
 
-    /// <summary>
-    /// Mirrors the body-visibility branches PawnRenderer uses (duty
-    /// drawBodyOverride and bed_showSleeperBody). Standing always shows the body.
-    /// </summary>
+    // Mirrors the body-visibility branches PawnRenderer uses (duty
+    // drawBodyOverride and bed_showSleeperBody). Standing always shows the body.
     private static bool ShowsBody(Pawn pawn)
     {
         if (pawn.GetPosture() == PawnPosture.Standing) return true;

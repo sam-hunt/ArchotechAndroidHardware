@@ -4,33 +4,31 @@ using Verse;
 
 namespace ArchotechAndroidHardware.VREAPatches;
 
-/// <summary>
-/// VREA workaround: restores standard downed logic for androids with any AAH_
-/// reactor replacement (Vanometric, Thanatic, …).
-///
-/// Problem: VREA's prefix on ShouldBeDowned checks for Hediff_AndroidReactor via
-/// OfType&lt;Hediff_AndroidReactor&gt;(). Our reactor hediffs extend Hediff_AddedPart
-/// (not VREA's type), so VREA finds no reactor and forces the android permanently
-/// downed. We use Hediff_AddedPart instead of Hediff_AndroidReactor because (a)
-/// we keep the mod reflection-only (no VREAndroids.dll compile-time dep) and (b)
-/// Vanometric has no drain at all while Thanatic's drain math is reimplemented.
-///
-/// Fix: After VREA's prefix sets __result = true (downed), check whether the
-/// pawn has any known AAH_ reactor hediff. If so, re-evaluate using the standard
-/// capacity-based check (CanBeAwake + CapableOf Moving), matching VREA's own
-/// else branch for reactor-equipped androids.
-///
-/// Note on Thanatic specifically: when Thanatic's Energy reaches 0, the hediff's
-/// TickInterval calls pawn.Kill() directly — the pawn dies rather than gets
-/// downed. This patch ensures the pawn stays upright while Energy > 0; the
-/// death transition happens in Hediff_ThanaticReactor, not here.
-///
-/// Lifecycle context: Active at runtime for every ShouldBeDowned evaluation
-/// on a pawn with any AAH_ reactor hediff installed.
-///
-/// Removable if: VREA checks for reactor presence by def, tag, or interface
-/// rather than hardcoding the Hediff_AndroidReactor type in OfType&lt;&gt;.
-/// </summary>
+// VREA workaround: restores standard downed logic for androids with any AAH_
+// reactor replacement (Vanometric, Thanatic, …).
+//
+// Problem: VREA's prefix on ShouldBeDowned checks for Hediff_AndroidReactor via
+// OfType<Hediff_AndroidReactor>(). Our reactor hediffs extend Hediff_AddedPart
+// (not VREA's type), so VREA finds no reactor and forces the android permanently
+// downed. We use Hediff_AddedPart instead of Hediff_AndroidReactor because (a)
+// we keep the mod reflection-only (no VREAndroids.dll compile-time dep) and (b)
+// Vanometric has no drain at all while Thanatic's drain math is reimplemented.
+//
+// Fix: After VREA's prefix sets __result = true (downed), check whether the
+// pawn has any known AAH_ reactor hediff. If so, re-evaluate using the standard
+// capacity-based check (CanBeAwake + CapableOf Moving), matching VREA's own
+// else branch for reactor-equipped androids.
+//
+// Note on Thanatic specifically: when Thanatic's Energy reaches 0, the hediff's
+// TickInterval calls pawn.Kill() directly — the pawn dies rather than gets
+// downed. This patch ensures the pawn stays upright while Energy > 0; the
+// death transition happens in Hediff_ThanaticReactor, not here.
+//
+// Lifecycle context: Active at runtime for every ShouldBeDowned evaluation
+// on a pawn with any AAH_ reactor hediff installed.
+//
+// Removable if: VREA checks for reactor presence by def, tag, or interface
+// rather than hardcoding the Hediff_AndroidReactor type in OfType<>.
 [HarmonyPatch(typeof(Pawn_HealthTracker), nameof(Pawn_HealthTracker.ShouldBeDowned))]
 public static class PawnHealthTracker_ShouldBeDowned_Postfix
 {

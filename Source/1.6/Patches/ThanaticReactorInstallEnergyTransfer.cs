@@ -6,24 +6,22 @@ using Verse;
 
 namespace ArchotechAndroidHardware.VREAPatches;
 
-/// <summary>
-/// Transfers a Thanatic Reactor item's <c>storedEnergy</c> onto the installed
-/// <see cref="Hediff_ThanaticReactor"/> during install surgery. Without this,
-/// every installation would start the hediff at Energy = 1f (PostAdd default),
-/// wiping the ingredient item's stored charge and breaking reactor
-/// transferability between android pawns.
-///
-/// Flow:
-///   Prefix  — scan <c>ingredients</c> for a <see cref="ThanaticReactorThing"/>,
-///             stash its <c>storedEnergy</c> into <see cref="_pendingEnergy"/>.
-///   (original ApplyOnPawn runs; VREA's code adds the hediff at Energy = 1f)
-///   Postfix — if we stashed energy AND the pawn now has a Thanatic Reactor
-///             hediff, overwrite its Energy with the stashed value, then clear.
-///
-/// Coexists with <see cref="RecipeInstallAndroidPart_ApplyOnPawn_Patch"/> on
-/// the same target method. The two patches don't interact — ejection/gene
-/// cleanup vs. energy transfer — and can run in either order.
-/// </summary>
+// Transfers a Thanatic Reactor item's storedEnergy onto the installed
+// Hediff_ThanaticReactor during install surgery. Without this,
+// every installation would start the hediff at Energy = 1f (PostAdd default),
+// wiping the ingredient item's stored charge and breaking reactor
+// transferability between android pawns.
+//
+// Flow:
+//   Prefix  — scan ingredients for a ThanaticReactorThing,
+//             stash its storedEnergy into _pendingEnergy.
+//   (original ApplyOnPawn runs; VREA's code adds the hediff at Energy = 1f)
+//   Postfix — if we stashed energy AND the pawn now has a Thanatic Reactor
+//             hediff, overwrite its Energy with the stashed value, then clear.
+//
+// Coexists with RecipeInstallAndroidPart_ApplyOnPawn_Patch on
+// the same target method. The two patches don't interact — ejection/gene
+// cleanup vs. energy transfer — and can run in either order.
 [HarmonyPatch]
 public static class ThanaticReactorInstallEnergyTransfer_Patch
 {

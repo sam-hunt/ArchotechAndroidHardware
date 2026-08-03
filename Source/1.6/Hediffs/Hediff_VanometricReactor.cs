@@ -5,25 +5,23 @@ using Verse;
 
 namespace ArchotechAndroidHardware;
 
-/// <summary>
-/// Core hediff for the vanometric reactor. Manages a companion gene lifecycle:
-///
-/// Gene mechanism: A companion gene (AAH_VanometricReactor) shares an exclusion
-/// tag with VREA_Power. Biotech's gene override system suppresses VREA_Power
-/// while our gene is active, which prevents VREA_Power's enablesNeeds from
-/// creating the ReactorPower need. The hediff's disablesNeeds then removes
-/// any residual need instance.
-///
-/// Lifecycle:
-///   Install  (PostAdd)         -> adds companion gene as xenogene
-///   Runtime                    -> hediff's disablesNeeds suppresses VREA_ReactorPower
-///   Removal  (PostRemoved)     -> removes companion gene, destroys reactor body part
-///   Load     (PostLoadInit)    -> re-asserts gene presence if missing (invariant defense)
-///
-/// Note: extends Hediff_AddedPart (not VREA's Hediff_AndroidReactor) because we
-/// don't need VREA's reactor drain logic. This type mismatch is what triggers
-/// the PawnHealthTracker_ShouldBeDowned workaround -- see that patch for details.
-/// </summary>
+// Core hediff for the vanometric reactor. Manages a companion gene lifecycle:
+//
+// Gene mechanism: A companion gene (AAH_VanometricReactor) shares an exclusion
+// tag with VREA_Power. Biotech's gene override system suppresses VREA_Power
+// while our gene is active, which prevents VREA_Power's enablesNeeds from
+// creating the ReactorPower need. The hediff's disablesNeeds then removes
+// any residual need instance.
+//
+// Lifecycle:
+//   Install  (PostAdd)         -> adds companion gene as xenogene
+//   Runtime                    -> hediff's disablesNeeds suppresses VREA_ReactorPower
+//   Removal  (PostRemoved)     -> removes companion gene, destroys reactor body part
+//   Load     (PostLoadInit)    -> re-asserts gene presence if missing (invariant defense)
+//
+// Note: extends Hediff_AddedPart (not VREA's Hediff_AndroidReactor) because we
+// don't need VREA's reactor drain logic. This type mismatch is what triggers
+// the PawnHealthTracker_ShouldBeDowned workaround -- see that patch for details.
 public class Hediff_VanometricReactor : Hediff_AddedPart
 {
     private static GeneDef VanometricPowerGene => AAH_GeneDefOf.AAH_VanometricReactor;

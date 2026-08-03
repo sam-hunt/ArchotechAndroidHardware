@@ -5,23 +5,21 @@ using Verse;
 
 namespace ArchotechAndroidHardware;
 
-/// <summary>
-/// Eligibility/commonality gate for the <c>AAH_SelfDetermination</c> inspiration.
-///
-/// The inspiration is granted only to an <b>awakened android</b>, with a separate
-/// random-pool weight for those carrying one of this mod's parts (any
-/// <c>AAH_Hardware</c>-category companion gene) vs. those that don't — either
-/// weight at 0 makes that group ineligible (the two commonality settings; both at
-/// 0 disables the feature). Awakened is required because a non-awakened android
-/// can already use VREA's behavior station normally, so the inspiration would be
-/// pointless there.
-///
-/// VREA's <c>IsAwakened</c> returns true for any pawn with no
-/// <c>removeWhenAwakened</c> android gene — including non-androids — so the
-/// explicit <see cref="SelfDeterminationUtility.IsAndroid"/> check is load-bearing
-/// whenever the without-part weight is above zero (else a plain human colonist
-/// would qualify).
-/// </summary>
+// Eligibility/commonality gate for the AAH_SelfDetermination inspiration.
+//
+// The inspiration is granted only to an awakened android, with a separate
+// random-pool weight for those carrying one of this mod's parts (any
+// AAH_Hardware-category companion gene) vs. those that don't — either
+// weight at 0 makes that group ineligible (the two commonality settings; both at
+// 0 disables the feature). Awakened is required because a non-awakened android
+// can already use VREA's behavior station normally, so the inspiration would be
+// pointless there.
+//
+// VREA's IsAwakened returns true for any pawn with no
+// removeWhenAwakened android gene — including non-androids — so the
+// explicit SelfDeterminationUtility.IsAndroid check is load-bearing
+// whenever the without-part weight is above zero (else a plain human colonist
+// would qualify).
 public class InspirationWorker_SelfDetermination : InspirationWorker
 {
     public override bool InspirationCanOccur(Pawn pawn)

@@ -6,39 +6,37 @@ using Verse;
 
 namespace ArchotechAndroidHardware;
 
-/// <summary>
-/// Core hediff for the grav reactor. Drains slower than baseline (driven by
-/// the companion gene's biostatMet +4 through VREA's
-/// PowerEfficiencyToPowerDrainFactorCurve) and is refilled by the configured
-/// fraction (default 0.5) whenever the host participates in a gravship launch
-/// ritual — see
-/// <see cref="VREAPatches.RitualOutcomeWorker_GravshipLaunch_Apply_Patch"/>.
-///
-/// On depletion: the hediff's Severity tracks (1 - Energy), so when Energy
-/// hits zero the empty stage activates and clamps Consciousness to 0. The
-/// PawnHealthTracker_ShouldBeDowned postfix then re-evaluates capacities and
-/// forces the pawn downed. The pawn does NOT die — unlike Thanatic, recharging
-/// (via a launch) or replacing the reactor revives them.
-///
-/// Companion gene lifecycle: mirrors Hediff_VanometricReactor / Hediff_ThanaticReactor —
-/// add on install, remove on uninstall, re-assert on post-load-init in case
-/// external mods stripped it.
-///
-/// Why Hediff_AddedPart base: body-part replacement in the reactor slot. VREA's
-/// ShouldBeDowned prefix would force-down the pawn permanently because we're
-/// not a Hediff_AndroidReactor; PawnHealthTracker_ShouldBeDowned_Postfix
-/// handles that fallthrough (this hediff's def is in its allowlist).
-///
-/// Power need wiring: VREA's Need_ReactorPower.CurLevel looks up by def name
-/// (VREA_Reactor). The NeedReactorPower_CurLevel patches fall through to any
-/// hediff implementing <see cref="IAAHReactorEnergy"/> when VREA_Reactor is
-/// absent — both getter and setter route through this hediff's Energy.
-///
-/// State transfer: implements <see cref="ICustomAAHEjection"/> so replacement
-/// surgery preserves the current Energy onto the freshly-spawned reactor
-/// item, matching the Thanatic pattern. Install transfer is handled by
-/// <see cref="VREAPatches.GravReactorInstallEnergyTransfer_Patch"/>.
-/// </summary>
+// Core hediff for the grav reactor. Drains slower than baseline (driven by
+// the companion gene's biostatMet +4 through VREA's
+// PowerEfficiencyToPowerDrainFactorCurve) and is refilled by the configured
+// fraction (default 0.5) whenever the host participates in a gravship launch
+// ritual — see
+// VREAPatches.RitualOutcomeWorker_GravshipLaunch_Apply_Patch.
+//
+// On depletion: the hediff's Severity tracks (1 - Energy), so when Energy
+// hits zero the empty stage activates and clamps Consciousness to 0. The
+// PawnHealthTracker_ShouldBeDowned postfix then re-evaluates capacities and
+// forces the pawn downed. The pawn does NOT die — unlike Thanatic, recharging
+// (via a launch) or replacing the reactor revives them.
+//
+// Companion gene lifecycle: mirrors Hediff_VanometricReactor / Hediff_ThanaticReactor —
+// add on install, remove on uninstall, re-assert on post-load-init in case
+// external mods stripped it.
+//
+// Why Hediff_AddedPart base: body-part replacement in the reactor slot. VREA's
+// ShouldBeDowned prefix would force-down the pawn permanently because we're
+// not a Hediff_AndroidReactor; PawnHealthTracker_ShouldBeDowned_Postfix
+// handles that fallthrough (this hediff's def is in its allowlist).
+//
+// Power need wiring: VREA's Need_ReactorPower.CurLevel looks up by def name
+// (VREA_Reactor). The NeedReactorPower_CurLevel patches fall through to any
+// hediff implementing IAAHReactorEnergy when VREA_Reactor is
+// absent — both getter and setter route through this hediff's Energy.
+//
+// State transfer: implements ICustomAAHEjection so replacement
+// surgery preserves the current Energy onto the freshly-spawned reactor
+// item, matching the Thanatic pattern. Install transfer is handled by
+// VREAPatches.GravReactorInstallEnergyTransfer_Patch.
 public class Hediff_GravReactor : Hediff_AddedPart, ICustomAAHEjection, IAAHReactorEnergy
 {
     private float curEnergy = 1f;
@@ -128,21 +126,19 @@ public class Hediff_GravReactor : Hediff_AddedPart, ICustomAAHEjection, IAAHReac
         SpawnReactorItem(position, map, curEnergy);
     }
 
-    /// <summary>
-    /// Recharge entry point for the gravship-landing patch. Refills the reactor
-    /// by the configured fraction (default 0.5), spills any overflow into the
-    /// Grav Overcharge buff, and arms the cyan charging aura, which fires on the
-    /// next Tick once the host pawn is back on a map. Coalescing two landings
-    /// within the same ~10s window is fine — the second call just resets the
-    /// pending timer to the full window; the aura plays once when the pawn next
-    /// ticks-while-spawned.
-    ///
-    /// Overflow mirrors Thanatic's kill-refill: it appears only when the reactor
-    /// was already more than (1 - refill) full at launch, and a fuller reactor
-    /// grants more overcharge. Only installed reactors reach here (item reactors
-    /// on the manifest are topped off directly by the landing patch), so there
-    /// is always a host pawn to buff.
-    /// </summary>
+    // Recharge entry point for the gravship-landing patch. Refills the reactor
+    // by the configured fraction (default 0.5), spills any overflow into the
+    // Grav Overcharge buff, and arms the cyan charging aura, which fires on the
+    // next Tick once the host pawn is back on a map. Coalescing two landings
+    // within the same ~10s window is fine — the second call just resets the
+    // pending timer to the full window; the aura plays once when the pawn next
+    // ticks-while-spawned.
+    //
+    // Overflow mirrors Thanatic's kill-refill: it appears only when the reactor
+    // was already more than (1 - refill) full at launch, and a fuller reactor
+    // grants more overcharge. Only installed reactors reach here (item reactors
+    // on the manifest are topped off directly by the landing patch), so there
+    // is always a host pawn to buff.
     public void Notify_RechargedByLaunch()
     {
         var settings = ArchotechAndroidHardwareMod.Settings;

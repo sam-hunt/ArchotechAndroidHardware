@@ -6,37 +6,35 @@ using Verse;
 
 namespace ArchotechAndroidHardware.VREAPatches;
 
-/// <summary>
-/// VREA workaround: wires <c>Need_ReactorPower</c>'s UI bar AND dev-mode
-/// +/- controls to any installed AAH reactor hediff implementing
-/// <see cref="IAAHReactorEnergy"/> when VREA's own reactor hediff is absent.
-///
-/// Problem: both accessors on VREA's <c>Need_ReactorPower.CurLevel</c> look
-/// up the backing hediff by def (<c>VREA_DefOf.VREA_Reactor</c>), not by
-/// type. When an AAH reactor (Thanatic / Grav) replaces VREA's reactor:
-///   • Getter returns 0 — bar permanently reads empty,
-///     <c>Alert_AndroidsLowOnPower</c> flags the pawn every tick.
-///   • Setter silently no-ops — the dev-mode +/- buttons appear but do
-///     nothing, making reactor behaviour hard to test in-game.
-/// The Need itself still exists because the <c>VREA_Power</c> gene's
-/// <c>enablesNeeds</c> creates it.
-///
-/// Fix: Postfix both accessors. When VREA_Reactor is absent, enumerate the
-/// known AAH reactor defs (see <see cref="ReactorDefs"/>) and route
-/// through the first installed one that implements
-/// <see cref="IAAHReactorEnergy"/>. Getter reads Energy; setter writes Energy
-/// and syncs <c>Need.curLevelInt</c> (matches VREA's native setter behaviour
-/// when its reactor is installed).
-///
-/// VREA_Reactor presence takes precedence in both directions — VREA's
-/// original accessors are left untouched in that branch.
-///
-/// Adding a new reactor type: implement <see cref="IAAHReactorEnergy"/> on
-/// the new hediff and add its DefOf field to <see cref="ReactorDefs"/>.
-///
-/// Removable if: VREA makes the reactor hediff lookup extensible (by tag,
-/// interface, or DefDatabase scan rather than a single hardcoded def).
-/// </summary>
+// VREA workaround: wires Need_ReactorPower's UI bar AND dev-mode
+// +/- controls to any installed AAH reactor hediff implementing
+// IAAHReactorEnergy when VREA's own reactor hediff is absent.
+//
+// Problem: both accessors on VREA's Need_ReactorPower.CurLevel look
+// up the backing hediff by def (VREA_DefOf.VREA_Reactor), not by
+// type. When an AAH reactor (Thanatic / Grav) replaces VREA's reactor:
+//   • Getter returns 0 — bar permanently reads empty,
+//     Alert_AndroidsLowOnPower flags the pawn every tick.
+//   • Setter silently no-ops — the dev-mode +/- buttons appear but do
+//     nothing, making reactor behaviour hard to test in-game.
+// The Need itself still exists because the VREA_Power gene's
+// enablesNeeds creates it.
+//
+// Fix: Postfix both accessors. When VREA_Reactor is absent, enumerate the
+// known AAH reactor defs (see ReactorDefs) and route
+// through the first installed one that implements
+// IAAHReactorEnergy. Getter reads Energy; setter writes Energy
+// and syncs Need.curLevelInt (matches VREA's native setter behaviour
+// when its reactor is installed).
+//
+// VREA_Reactor presence takes precedence in both directions — VREA's
+// original accessors are left untouched in that branch.
+//
+// Adding a new reactor type: implement IAAHReactorEnergy on
+// the new hediff and add its DefOf field to ReactorDefs.
+//
+// Removable if: VREA makes the reactor hediff lookup extensible (by tag,
+// interface, or DefDatabase scan rather than a single hardcoded def).
 internal static class NeedReactorPowerPatchHelpers
 {
     private static HediffDef[] _reactorDefs;

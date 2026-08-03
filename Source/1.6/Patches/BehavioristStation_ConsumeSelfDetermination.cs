@@ -5,30 +5,26 @@ using Verse;
 
 namespace ArchotechAndroidHardware.VREAPatches;
 
-/// <summary>
-/// Grants the right payoff moodlet when an android finishes reprogramming itself at
-/// VREA's behavior station, branching on <i>why</i> the awakened android was admitted
-/// (see <see cref="BehavioristStation_AllowSelfDetermination_Patch"/>):
-/// <list type="bullet">
-/// <item>Active <c>AAH_SelfDetermination</c> inspiration → the android chose this of its
-///   own will: consume the inspiration and grant the positive
-///   <c>AAH_SelfDeterminationFulfilled</c> memory.</item>
-/// <item>No inspiration but awakened + psychic transceiver → it was reprogrammed under
-///   outside (archotech) influence, not its own will: grant the
-///   <c>AAH_SelfDeterminationOverridden</c> memory (a decaying-severity unease).</item>
-/// </list>
-///
-/// Patched as a <b>Prefix</b> on <c>Building_AndroidBehavioristStation.FinishAndroidProject()</c>
-/// (no parameters) because the method ejects the occupant before it returns — a
-/// Postfix would read a null <c>Occupant</c>. FinishAndroidProject only runs when
-/// the reprogramming work actually completes, so this is the right "on completion"
-/// hook.
-///
-/// No-op for a normal non-awakened android using the station (neither branch fires).
-///
-/// Reflection-only: target + <c>Occupant</c> resolved via Harmony reflection; the
-/// patch is silently skipped if VREA is absent.
-/// </summary>
+// Grants the right payoff moodlet when an android finishes reprogramming itself at
+// VREA's behavior station, branching on why the awakened android was admitted
+// (see BehavioristStation_AllowSelfDetermination_Patch):
+// - Active AAH_SelfDetermination inspiration → the android chose this of its
+//   own will: consume the inspiration and grant the positive
+//   AAH_SelfDeterminationFulfilled memory.
+// - No inspiration but awakened + psychic transceiver → it was reprogrammed under
+//   outside (archotech) influence, not its own will: grant the
+//   AAH_SelfDeterminationOverridden memory (a decaying-severity unease).
+//
+// Patched as a Prefix on Building_AndroidBehavioristStation.FinishAndroidProject()
+// (no parameters) because the method ejects the occupant before it returns — a
+// Postfix would read a null Occupant. FinishAndroidProject only runs when
+// the reprogramming work actually completes, so this is the right "on completion"
+// hook.
+//
+// No-op for a normal non-awakened android using the station (neither branch fires).
+//
+// Reflection-only: target + Occupant resolved via Harmony reflection; the
+// patch is silently skipped if VREA is absent.
 [HarmonyPatch]
 public static class BehavioristStation_ConsumeSelfDetermination_Patch
 {

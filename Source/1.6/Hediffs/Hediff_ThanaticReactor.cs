@@ -7,39 +7,37 @@ using Verse;
 
 namespace ArchotechAndroidHardware;
 
-/// <summary>
-/// Core hediff for the Thanatic Reactor. Unlike the Vanometric Reactor (which
-/// disables the power need entirely), this reactor keeps VREA's power need
-/// visible and drains faster than baseline. Humanlike kills refill it; overflow
-/// spills into the <c>AAH_ThanaticOvercharge</c> combat buff; hitting zero
-/// energy kills the pawn and ejects the reactor partially recharged.
-///
-/// Why not subclass VREA's Hediff_AndroidReactor: the mod stays reflection-only
-/// (no VREAndroids.dll compile-time dep). We reimplement the ~10 lines of drain
-/// math and read the PowerEfficiency curve from VREA via reflection at runtime.
-///
-/// Why Hediff_AddedPart base (same as Vanometric): this is a body-part
-/// replacement in the reactor slot, not a brain implant. VREA's ShouldBeDowned
-/// prefix force-downs pawns whose reactor isn't <c>Hediff_AndroidReactor</c> —
-/// the existing PawnHealthTracker_ShouldBeDowned postfix handles that.
-///
-/// Power need wiring: VREA's <c>Need_ReactorPower.CurLevel</c> looks up the
-/// reactor hediff by def (VREA_Reactor). With our hediff installed instead,
-/// that lookup fails and the need reads 0. The NeedReactorPower_CurLevel patch
-/// falls through to this hediff's Energy when VREA_Reactor is absent.
-///
-/// Drain rate: driven entirely by the biostatMet sum of the pawn's active
-/// genes, piped through VREA's PowerEfficiencyToPowerDrainFactorCurve (same
-/// mechanism VREA's own reactor uses). Our companion gene
-/// <c>AAH_ThanaticReactor</c> contributes biostatMet -4, which accelerates
-/// drain; the exact multiplier is whatever VREA's curve evaluates to at that
-/// point (we don't assert a specific number here, and the gene's biostatMet
-/// is the only lever we tweak to tune it).
-///
-/// Companion gene lifecycle: mirrors Hediff_VanometricReactor — add on install,
-/// remove on uninstall, re-assert on post-load-init in case external mods
-/// stripped it.
-/// </summary>
+// Core hediff for the Thanatic Reactor. Unlike the Vanometric Reactor (which
+// disables the power need entirely), this reactor keeps VREA's power need
+// visible and drains faster than baseline. Humanlike kills refill it; overflow
+// spills into the AAH_ThanaticOvercharge combat buff; hitting zero
+// energy kills the pawn and ejects the reactor partially recharged.
+//
+// Why not subclass VREA's Hediff_AndroidReactor: the mod stays reflection-only
+// (no VREAndroids.dll compile-time dep). We reimplement the ~10 lines of drain
+// math and read the PowerEfficiency curve from VREA via reflection at runtime.
+//
+// Why Hediff_AddedPart base (same as Vanometric): this is a body-part
+// replacement in the reactor slot, not a brain implant. VREA's ShouldBeDowned
+// prefix force-downs pawns whose reactor isn't Hediff_AndroidReactor —
+// the existing PawnHealthTracker_ShouldBeDowned postfix handles that.
+//
+// Power need wiring: VREA's Need_ReactorPower.CurLevel looks up the
+// reactor hediff by def (VREA_Reactor). With our hediff installed instead,
+// that lookup fails and the need reads 0. The NeedReactorPower_CurLevel patch
+// falls through to this hediff's Energy when VREA_Reactor is absent.
+//
+// Drain rate: driven entirely by the biostatMet sum of the pawn's active
+// genes, piped through VREA's PowerEfficiencyToPowerDrainFactorCurve (same
+// mechanism VREA's own reactor uses). Our companion gene
+// AAH_ThanaticReactor contributes biostatMet -4, which accelerates
+// drain; the exact multiplier is whatever VREA's curve evaluates to at that
+// point (we don't assert a specific number here, and the gene's biostatMet
+// is the only lever we tweak to tune it).
+//
+// Companion gene lifecycle: mirrors Hediff_VanometricReactor — add on install,
+// remove on uninstall, re-assert on post-load-init in case external mods
+// stripped it.
 public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection, IAAHReactorEnergy
 {
     private float curEnergy = 1f;
@@ -190,13 +188,11 @@ public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection, IAAH
         SpawnReactorItem(position, map, curEnergy);
     }
 
-    /// <summary>
-    /// Player-driven extraction from an android corpse. Mirrors the post-death
-    /// flow in <see cref="ExecuteDeath"/>: spawns the reactor item carrying the
-    /// hediff's current energy, then removes the hediff with the same
-    /// "ejected" missing-body-part labeling. Called from
-    /// <see cref="JobDriver_ExtractThanaticReactor"/>.
-    /// </summary>
+    // Player-driven extraction from an android corpse. Mirrors the post-death
+    // flow in ExecuteDeath: spawns the reactor item carrying the
+    // hediff's current energy, then removes the hediff with the same
+    // "ejected" missing-body-part labeling. Called from
+    // JobDriver_ExtractThanaticReactor.
     public void ExtractFromCorpse(Corpse corpse)
     {
         if (corpse == null || corpse.Destroyed) return;

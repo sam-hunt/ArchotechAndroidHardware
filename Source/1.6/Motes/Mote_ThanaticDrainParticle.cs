@@ -3,18 +3,16 @@ using Verse;
 
 namespace ArchotechAndroidHardware;
 
-/// <summary>
-/// Homing particle that streams from a victim's kill tile toward the source
-/// android. Unlike a stock fleck — whose velocity and acceleration are
-/// locked at spawn — this mote recomputes its steering each tick, so it
-/// tracks the android even as it moves.
-///
-/// Self-destructs on reaching the target, losing its target with no corpse
-/// fallback, or the def's natural fade+solid+fade lifespan expiring (safety
-/// net so stragglers never linger).
-///
-/// Spawned in batches by <see cref="ThanaticStreamController"/>.
-/// </summary>
+// Homing particle that streams from a victim's kill tile toward the source
+// android. Unlike a stock fleck — whose velocity and acceleration are
+// locked at spawn — this mote recomputes its steering each tick, so it
+// tracks the android even as it moves.
+//
+// Self-destructs on reaching the target, losing its target with no corpse
+// fallback, or the def's natural fade+solid+fade lifespan expiring (safety
+// net so stragglers never linger).
+//
+// Spawned in batches by ThanaticStreamController.
 public class Mote_ThanaticDrainParticle : Mote
 {
     public Pawn homingTarget;

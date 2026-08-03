@@ -7,23 +7,21 @@ using Verse;
 
 namespace ArchotechAndroidHardware;
 
-/// <summary>
-/// Scenario part that installs an added-part hediff (e.g. an archotech arm) into a
-/// named body part of each starting colonist. Used by "Magus of the Abyss" to give
-/// its starter an archotech arm in place of its right shoulder.
-///
-/// Generic over the hediff (<c>hediffDef</c>), the slot's <c>bodyPart</c> def, and
-/// an optional <c>bodyPartLabel</c> that disambiguates side when a body has more
-/// than one part of that def — matched against <see cref="BodyPartRecord.untranslatedCustomLabel"/>
-/// (the raw English "right shoulder", language-independent), falling back to the
-/// first matching part. Side is purely a health-tab detail here — RimWorld doesn't
-/// render left/right limbs separately — but we honour the request precisely.
-///
-/// Runs from <see cref="ModifyPawnPostGenerate"/> (the same late hook the reactor
-/// part uses), so the limb is present during the starting-pawn config screen and
-/// any of the hediff's own PostAdd wiring fires. Idempotent across redress / re-roll.
-/// Scope it to <c>PlayerStarter</c> in XML.
-/// </summary>
+// Scenario part that installs an added-part hediff (e.g. an archotech arm) into a
+// named body part of each starting colonist. Used by "Magus of the Abyss" to give
+// its starter an archotech arm in place of its right shoulder.
+//
+// Generic over the hediff (hediffDef), the slot's bodyPart def, and
+// an optional bodyPartLabel that disambiguates side when a body has more
+// than one part of that def — matched against BodyPartRecord.untranslatedCustomLabel
+// (the raw English "right shoulder", language-independent), falling back to the
+// first matching part. Side is purely a health-tab detail here — RimWorld doesn't
+// render left/right limbs separately — but we honour the request precisely.
+//
+// Runs from ModifyPawnPostGenerate (the same late hook the reactor
+// part uses), so the limb is present during the starting-pawn config screen and
+// any of the hediff's own PostAdd wiring fires. Idempotent across redress / re-roll.
+// Scope it to PlayerStarter in XML.
 public class ScenPart_StartingBodyPart : ScenPart_PawnModifier
 {
     private HediffDef hediffDef;

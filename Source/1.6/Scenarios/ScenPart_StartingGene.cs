@@ -5,26 +5,24 @@ using Verse;
 
 namespace ArchotechAndroidHardware;
 
-/// <summary>
-/// Scenario part that grants a gene to starting colonists, using the inherited
-/// <c>chance</c> roll for "some of the time" odds. Used by "Magus of the Abyss" to
-/// give each starter a 25% chance of red eyes.
-///
-/// The configured gene for that use is <c>VREA_Eyes_Red</c> — <em>not</em> vanilla
-/// Biotech's <c>Eyes_Red</c>. VREA's <c>GeneDefGenerator.ImpliedGeneDefs</c> postfix
-/// clones every "convertable" vanilla cosmetic gene (eye colour included) into a
-/// <c>VREA_</c>-prefixed implied counterpart carrying the hardware-gene background,
-/// and registers it in <c>allAndroidGenes</c>; that clone is exactly what the
-/// Android Creation / Behaviorist Station dialogs offer as the "red eyes" hardware
-/// gene. Adding the same def here makes the in-game gene inspector and those dialogs
-/// agree. (Implied defs are registered before cross-references resolve, so the
-/// ScenPartDef XML can reference <c>VREA_Eyes_Red</c> directly.)
-///
-/// Runs from <see cref="ModifyPawnPostGenerate"/> so the gene is present before the
-/// config screen renders the pawn (its eye render node then resolves on first draw).
-/// Added as a xenogene to match how VREA installs hardware genes. Idempotent.
-/// Scope it to <c>PlayerStarter</c> in XML.
-/// </summary>
+// Scenario part that grants a gene to starting colonists, using the inherited
+// chance roll for "some of the time" odds. Used by "Magus of the Abyss" to
+// give each starter a 25% chance of red eyes.
+//
+// The configured gene for that use is VREA_Eyes_Red — not vanilla
+// Biotech's Eyes_Red. VREA's GeneDefGenerator.ImpliedGeneDefs postfix
+// clones every "convertable" vanilla cosmetic gene (eye colour included) into a
+// VREA_-prefixed implied counterpart carrying the hardware-gene background,
+// and registers it in allAndroidGenes; that clone is exactly what the
+// Android Creation / Behaviorist Station dialogs offer as the "red eyes" hardware
+// gene. Adding the same def here makes the in-game gene inspector and those dialogs
+// agree. (Implied defs are registered before cross-references resolve, so the
+// ScenPartDef XML can reference VREA_Eyes_Red directly.)
+//
+// Runs from ModifyPawnPostGenerate so the gene is present before the
+// config screen renders the pawn (its eye render node then resolves on first draw).
+// Added as a xenogene to match how VREA installs hardware genes. Idempotent.
+// Scope it to PlayerStarter in XML.
 public class ScenPart_StartingGene : ScenPart_PawnModifier
 {
     private GeneDef geneDef;

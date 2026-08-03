@@ -7,48 +7,46 @@ using Verse;
 
 namespace ArchotechAndroidHardware.VREAPatches;
 
-/// <summary>
-/// Refills every grav reactor that travelled on a gravship, at the moment the
-/// ship lands at its destination.
-///
-/// Hook: postfix on Odyssey's
-/// <c>Verse.WorldComponent_GravshipController.InitiateLanding</c> — called
-/// once per landing, after travel completes, regardless of positive/negative
-/// outcome. Negative outcomes (crash / rough landings) affect arrival fidelity
-/// (damage, scatter, etc.) but the ship still arrives, so InitiateLanding
-/// still fires. This timing intentionally trails the destination picker and
-/// the travel animation, so:
-///
-///   • Ritual interrupted before completion → Apply early-returned, no
-///     destination picker opens, no launch, no landing → no refill. ✓
-///   • Ritual completes but player cancels at the destination picker → no
-///     takeoff → no landing → no refill. ✓
-///   • Ritual completes, ship launches, ship arrives (clean landing) → refill. ✓
-///   • Ritual completes, ship launches, ship arrives (crash landing) → refill. ✓
-///
-/// Manifest of who/what was on the ship: <see cref="Gravship.Things"/> and
-/// <see cref="Gravship.Pawns"/>. The Gravship object captures the contents at
-/// takeoff and carries them through travel, so reading these collections at
-/// landing gives the authoritative "actually went on the trip" set — no
-/// substructure intersection required.
-///
-/// Container traversal: a reactor inside a pawn's inventory, a colonist's
-/// carry tracker, or a storage building (crate / shelf with inner container)
-/// won't appear directly in <see cref="Gravship.Things"/> — only the
-/// outermost holder does. <see cref="ThingOwnerUtility.GetAllThingsRecursively"/>
-/// walks every nested <see cref="IThingHolder"/> for us, collapsing all those
-/// scopes into a single recursive scan per holder.
-///
-/// Odyssey types live in the main Assembly-CSharp.dll (the DLC ships no
-/// separate assembly), so direct C# references to <see cref="Gravship"/> etc.
-/// are safe — the types are present even on installs without Odyssey
-/// ownership (only the Defs are gated). TargetMethod still uses TypeByName
-/// to match the rest of the patch set's posture: a future rename silently
-/// no-ops the patch rather than crashing at load.
-///
-/// Removable if: Odyssey exposes a public "gravship landed" event with the
-/// Gravship attached, or the grav reactor's refill semantics change.
-/// </summary>
+// Refills every grav reactor that travelled on a gravship, at the moment the
+// ship lands at its destination.
+//
+// Hook: postfix on Odyssey's
+// Verse.WorldComponent_GravshipController.InitiateLanding — called
+// once per landing, after travel completes, regardless of positive/negative
+// outcome. Negative outcomes (crash / rough landings) affect arrival fidelity
+// (damage, scatter, etc.) but the ship still arrives, so InitiateLanding
+// still fires. This timing intentionally trails the destination picker and
+// the travel animation, so:
+//
+//   • Ritual interrupted before completion → Apply early-returned, no
+//     destination picker opens, no launch, no landing → no refill. ✓
+//   • Ritual completes but player cancels at the destination picker → no
+//     takeoff → no landing → no refill. ✓
+//   • Ritual completes, ship launches, ship arrives (clean landing) → refill. ✓
+//   • Ritual completes, ship launches, ship arrives (crash landing) → refill. ✓
+//
+// Manifest of who/what was on the ship: Gravship.Things and
+// Gravship.Pawns. The Gravship object captures the contents at
+// takeoff and carries them through travel, so reading these collections at
+// landing gives the authoritative "actually went on the trip" set — no
+// substructure intersection required.
+//
+// Container traversal: a reactor inside a pawn's inventory, a colonist's
+// carry tracker, or a storage building (crate / shelf with inner container)
+// won't appear directly in Gravship.Things — only the
+// outermost holder does. ThingOwnerUtility.GetAllThingsRecursively
+// walks every nested IThingHolder for us, collapsing all those
+// scopes into a single recursive scan per holder.
+//
+// Odyssey types live in the main Assembly-CSharp.dll (the DLC ships no
+// separate assembly), so direct C# references to Gravship etc.
+// are safe — the types are present even on installs without Odyssey
+// ownership (only the Defs are gated). TargetMethod still uses TypeByName
+// to match the rest of the patch set's posture: a future rename silently
+// no-ops the patch rather than crashing at load.
+//
+// Removable if: Odyssey exposes a public "gravship landed" event with the
+// Gravship attached, or the grav reactor's refill semantics change.
 [HarmonyPatch]
 public static class WorldComponentGravshipController_InitiateLanding_Patch
 {

@@ -5,21 +5,19 @@ using Verse.AI;
 
 namespace ArchotechAndroidHardware;
 
-/// <summary>
-/// One-click "extract thanatic reactor" right-click option on android corpses
-/// containing an installed Hediff_ThanaticReactor. Goes beyond vanilla skull
-/// extraction (which has no float-menu surface — it requires architect-menu
-/// designation first) so players can discover the feature without opening the
-/// orders tab.
-///
-/// Adds the AAH_ExtractThanaticReactor designation AND immediately prioritizes
-/// the extraction job onto the clicking pawn. The designation also makes the
-/// overlay visible (and lets WorkGiver_ExtractThanaticReactor pick it up if
-/// the prioritized pawn is interrupted before completion). When the corpse is
-/// already designated, this provider stays silent — the generic
-/// FloatMenuOptionProvider_WorkGivers surfaces the same job through our
-/// WorkGiverDef in that case, so we'd otherwise duplicate the option.
-/// </summary>
+// One-click "extract thanatic reactor" right-click option on android corpses
+// containing an installed Hediff_ThanaticReactor. Goes beyond vanilla skull
+// extraction (which has no float-menu surface — it requires architect-menu
+// designation first) so players can discover the feature without opening the
+// orders tab.
+//
+// Adds the AAH_ExtractThanaticReactor designation AND immediately prioritizes
+// the extraction job onto the clicking pawn. The designation also makes the
+// overlay visible (and lets WorkGiver_ExtractThanaticReactor pick it up if
+// the prioritized pawn is interrupted before completion). When the corpse is
+// already designated, this provider stays silent — the generic
+// FloatMenuOptionProvider_WorkGivers surfaces the same job through our
+// WorkGiverDef in that case, so we'd otherwise duplicate the option.
 public class FloatMenuOptionProvider_ExtractThanaticReactor : FloatMenuOptionProvider
 {
     protected override bool Drafted => false;

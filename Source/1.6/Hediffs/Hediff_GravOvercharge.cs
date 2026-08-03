@@ -4,27 +4,23 @@ using Verse;
 
 namespace ArchotechAndroidHardware;
 
-/// <summary>
-/// Whole-body buff applied when a grav reactor's launch-refill overflows the
-/// energy meter — the reactor was already partly charged at launch, so the
-/// "wasted" refill discharges as grav heat. Because the default refill is full
-/// (1.0), the overflow equals the pre-launch charge: a launch on a near-full
-/// reactor yields the most overcharge, an empty one almost none.
-///
-/// Mirrors <see cref="Hediff_ThanaticOvercharge"/> in shape — duration via
-/// <see cref="HediffComp_Disappears"/>, with repeat launches *extending*
-/// <c>ticksToDisappear</c> (capped by
-/// <see cref="ArchotechAndroidHardwareSettings.gravOverchargeCapHours"/>) rather
-/// than re-applying the hediff fresh. It carries no psyfocus bump (that is the
-/// thanatic/psychic theme); grav's payoff is the thermal-vent + agility stat
-/// envelope defined in the XML stage.
-/// </summary>
+// Whole-body buff applied when a grav reactor's launch-refill overflows the
+// energy meter — the reactor was already partly charged at launch, so the
+// "wasted" refill discharges as grav heat. Because the default refill is full
+// (1.0), the overflow equals the pre-launch charge: a launch on a near-full
+// reactor yields the most overcharge, an empty one almost none.
+//
+// Mirrors Hediff_ThanaticOvercharge in shape — duration via
+// HediffComp_Disappears, with repeat launches *extending*
+// ticksToDisappear (capped by
+// ArchotechAndroidHardwareSettings.gravOverchargeCapHours) rather
+// than re-applying the hediff fresh. It carries no psyfocus bump (that is the
+// thanatic/psychic theme); grav's payoff is the thermal-vent + agility stat
+// envelope defined in the XML stage.
 public class Hediff_GravOvercharge : HediffWithComps
 {
-    /// <summary>
-    /// Apply or extend Grav Overcharge on the given pawn.
-    /// </summary>
-    /// <param name="overflow">Fraction [0,1] of reactor energy that overflowed past max on refill.</param>
+    // Apply or extend Grav Overcharge on the given pawn.
+    // overflow: Fraction [0,1] of reactor energy that overflowed past max on refill.
     public static void ApplyOrExtend(Pawn pawn, float overflow, ArchotechAndroidHardwareSettings settings)
     {
         if (pawn == null || overflow <= 0f) return;

@@ -6,22 +6,20 @@ using Verse;
 
 namespace ArchotechAndroidHardware.VREAPatches;
 
-/// <summary>
-/// Transfers a Grav Reactor item's <c>storedEnergy</c> onto the installed
-/// <see cref="Hediff_GravReactor"/> during install surgery. Without this,
-/// every installation would start the hediff at Energy = 1f (PostAdd default),
-/// wiping the ingredient item's stored charge and breaking reactor
-/// transferability between android pawns.
-///
-/// Mirrors <see cref="ThanaticReactorInstallEnergyTransfer_Patch"/> exactly —
-/// kept as separate types (rather than a shared generic patch) so each
-/// reactor's energy-transfer pipeline is independently traceable in stack
-/// dumps and Harmony's patch list. The runtime cost of the duplication is
-/// trivial.
-///
-/// Coexists with <see cref="RecipeInstallAndroidPart_ApplyOnPawn_Patch"/> on
-/// the same target method.
-/// </summary>
+// Transfers a Grav Reactor item's storedEnergy onto the installed
+// Hediff_GravReactor during install surgery. Without this,
+// every installation would start the hediff at Energy = 1f (PostAdd default),
+// wiping the ingredient item's stored charge and breaking reactor
+// transferability between android pawns.
+//
+// Mirrors ThanaticReactorInstallEnergyTransfer_Patch exactly —
+// kept as separate types (rather than a shared generic patch) so each
+// reactor's energy-transfer pipeline is independently traceable in stack
+// dumps and Harmony's patch list. The runtime cost of the duplication is
+// trivial.
+//
+// Coexists with RecipeInstallAndroidPart_ApplyOnPawn_Patch on
+// the same target method.
 [HarmonyPatch]
 public static class GravReactorInstallEnergyTransfer_Patch
 {

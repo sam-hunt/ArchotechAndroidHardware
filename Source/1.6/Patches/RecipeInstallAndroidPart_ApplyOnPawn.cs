@@ -7,38 +7,36 @@ using Verse;
 
 namespace ArchotechAndroidHardware.VREAPatches;
 
-/// <summary>
-/// VREA workaround: fixes three issues in Recipe_InstallAndroidPart.ApplyOnPawn.
-///
-/// Problem 1 (item loss): VREA's ApplyOnPawn calls RestorePart(), which removes
-/// all hediffs on the body part via RestorePartRecursiveInt. That internal method
-/// destroys hediffs without checking spawnThingOnRemoved, so valuable items (like
-/// our archotech reactor) are silently lost when a replacement part is installed.
-///
-/// Problem 2 (gene timing): When replacing our parts with another part, the
-/// companion gene must be removed before VREA's code runs. Otherwise the overridden
-/// gene stays suppressed during the replacement, and the new part's need/stat
-/// setup may see incorrect state.
-///
-/// Problem 3 (stale cache): VREA's RestorePartRecursiveInt removes hediffs with
-/// direct list manipulation (RemoveAt) followed by PostRemoved, but never calls
-/// DirtyCache() on the hediff set. This leaves stale cached state, so
-/// AddOrRemoveNeedsAsAppropriate (called during gene removal and PostRemoved)
-/// may evaluate against an outdated hediff list.
-///
-/// Fix: The Prefix delegates ejection to <see cref="AAHPartEjector"/> (which
-/// dispatches to <see cref="ICustomAAHEjection"/> for state-preserving hediffs
-/// like Thanatic Reactor, or falls through to spawnThingOnRemoved otherwise)
-/// and removes companion genes early for AAH_-prefixed hediffs. The Postfix
-/// cleans up any orphaned genes (safety net for edge cases) and forces a final
-/// needs recalculation after all hediff and gene changes have settled.
-///
-/// Lifecycle context: Active during part replacement surgery (installation phase).
-/// Only triggers when a new part is installed on the same body part slot.
-///
-/// Removable if: VREA's RestorePart spawns spawnThingOnRemoved items, and their
-/// RestorePartRecursiveInt calls DirtyCache() after hediff removal.
-/// </summary>
+// VREA workaround: fixes three issues in Recipe_InstallAndroidPart.ApplyOnPawn.
+//
+// Problem 1 (item loss): VREA's ApplyOnPawn calls RestorePart(), which removes
+// all hediffs on the body part via RestorePartRecursiveInt. That internal method
+// destroys hediffs without checking spawnThingOnRemoved, so valuable items (like
+// our archotech reactor) are silently lost when a replacement part is installed.
+//
+// Problem 2 (gene timing): When replacing our parts with another part, the
+// companion gene must be removed before VREA's code runs. Otherwise the overridden
+// gene stays suppressed during the replacement, and the new part's need/stat
+// setup may see incorrect state.
+//
+// Problem 3 (stale cache): VREA's RestorePartRecursiveInt removes hediffs with
+// direct list manipulation (RemoveAt) followed by PostRemoved, but never calls
+// DirtyCache() on the hediff set. This leaves stale cached state, so
+// AddOrRemoveNeedsAsAppropriate (called during gene removal and PostRemoved)
+// may evaluate against an outdated hediff list.
+//
+// Fix: The Prefix delegates ejection to AAHPartEjector (which
+// dispatches to ICustomAAHEjection for state-preserving hediffs
+// like Thanatic Reactor, or falls through to spawnThingOnRemoved otherwise)
+// and removes companion genes early for AAH_-prefixed hediffs. The Postfix
+// cleans up any orphaned genes (safety net for edge cases) and forces a final
+// needs recalculation after all hediff and gene changes have settled.
+//
+// Lifecycle context: Active during part replacement surgery (installation phase).
+// Only triggers when a new part is installed on the same body part slot.
+//
+// Removable if: VREA's RestorePart spawns spawnThingOnRemoved items, and their
+// RestorePartRecursiveInt calls DirtyCache() after hediff removal.
 [HarmonyPatch]
 public static class RecipeInstallAndroidPart_ApplyOnPawn_Patch
 {

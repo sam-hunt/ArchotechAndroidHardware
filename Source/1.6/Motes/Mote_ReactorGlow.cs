@@ -6,44 +6,42 @@ using Verse;
 
 namespace ArchotechAndroidHardware;
 
-/// <summary>
-/// Reactor core glow mote that tracks the pawn's body through non-standing
-/// postures (laying down, in bed, downed). A plain <see cref="MoteAttached"/>
-/// only follows <c>link1.LastDrawPos</c> (pawn pivot) and skips the posture/bed
-/// transforms that <see cref="PawnRenderer"/> applies before drawing the body,
-/// so when the pawn lies down the glow stays floating where the upright chest
-/// would have been. This subclass mirrors the body-resolution logic in
-/// <c>PawnRenderer.GetBodyPos</c> + <c>PawnRenderer.BodyAngle</c> and rotates
-/// <see cref="chestOffset"/> with the body so the hot core stays glued to the
-/// chest core, and rolls <see cref="Mote.exactRotation"/> with the torso so
-/// the halo rotates with the body too.
-///
-/// Why subclass instead of swapping to a PawnRenderNode: render nodes draw at
-/// the pawn's altitude band and are occluded by the unnatural-darkness section
-/// layer. The mote draws at the transparent renderQueue and punches through
-/// (same trick CompNoctolEyes uses). See ReactorGlowMote for the full
-/// rationale on why this mote overlay exists alongside the always-on render node.
-///
-/// Y coordinate is left alone after base TimeInterval — the mote's draw
-/// altitude is governed by the def's altitudeLayer + renderQueue, not by
-/// exactPosition.y, so overwriting only XZ keeps the existing punch-through
-/// behaviour while fixing the horizontal tracking.
-///
-/// Yayo's Animation compatibility: we resolve the body position by reflection-
-/// calling the real <c>PawnRenderer.GetBodyPos</c> instead of mirroring its
-/// logic locally. Yayo's <c>GetBodyPosPatch</c> is a Postfix on that method
-/// that adds the per-pawn animation offset (pdd.posOffset) to the result, so
-/// Harmony runs Yayo's postfix on our reflection call too — the glow tracks
-/// Yayo's animated body for free. <c>PawnRenderer.BodyAngle</c> is already
-/// called publicly, and Yayo's <c>BodyAnglePatch</c> postfix on it gives us
-/// the animated angle the same way. (Yayo itself bails on <c>HasAnimation</c>,
-/// matching our vanilla-animation visibility gate, so no double-handling
-/// during Anomaly rituals etc.)
-///
-/// If reflection ever fails (RimWorld renames the method, etc.) we fall back
-/// to a local mirror of <c>GetBodyPos</c> so positioning still works — just
-/// without Yayo's postfix contribution in that fallback case.
-/// </summary>
+// Reactor core glow mote that tracks the pawn's body through non-standing
+// postures (laying down, in bed, downed). A plain MoteAttached
+// only follows link1.LastDrawPos (pawn pivot) and skips the posture/bed
+// transforms that PawnRenderer applies before drawing the body,
+// so when the pawn lies down the glow stays floating where the upright chest
+// would have been. This subclass mirrors the body-resolution logic in
+// PawnRenderer.GetBodyPos + PawnRenderer.BodyAngle and rotates
+// chestOffset with the body so the hot core stays glued to the
+// chest core, and rolls Mote.exactRotation with the torso so
+// the halo rotates with the body too.
+//
+// Why subclass instead of swapping to a PawnRenderNode: render nodes draw at
+// the pawn's altitude band and are occluded by the unnatural-darkness section
+// layer. The mote draws at the transparent renderQueue and punches through
+// (same trick CompNoctolEyes uses). See ReactorGlowMote for the full
+// rationale on why this mote overlay exists alongside the always-on render node.
+//
+// Y coordinate is left alone after base TimeInterval — the mote's draw
+// altitude is governed by the def's altitudeLayer + renderQueue, not by
+// exactPosition.y, so overwriting only XZ keeps the existing punch-through
+// behaviour while fixing the horizontal tracking.
+//
+// Yayo's Animation compatibility: we resolve the body position by reflection-
+// calling the real PawnRenderer.GetBodyPos instead of mirroring its
+// logic locally. Yayo's GetBodyPosPatch is a Postfix on that method
+// that adds the per-pawn animation offset (pdd.posOffset) to the result, so
+// Harmony runs Yayo's postfix on our reflection call too — the glow tracks
+// Yayo's animated body for free. PawnRenderer.BodyAngle is already
+// called publicly, and Yayo's BodyAnglePatch postfix on it gives us
+// the animated angle the same way. (Yayo itself bails on HasAnimation,
+// matching our vanilla-animation visibility gate, so no double-handling
+// during Anomaly rituals etc.)
+//
+// If reflection ever fails (RimWorld renames the method, etc.) we fall back
+// to a local mirror of GetBodyPos so positioning still works — just
+// without Yayo's postfix contribution in that fallback case.
 public class Mote_ReactorGlow : MoteAttached
 {
     public Vector3 chestOffset;
@@ -72,13 +70,11 @@ public class Mote_ReactorGlow : MoteAttached
         exactRotation = bodyAngle;
     }
 
-    /// <summary>
-    /// Resolves the body's draw position, preferring the canonical
-    /// <c>PawnRenderer.GetBodyPos</c> (which carries every other mod's postfix
-    /// contributions — notably Yayo's per-pawn offset). Falls back to a local
-    /// mirror of the vanilla logic if the reflection lookup fails, so we
-    /// degrade gracefully rather than break.
-    /// </summary>
+    // Resolves the body's draw position, preferring the canonical
+    // PawnRenderer.GetBodyPos (which carries every other mod's postfix
+    // contributions — notably Yayo's per-pawn offset). Falls back to a local
+    // mirror of the vanilla logic if the reflection lookup fails, so we
+    // degrade gracefully rather than break.
     private static Vector3 ResolveBodyPos(Pawn pawn, PawnPosture posture)
     {
         var renderer = pawn.Drawer?.renderer;
@@ -112,13 +108,11 @@ public class Mote_ReactorGlow : MoteAttached
         return true;
     }
 
-    /// <summary>
-    /// Fallback mirror of the non-private bits of <c>PawnRenderer.GetBodyPos</c>
-    /// for the case where reflection fails. Inputs are all public
-    /// (<c>CurrentBed</c>, <c>BaseHeadOffsetAt</c>, <c>bodyType.bedOffset</c>,
-    /// <c>bed_pawnDrawOffset</c>). Does not include Yayo's posOffset because
-    /// that's contributed via Harmony postfix on the real method.
-    /// </summary>
+    // Fallback mirror of the non-private bits of PawnRenderer.GetBodyPos
+    // for the case where reflection fails. Inputs are all public
+    // (CurrentBed, BaseHeadOffsetAt, bodyType.bedOffset,
+    // bed_pawnDrawOffset). Does not include Yayo's posOffset because
+    // that's contributed via Harmony postfix on the real method.
     private static Vector3 MirrorGetBodyPos(Pawn pawn, PawnPosture posture)
     {
         if (posture == PawnPosture.Standing)

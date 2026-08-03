@@ -5,13 +5,11 @@ using Verse.AI;
 
 namespace ArchotechAndroidHardware;
 
-/// <summary>
-/// Scans for corpses tagged with the AAH_ExtractThanaticReactor designation and
-/// dispatches a JobDriver_ExtractThanaticReactor to a willing worker. Mirrors
-/// vanilla's WorkGiver_ExtractSkull / Designation pattern: the player adds the
-/// designation via the per-corpse gizmo (see Hediff_ThanaticReactor.GetGizmos),
-/// and any colonist on BasicWorker work picks the job up.
-/// </summary>
+// Scans for corpses tagged with the AAH_ExtractThanaticReactor designation and
+// dispatches a JobDriver_ExtractThanaticReactor to a willing worker. Mirrors
+// vanilla's WorkGiver_ExtractSkull / Designation pattern: the player adds the
+// designation via the per-corpse gizmo (see Hediff_ThanaticReactor.GetGizmos),
+// and any colonist on BasicWorker work picks the job up.
 public class WorkGiver_ExtractThanaticReactor : WorkGiver_Scanner
 {
     private static DesignationDef DesignationDef => AAH_DesignationDefOf.AAH_ExtractThanaticReactor;

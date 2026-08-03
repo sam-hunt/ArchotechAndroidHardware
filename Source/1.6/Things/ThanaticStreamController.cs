@@ -3,19 +3,17 @@ using Verse;
 
 namespace ArchotechAndroidHardware;
 
-/// <summary>
-/// Ethereal emitter that spawns a burst of homing drain-particles over a
-/// one-second window, streaming from a victim's kill location toward the
-/// source android pawn.
-///
-/// Owns its own per-tick ticker (tickerType=Normal on the def) because the
-/// hediff's TickInterval is hash-gated to the 60-tick drain cadence — too
-/// coarse for a staggered particle stream within a single second. Isolating
-/// the emitter as a Thing also sets up step 2's corpse-shift handling:
-/// the controller can poll for <c>victim.Corpse</c> and swap the spawn
-/// anchor onto it once it materialises, without the hediff having to
-/// track corpse lifecycle.
-/// </summary>
+// Ethereal emitter that spawns a burst of homing drain-particles over a
+// one-second window, streaming from a victim's kill location toward the
+// source android pawn.
+//
+// Owns its own per-tick ticker (tickerType=Normal on the def) because the
+// hediff's TickInterval is hash-gated to the 60-tick drain cadence — too
+// coarse for a staggered particle stream within a single second. Isolating
+// the emitter as a Thing also sets up step 2's corpse-shift handling:
+// the controller can poll for victim.Corpse and swap the spawn
+// anchor onto it once it materialises, without the hediff having to
+// track corpse lifecycle.
 public class ThanaticStreamController : Thing
 {
     public Pawn sourcePawn;   // homing target for every spawned particle
