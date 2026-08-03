@@ -1,8 +1,4 @@
-# TODO
-
-> **Next session — infra modernization queued.** Follow the spec at
-> `docs/Specs/Infra-Modernization.md` (written 2026-08-03 from the TradersStockXenogerms port session;
-> TSX is the freshest exemplar). Infra only — no translation generation.
+# TODOs
 
 ## Features
 
