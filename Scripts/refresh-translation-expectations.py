@@ -224,6 +224,10 @@ def load_dump(dump_path):
     if dump.get("meta", {}).get("modPackageId") != PACKAGE_ID:
         sys.exit(f"{dump_path} is not a {PACKAGE_ID} dump")
     dump["meta"].pop("generated", None)
+    # Record the boot's mod list so the checker can resolve def-level
+    # MayRequire gates against what was actually active during the probe
+    # (the probe itself only records DLCs).
+    dump["meta"]["activeMods"] = CANONICAL_ACTIVE_MODS
     return dump
 
 

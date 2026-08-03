@@ -195,9 +195,30 @@ def collect_keyed(lang_dir, report):
     return keyed
 
 
-def collect_defs(defs_dirs):
+def def_is_active(elem, active_packages):
+    # A def whose root node is MayRequire-gated on a package that was not
+    # active during the probe boot never loaded there, so it is legitimately
+    # absent from the sidecar and outside the l10n surface (e.g.
+    # BetterTradersGuild's Biotech-gated ScenPartDef, where this fix
+    # originated). MayRequire = ALL listed packages must be active;
+    # MayRequireAnyOf = any.
+    may_require = elem.get("MayRequire")
+    if may_require:
+        ids = {p.strip().lower() for p in may_require.split(",") if p.strip()}
+        if not ids <= active_packages:
+            return False
+    any_of = elem.get("MayRequireAnyOf")
+    if any_of:
+        ids = {p.strip().lower() for p in any_of.split(",") if p.strip()}
+        if ids and not ids & active_packages:
+            return False
+    return True
+
+
+def collect_defs(defs_dirs, active_packages):
     # tag -> {defName -> element}. Abstract parents (Name=, no defName) are
-    # not collected: they are not injection targets themselves.
+    # not collected: they are not injection targets themselves. Defs gated on
+    # packages inactive during the probe boot are skipped (see def_is_active).
     defs = {}
     for defs_dir in defs_dirs:
         for path in sorted(defs_dir.glob("**/*.xml")):
@@ -211,7 +232,7 @@ def collect_defs(defs_dirs):
                 if elem.tag is ET.Comment:
                     continue
                 def_name = elem.findtext("defName")
-                if def_name:
+                if def_name and def_is_active(elem, active_packages):
                     def_type = DEF_TYPE_ALIASES.get(elem.tag, elem.tag)
                     defs.setdefault(def_type, {})[def_name] = elem
     return defs
@@ -244,6 +265,18 @@ class Sidecar:
     @property
     def def_types(self):
         return set(self.entries)
+
+    @property
+    def active_packages(self):
+        # Lowercased packageIds active during the probe boot: Core plus each
+        # active DLC (ludeon.rimworld.<dlc>), plus meta.activeMods when the
+        # refresh script recorded it (older sidecars predate that field).
+        pkgs = {"ludeon.rimworld"}
+        for dlc in self.meta.get("activeDlcs", []):
+            if dlc != "Core":
+                pkgs.add(f"ludeon.rimworld.{dlc.lower()}")
+        pkgs.update(m.lower() for m in self.meta.get("activeMods", []))
+        return pkgs
 
     def lookup(self, def_type, key):
         # Resolve a translated key to (canonical_key, element_index):
@@ -284,12 +317,13 @@ def load_sidecar(root, report):
 
 
 def check_sidecar_freshness(defs, sidecar, report):
-    # The rule that makes unknown gap classes impossible by structure: every
-    # defName in Defs/ must appear in the sidecar, so any new content forces
-    # a regen, and the regen sees everything the game sees. Def types with no
-    # sidecar entries at all (FleckDef, ThingSetMakerDef) have no legal
-    # injection points and are tolerated — but only while their defs carry no
-    # label/description in XML.
+    # The rule that makes stale expectations loud: every def carrying a
+    # label/description in XML must appear in the sidecar, so new or edited
+    # translatable content forces a regen, and the regen sees everything the
+    # game sees. The probe dumps only defs with at least one possible
+    # injection point, so defs with NO translatable text in XML (most
+    # DutyDefs, PrefabDefs, ...) are legitimately absent and tolerated —
+    # whether or not their def type has other entries.
     label = "[Scripts/expected-injections.json]"
     stale = (f"expectations stale — rerun "
              f"Scripts/refresh-translation-expectations.py")
@@ -302,9 +336,6 @@ def check_sidecar_freshness(defs, sidecar, report):
                                         f"description but its def type has no "
                                         f"sidecar entries; {stale}")
             continue
-        for def_name in sorted(set(by_name) - sidecar.def_names[def_type]):
-            report.error(label, f"{def_type} {def_name} is not in the "
-                                f"sidecar; {stale}")
         # English drift: a label/description edited in XML without a regen.
         for def_name, elem in sorted(by_name.items()):
             for field in ("label", "description"):
@@ -457,7 +488,7 @@ def main():
         print("No English Keyed strings found; nothing to check against.", file=sys.stderr)
         return 2
 
-    defs = collect_defs(defs_dirs)
+    defs = collect_defs(defs_dirs, sidecar.active_packages)
     check_sidecar_freshness(defs, sidecar, report)
     found_by_lang = {}
     for lang_dir in languages:

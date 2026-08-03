@@ -8,7 +8,19 @@
       "Odyssey"
     ],
     "modPackageId": "shunter.archotechandroidhardware",
-    "modName": "Archotech Android Hardware"
+    "modName": "Archotech Android Hardware",
+    "activeMods": [
+      "brrainz.harmony",
+      "ludeon.rimworld",
+      "ludeon.rimworld.biotech",
+      "ludeon.rimworld.anomaly",
+      "ludeon.rimworld.odyssey",
+      "oskarpotocki.vanillafactionsexpanded.core",
+      "vanillaracesexpanded.android",
+      "vanillaexpanded.vfepower",
+      "shunter.archotechandroidhardware",
+      "shunter.l10nprobe"
+    ]
   },
   "defInjections": {
     "DamageDef": {
