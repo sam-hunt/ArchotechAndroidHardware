@@ -150,8 +150,12 @@
     <Message Text="Staged @(_ModFiles->Count()) mod files -> $(StageDir)" Importance="high" />
   </Target>
 
-  <!-- After every local build, atomically redeploy into the RimWorld Mods folder. -->
-  <Target Name="DeployToModFolder" AfterTargets="Build" Condition="'$(UseLocalRimWorld)' == 'true'">
+  <!-- After every local Release build, atomically redeploy into the RimWorld Mods
+       folder. Release-only: `dotnet test` builds Debug by default via the Tests
+       project's ProjectReference, and an ungated deploy would silently swap the
+       played mod's DLL for a Debug build on every test run. -->
+  <Target Name="DeployToModFolder" AfterTargets="Build"
+          Condition="'$(UseLocalRimWorld)' == 'true' And '$(Configuration)' == 'Release'">
     <CallTarget Targets="StageMod" />
   </Target>
 </Project>

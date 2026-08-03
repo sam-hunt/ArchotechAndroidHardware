@@ -50,8 +50,8 @@ dotnet build Source/1.6/ArchotechAndroidHardware.csproj
 dotnet build Source/1.6/ArchotechAndroidHardware.csproj -c Release \
   -t:StageMod -p:StageDir=/path/to/output/ArchotechAndroidHardware
 
-# Run the test suite (WSL -> Windows PowerShell; net472 runner)
-./Scripts/test-windows.sh
+# Run the test suite (native WSL; mono hosts the net472 runner)
+dotnet test Tests/1.6/ArchotechAndroidHardware.Tests.csproj
 ```
 
 The build system auto-detects the RimWorld installation path on Windows/Linux/Mac (including WSL targeting a Windows install). For CI builds without RimWorld installed, it falls back to the `Krafs.Rimworld.Ref` NuGet package.
@@ -89,8 +89,7 @@ Textures/
 Scripts/
 ├── check-translations.py                # Deterministic localization validator (CI release gate)
 ├── refresh-translation-expectations.py  # Regenerates the sidecar via ../L10nProbe game boot
-├── expected-injections.json             # Checked-in DefInjected expectations sidecar
-└── test-windows.sh                      # Runs the net472 xUnit suite via Windows PowerShell
+└── expected-injections.json             # Checked-in DefInjected expectations sidecar
 Tests/1.6/          # Headless xUnit suite (settings, ReactorGlow guards, SurgeryState)
 Source/1.6/
 ├── Core/           # Mod subclass (Harmony setup + settings window), SurgeryState, ArchotechAndroidHardwareSettings, AAH_DefOf
@@ -196,7 +195,7 @@ Use the `rimworld-logs` skill — it covers Player.log locations (Windows/WSL), 
 
 ## Testing
 
-`Tests/1.6/` holds an xUnit (net472) suite for the pure logic: settings field-initializer/`ResetToDefaults` coherence, overcharge-cap sentinel guards, `SurgeryState`, and `ReactorGlow.AttachmentsEnabledFor`'s headless-safe branches. Tests are headless — anything needing `DefDatabase`, a live `Pawn`, or a `[DefOf]` static constructor is out of scope (documented per-test). Run with `./Scripts/test-windows.sh` (WSL shells out to Windows PowerShell because WSL's dotnet can't host the net472 runner; it robocopies the test bin to local NTFS first). CI builds the Tests project but does not run it.
+`Tests/1.6/` holds an xUnit (net472) suite for the pure logic: settings field-initializer/`ResetToDefaults` coherence, overcharge-cap sentinel guards, `SurgeryState`, and `ReactorGlow.AttachmentsEnabledFor`'s headless-safe branches. Tests are headless — anything needing `DefDatabase`, a live `Pawn`, or a `[DefOf]` static constructor is out of scope (documented per-test). Run natively from WSL with `dotnet test Tests/1.6/ArchotechAndroidHardware.Tests.csproj` (the BetterTradersGuild pattern — do **not** port the older siblings' `test-windows.sh`; the Windows toolchain sharing `obj/` under a different path root corrupts incremental state). `dotnet test` builds Debug by default, so `DeployToModFolder` is Release-gated — test runs never swap the deployed mod DLL for a Debug build. CI builds the Tests project but does not run it.
 
 ## Localization
 
