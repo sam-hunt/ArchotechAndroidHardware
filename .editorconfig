@@ -37,12 +37,19 @@ csharp_style_namespace_declarations = file_scoped:suggestion
 dotnet_sort_system_directives_first = true
 dotnet_separate_import_directive_groups = false
 
-# XML documentation
+# Comments: plain // comments only — no XML doc comments (///). Nothing
+# consumes the doc XML, so the tag scaffolding is pure noise.
 dotnet_style_prefer_auto_properties = true:suggestion
 dotnet_style_explicit_tuple_names = true:warning
 
 # Code quality
 dotnet_code_quality_unused_parameters = all:suggestion
+
+# Roslynator analyzer severities (only rules we've actually hit are pinned here;
+# everything else runs at package defaults. Style-only — nothing fails the build.)
+dotnet_diagnostic.RCS1146.severity = warning   # Use conditional access
+dotnet_diagnostic.RCS1139.severity = none      # Add summary element to doc comment
+dotnet_diagnostic.RCS1226.severity = none      # Add paragraph to doc comment
 
 # XML files (Defs, About.xml, Patches)
 [*.xml]

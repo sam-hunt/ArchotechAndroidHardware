@@ -78,6 +78,17 @@
     </PackageReference>
   </ItemGroup>
 
+  <!-- Build-time code analysis (warnings only; never ships). Roslynator's analyzers run
+       on every build and surface in the IDE + build log; PrivateAssets="all" keeps them
+       out of the compiled DLL and out of any downstream reference. The global
+       `roslynator` CLI (installed separately) handles bulk fixes and CI gating. -->
+  <ItemGroup>
+    <PackageReference Include="Roslynator.Analyzers" Version="4.*">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
   <!-- ===== Mod packaging / deployment =====
        The ItemGroup inside StageMod below is the SINGLE source of truth for what
        files constitute the deployable mod. It feeds BOTH the post-build deploy into
