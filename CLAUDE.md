@@ -49,6 +49,9 @@ dotnet build Source/1.6/ArchotechAndroidHardware.csproj
 # Stage the mod into an arbitrary folder (used by CI; same manifest as the local deploy)
 dotnet build Source/1.6/ArchotechAndroidHardware.csproj -c Release \
   -t:StageMod -p:StageDir=/path/to/output/ArchotechAndroidHardware
+
+# Run the test suite (WSL -> Windows PowerShell; net472 runner)
+./Scripts/test-windows.sh
 ```
 
 The build system auto-detects the RimWorld installation path on Windows/Linux/Mac (including WSL targeting a Windows install). For CI builds without RimWorld installed, it falls back to the `Krafs.Rimworld.Ref` NuGet package.
@@ -61,7 +64,7 @@ The repo lives in `~/dev/ArchotechAndroidHardware`, separate from the RimWorld M
 - **Lean by extension whitelist:** only the formats RimWorld loads at runtime ship — `.dll` (no `.pdb`); `.xml` (Defs/Patches/Languages/About); `.png`/`.jpg`/`.jpeg` (Textures); `.wav`/`.mp3`/`.ogg` (Sounds); `.txt` (Languages/About, e.g. `PublishedFileId.txt`). `Verse.ModContentLoader` _lists_ `.psd`/`.dds` among acceptable texture extensions, but its runtime decode path (`Texture2D.LoadImage`) only handles PNG/JPEG — a shipped `.psd`/`.dds` would fail to render and just bloat the download, so they're **excluded**. OS junk, editor backups (incl. `.kra` art sources), dev notes, and `Source/` can never leak into a release.
 - **Self-cleaning:** `StageMod` wipes `$(StageDir)` and recopies from source, so renamed/deleted Defs/Patches/Textures never linger. The post-build `DeployToModFolder` target calls `StageMod` with `StageDir = $RIMWORLD_PATH/Mods/ArchotechAndroidHardware` (only when a local RimWorld install is detected).
 - **CI reuses the same target:** `.github/workflows/release.yml` invokes `StageMod` with `-p:StageDir=<release dir>` rather than its own `cp` list, so the release zip can never drift from the local deploy.
-- **Stop hook (`.claude/hooks/sync-mod.sh`):** runs after each conversation turn. It rebuilds+redeploys _only when mod-relevant source/content changed since the last deploy_ (skips doc/discussion turns), logs to `$TMPDIR/aah-build.log`, and prints a warning on build failure instead of silently leaving a stale DLL in the game folder. Change-detection uses a stamp at `Source/1.6/obj/.aah-deploy-stamp`. Both the hook config (`.claude/settings.local.json`) and the helper script live under `.claude/`, which is **gitignored** — so the whole post-turn sync is local-only and untracked. If it's ever promoted to a committed config, move the helper somewhere version-controlled. The script finds the repo root via `git rev-parse`, so it works regardless of where it's relocated.
+- **Stop hook (`.claude/hooks/sync-mod.sh`):** runs after each conversation turn. It rebuilds+redeploys _only when mod-relevant source/content changed since the last deploy_ (skips doc/discussion turns), logs to `$TMPDIR/aah-build.log`, and prints a warning on build failure instead of silently leaving a stale DLL in the game folder. Change-detection uses a stamp at `Source/1.6/obj/.aah-deploy-stamp`. Both the hook config (`.claude/settings.local.json`) and the helper script stay machine-local: `.gitignore` tracks only `.claude/skills/` (shared: `release`, `translate`, `rimworld-logs`); everything else under `.claude/` is untracked. If the hook is ever promoted to a committed config, move the helper somewhere version-controlled. The script finds the repo root via `git rev-parse`, so it works regardless of where it's relocated.
 
 **WSL Setup:** Requires `RIMWORLD_PATH` env var in `~/.bashrc` pointing to the Windows RimWorld install (e.g., `/mnt/c/Program Files (x86)/Steam/steamapps/common/RimWorld`).
 
@@ -79,9 +82,16 @@ About/              # Mod metadata (About.xml, ModIcon.png)
 │   ├── GeneDefs/          # Companion genes
 │   ├── GeneCategoryDefs/  # AAH_Hardware category (priority 10000, see below)
 │   └── RecipeDefs/        # Crafting recipes + surgery installation recipes
-└── Patches/        # XPath patches (VREA gene exclusion tags)
+├── Patches/        # XPath patches (VREA gene exclusion tags)
+└── Languages/English/Keyed/AAH_UI.xml   # All player-facing settings strings (AAH_ prefix)
 Textures/
 └── Items/          # Custom body part textures
+Scripts/
+├── check-translations.py                # Deterministic localization validator (CI release gate)
+├── refresh-translation-expectations.py  # Regenerates the sidecar via ../L10nProbe game boot
+├── expected-injections.json             # Checked-in DefInjected expectations sidecar
+└── test-windows.sh                      # Runs the net472 xUnit suite via Windows PowerShell
+Tests/1.6/          # Headless xUnit suite (settings, ReactorGlow guards, SurgeryState)
 Source/1.6/
 ├── Core/           # Mod subclass (Harmony setup + settings window), SurgeryState, ArchotechAndroidHardwareSettings, AAH_DefOf
 ├── Hediffs/        # Hediff classes (gene lifecycle; Thanatic reactor drain/kill/death logic)
@@ -182,10 +192,20 @@ All patches target VREA (or vanilla / Odyssey) classes via `AccessTools.TypeByNa
 
 ## Debugging
 
-1. **Enable RimWorld Dev Mode:** Settings > Dev Mode > Logging
-2. **Log locations:**
-   - **Windows:** `%USERPROFILE%\AppData\LocalLow\Ludeon Studios\RimWorld by Ludeon Studios\Player.log`
-   - **WSL:** `/mnt/c/Users/*/AppData/LocalLow/Ludeon Studios/RimWorld by Ludeon Studios/Player.log`
-3. **Logging:** Use `Log.Message("[Archotech Android Hardware] ...")` for mod-specific logs
-4. **Inspect VREA defs:** VREA mod is at `$RIMWORLD_PATH/../../workshop/content/294100/2975771801/1.6/Defs/`
-5. **Inspect RimWorld API:** `ilspycmd "/mnt/c/.../RimWorldWin64_Data/Managed/Assembly-CSharp.dll" -t "Namespace.ClassName"`
+Use the `rimworld-logs` skill — it covers Player.log locations (Windows/WSL), the `[Archotech Android Hardware]` log prefix, and API disassembly via `ilspycmd` against both vanilla's `Assembly-CSharp.dll` and VREA's `VREAndroids.dll`. VREA's XML defs live at `$RIMWORLD_PATH/../../workshop/content/294100/2975771801/1.6/Defs/`.
+
+## Testing
+
+`Tests/1.6/` holds an xUnit (net472) suite for the pure logic: settings field-initializer/`ResetToDefaults` coherence, overcharge-cap sentinel guards, `SurgeryState`, and `ReactorGlow.AttachmentsEnabledFor`'s headless-safe branches. Tests are headless — anything needing `DefDatabase`, a live `Pawn`, or a `[DefOf]` static constructor is out of scope (documented per-test). Run with `./Scripts/test-windows.sh` (WSL shells out to Windows PowerShell because WSL's dotnet can't host the net472 runner; it robocopies the test bin to local NTFS first). CI builds the Tests project but does not run it.
+
+## Localization
+
+English is the source of truth: Keyed strings in `1.6/Languages/English/Keyed/AAH_UI.xml` (`AAH_` prefix), plus a real DefInjected surface (labels/descriptions across the defs under `1.6/Defs/`). The pipeline is shared with the sibling mod repos:
+
+- `python3 Scripts/check-translations.py [--strict]` — deterministic validator; CI release gate. This repo's copy carries three fixes the siblings should back-port: literal-`\n` normalization, `DEF_TYPE_ALIASES` (subclass-declared defs like VREA's `AndroidGeneDef` dump under their base type), and an Anomaly-inclusive `REQUIRED_DLCS`.
+- `Scripts/expected-injections.json` — checked-in sidecar of every DefInjected key the live game expects; regenerate with `python3 Scripts/refresh-translation-expectations.py` (boots RimWorld via `../L10nProbe`; game must be closed). **`CANONICAL_ACTIVE_MODS` ids must stay lowercase** — MayRequire's active-check is case-exact even though mod loading isn't.
+- The `translate` skill holds the family per-language grammar/glossary knowledge (VREA's English strings are a grounding source); `CONTRIBUTING.md` carries the public roster (English only so far). No non-English translations exist yet.
+
+## Linting
+
+Roslynator.Analyzers runs on every build (warnings only, never fails the build; `PrivateAssets=all` so nothing ships). Severities are pinned in `.editorconfig`, along with the no-XML-doc-comments convention (plain `//` only). Formatting-only sweeps are registered in `.git-blame-ignore-revs`.
