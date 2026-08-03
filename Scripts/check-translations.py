@@ -87,17 +87,32 @@ PARITY_EXEMPT_FIELDS = set()
 # AAH_BodyPartAndroidArchotechBase's grav-reactor exception and its crafting
 # recipe's gravcore-cell ingredient) — without Odyssey active, the grav
 # reactor's labels/descriptions drop out of the sidecar and any already-
-# shipped translations for them turn illegal. VanillaExpanded.VFEPower is
-# also MayRequire-gated (the Thanatic reactor's crafting recipe only), but it
-# is a workshop mod, not a DLC, so it cannot appear in activeDlcs — it is
-# handled instead by refresh-translation-expectations.py's
+# shipped translations for them turn illegal. Anomaly likewise gates the
+# Thanatic reactor's shard-based crafting recipe (AAH_MakeThanaticReactor).
+# VanillaExpanded.VFEPower is also MayRequire-gated (the Thanatic salvage
+# recipe), but it is a workshop mod, not a DLC, so it cannot appear in
+# activeDlcs — it is handled instead by refresh-translation-expectations.py's
 # CANONICAL_ACTIVE_MODS, which pins every mod (not just DLC) the probe boots
 # with.
-REQUIRED_DLCS = {"Biotech", "Odyssey"}
+REQUIRED_DLCS = {"Biotech", "Anomaly", "Odyssey"}
+
+# Def XML may declare a def via a subclass the game rolls into a base-type
+# database — the probe's walker (the game's own) then dumps those defs under
+# the base type, and DefInjected translations legally target that base-type
+# folder. Map each subclass element tag seen in this repo's Defs/ to the
+# def type the dump actually uses. (First hit: VREA's AndroidGeneDef
+# companion genes, dumped under GeneDef.)
+DEF_TYPE_ALIASES = {
+    "VREAndroids.AndroidGeneDef": "GeneDef",
+}
 
 
 def norm(text):
-    return re.sub(r"\s+", " ", (text or "").strip())
+    # The game decodes literal "\n" escapes in def XML text at load, so the
+    # sidecar (dumped game-side) holds real newlines where the XML holds two
+    # characters; decode before collapsing whitespace or every multi-paragraph
+    # description reads as drifted.
+    return re.sub(r"\s+", " ", (text or "").replace("\\n", "\n").strip())
 
 
 def placeholders(text):
@@ -197,7 +212,8 @@ def collect_defs(defs_dirs):
                     continue
                 def_name = elem.findtext("defName")
                 if def_name:
-                    defs.setdefault(elem.tag, {})[def_name] = elem
+                    def_type = DEF_TYPE_ALIASES.get(elem.tag, elem.tag)
+                    defs.setdefault(def_type, {})[def_name] = elem
     return defs
 
 

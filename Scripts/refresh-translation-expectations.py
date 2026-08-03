@@ -99,14 +99,21 @@ SIDECAR = ROOT / "Scripts" / "expected-injections.json"
 # Forgetting this list fails loudly, not silently: L10nProbe's settings UI
 # reminds about it whenever a mod is ticked for probing, and launch_probe
 # warns when a ticked mod is absent here (its dump cannot succeed).
+# All ids LOWERCASE — the format RimWorld itself writes to ModsConfig.xml.
+# This is load-bearing, not cosmetic: mod *loading* tolerates mixed case, but
+# the MayRequire active-check is case-exact against the ModsConfig strings, so
+# a mixed-case entry here loads the mod yet silently drops every def gated on
+# it (observed 2026-08-03: VanillaExpanded.VFEPower loaded fine while both
+# VFEPower-gated RecipeDefs vanished from the dump).
 CANONICAL_ACTIVE_MODS = [
     "brrainz.harmony",
     "ludeon.rimworld",
     "ludeon.rimworld.biotech",
+    "ludeon.rimworld.anomaly",
     "ludeon.rimworld.odyssey",
-    "OskarPotocki.VanillaFactionsExpanded.Core",
+    "oskarpotocki.vanillafactionsexpanded.core",
     "vanillaracesexpanded.android",
-    "VanillaExpanded.VFEPower",
+    "vanillaexpanded.vfepower",
     "shunter.archotechandroidhardware",
     "shunter.l10nprobe",
 ]
