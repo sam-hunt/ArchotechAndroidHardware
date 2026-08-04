@@ -81,7 +81,11 @@
   <!-- Build-time code analysis (warnings only; never ships). Roslynator's analyzers run
        on every build and surface in the IDE + build log; PrivateAssets="all" keeps them
        out of the compiled DLL and out of any downstream reference. The global
-       `roslynator` CLI (installed separately) handles bulk fixes and CI gating. -->
+       `roslynator` CLI (installed separately) handles bulk fixes and CI gating.
+       Invoke the CLI against this csproj, never the .sln: roslynator 0.12's workspace
+       assemblies clash with current SDKs' Microsoft.Build in the solution-file parser
+       (MissingFieldException: MSBuildConstants.InvalidPathChars); loading a csproj
+       directly bypasses SolutionFile.Parse and works fine. -->
   <ItemGroup>
     <PackageReference Include="Roslynator.Analyzers" Version="4.*">
       <PrivateAssets>all</PrivateAssets>
