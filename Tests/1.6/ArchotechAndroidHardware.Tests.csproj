@@ -63,11 +63,11 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <!-- xunit.runner.console is the standalone runner; on Linux/WSL we drive
-         it via Mono since `dotnet test` for net472 requires a .NET Framework
-         host that isn't present out of the box. On Windows, Visual Studio's
-         test explorer or `dotnet test` with the .NET Framework Developer
-         Pack installed both work without invoking the console runner. -->
+    <!-- xunit.runner.console is a fallback standalone runner. The everyday
+         path is plain `dotnet test`: on Linux/WSL vstest hosts the net472
+         suite via mono automatically. The console runner remains useful for
+         running the built test DLL directly under mono (bypassing vstest)
+         when diagnosing host-level problems. -->
     <PackageReference Include="xunit.runner.console" Version="2.9.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -88,6 +88,13 @@
   <Target Name="CopyRimWorldAssembliesToTestOutput" AfterTargets="Build">
     <ItemGroup Condition="'$(UseLocalRimWorld)' == 'true'">
       <_RimWorldAssemblies Include="$(RimWorldPath)/$(RimWorldDataFolder)/Managed/Assembly-CSharp.dll" />
+      <!-- Mono (the native WSL/Linux test host) resolves field types eagerly, so
+           loading Verse.Current pulls in Assembly-CSharp-firstpass (its
+           colorCorrectionCurvesInt field's type lives there). The Windows CLR
+           resolves lazily and never needs it — omitting this DLL is invisible on
+           Windows but fails tests under mono with BadImageFormatException
+           (diagnosed in UniqueWeaponsUnbound, 2026-08-04: 61/351 failures). -->
+      <_RimWorldAssemblies Include="$(RimWorldPath)/$(RimWorldDataFolder)/Managed/Assembly-CSharp-firstpass.dll" />
       <_RimWorldAssemblies Include="$(RimWorldPath)/$(RimWorldDataFolder)/Managed/UnityEngine*.dll" />
       <!-- Unity.Burst and friends: assembly-level attributes on Assembly-CSharp
            reference them, so anything that reflects over the assembly's

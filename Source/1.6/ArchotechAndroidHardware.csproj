@@ -1,7 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
-    <OutputPath>../../1.6/Assemblies/</OutputPath>
+    <!-- Release-only: 1.6/Assemblies/ holds the shipped DLL that StageMod globs.
+         Debug builds (e.g. the ProjectReference build under `dotnet test`) stay in
+         the default bin/ so they can't swap a Debug DLL into the mod layout. -->
+    <OutputPath Condition="'$(Configuration)' == 'Release'">../../1.6/Assemblies/</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <LangVersion>latest</LangVersion>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
