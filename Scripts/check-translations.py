@@ -72,6 +72,18 @@ EN_COMMENT_RE = re.compile(r"^\s*EN:\s?(.*)$", re.DOTALL)
 # bare "{0}", so a translation that dropped a real argument still fails.
 GRAMMAR_CONSTRUCT_RE = re.compile(r"\{[^{}]*\?[^{}]*\}")
 
+# ...with one exception, and it is the reason this is not a plain exclusion.
+# _numCase is the only ?-construct that CONSUMES AND PRINTS its argument
+# (decompile-verified, Verse.LanguageWorker.ResolveNumCase: it returns
+# `number + " " + form`, where every other construct returns only a form).
+# Numeral-agreement languages therefore replace the bare placeholder with it
+# rather than writing both: Core ru renders "{0} days" as
+# "{0_numCase ? день : дня : дней}" — writing "{0} {0_numCase ...}" would
+# print the number twice. Rewriting it back to its bare placeholder before
+# the comparison keeps the argument contract enforced (drop argument 0
+# entirely and it still fails) without forbidding the correct Russian.
+NUM_CASE_RE = re.compile(r"\{([^{}?]*?)_numCase\s*\?[^{}]*\}")
+
 # Fields whose entries legitimately vary per language (RimWorld's
 # [TranslationCanChangeCount]-style matching tokens, e.g. UWU's
 # labelKeywords): exempt from the cross-language parity check, keyed on the
@@ -116,7 +128,8 @@ def norm(text):
 
 
 def placeholders(text):
-    return set(PLACEHOLDER_RE.findall(GRAMMAR_CONSTRUCT_RE.sub("", text or "")))
+    text = NUM_CASE_RE.sub(r"{\1}", text or "")
+    return set(PLACEHOLDER_RE.findall(GRAMMAR_CONSTRUCT_RE.sub("", text)))
 
 
 def parse_with_comments(path):
