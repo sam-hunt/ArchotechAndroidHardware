@@ -61,9 +61,31 @@ python3 Scripts/check-translations.py --strict
   there is still time to act on them.
 - If the sidecar or any translations changed, commit them as their own
   `fix(l10n)` commit (show the diff and **ask the user to confirm**) before
-  moving on — step 7 stages only the version-bump files.
+  moving on — step 8 stages only the version-bump files.
 
-### 4. Update CHANGELOG.md
+### 4. Refresh Steam Workshop page translations
+
+The Workshop title and description live in
+`.steamworkshop/Description/<Language>.txt` — line 1 is the title, then a
+blank line, then the BBCode description; one file per language folder in
+`1.6/Languages/`, English being the source of truth (see
+`.steamworkshop/README.md`).
+
+- Diff the English source against the last release:
+  ```bash
+  git diff $(git describe --tags --abbrev=0) -- .steamworkshop/Description/English.txt
+  ```
+- Also check for languages in `1.6/Languages/` with no description file yet.
+- If nothing changed and no file is missing, say so and move on.
+- Otherwise spawn one translation subagent per affected language (cheaper
+  model, in parallel) to update or create its file, grounded in the
+  `translate` skill's glossary section for that language and the mod's own
+  committed `1.6/Languages/<Language>/` strings, preserving BBCode tags and
+  the title-line format. Subagents never commit.
+- Review the diffs, then commit them as their own `docs:` commit (show the
+  diff and **ask the user to confirm**).
+
+### 5. Update CHANGELOG.md
 
 - Add a new `## [X.Y.Z] - YYYY-MM-DD` section at the top of the version list,
   directly below the Keep a Changelog intro paragraph, using today's date. This
@@ -73,7 +95,7 @@ python3 Scripts/check-translations.py --strict
   link reference at the bottom of the file, above any older ones
 - Show the diff and **ask the user to confirm**
 
-### 5. Bump versions
+### 6. Bump versions
 
 Update the version string in all three files:
 - `About/About.xml` — `<modVersion>`
@@ -82,7 +104,7 @@ Update the version string in all three files:
 
 Show the diff and **ask the user to confirm** the changes look correct.
 
-### 6. Clean build and deploy
+### 7. Clean build and deploy
 
 Run:
 ```bash
@@ -92,7 +114,7 @@ dotnet build ArchotechAndroidHardware.sln -c Release
 
 Report the build result. If the build fails, stop and help the user fix it. **Ask the user to confirm** before proceeding to commit.
 
-### 7. Stage, commit, tag
+### 8. Stage, commit, tag
 
 - Stage only the release files: `About/About.xml`, `Source/1.6/Properties/AssemblyInfo.cs`, `README.md`, `CHANGELOG.md`
 - If there are other modified tracked files, list them and ask the user whether to include them
@@ -101,10 +123,10 @@ Report the build result. If the build fails, stop and help the user fix it. **As
 - Show `git log --oneline -3` and `git tag -l 'v*' --sort=-v:refname | head -5`
 - **Ask the user to confirm** before pushing
 
-### 8. Push
+### 9. Push
 
 ```bash
 git push && git push --tags
 ```
 
-Show the final result and the changelog notes for the user to copy into Steam Workshop / GitHub release notes.
+Show the final result and the changelog notes for the user to copy into Steam Workshop / GitHub release notes. If step 4 updated any Workshop description files, list the affected languages and remind the user to paste each updated title and description into the Workshop page's per-language edit UI (Steam's own language names differ: schinese, koreana, brazilian, latam, ...).

@@ -1,0 +1,46 @@
+Archotech Android Hardware
+
+[h1]About[/h1]
+True archotechnology can't be built by human hands. But a salvaged vanometric power cell, psychic emanator, or violence generator can be dismantled, re-housed, and wired into an android chassis. This mod adds a family of such parts for androids from Vanilla Races Expanded - Android: alternative reactors with distinct power economies, plus archotech implants that lift limitations androids are normally born with.
+
+Every part is crafted at the Android Part Workbench (Archotech Androidtech research), installed via surgery, and recovered intact if removed.
+
+[hr][/hr]
+[h2]Reactors[/h2]
+[list]
+[*][b]Vanometric reactor[/b] - a permanent power cell that removes the android's power need entirely. No more drain, no more replacements.
+[*][b]Thanatic reactor[/b] - fed by the echoes of violent death. Each humanlike kill its host delivers recharges it, and brief overflows trigger a combat overcharge. Starved of kills it drains faster than a standard reactor, and its host dies when it runs dry. Requires [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2062943477]Vanilla Expanded - Power[/url] to craft.
+[*][b]Grav reactor[/b] - drawn from gravship engine technology and recharged in full whenever its host takes part in a gravship launch. Indispensable to a colony that lives on the move. Requires the Odyssey DLC to craft.
+[/list]
+
+[h2]Other Hardware[/h2]
+[list]
+[*][b]Psychic transceiver[/b] - bridges an android's natural psychic inertness, granting psychic sensitivity.
+[*][b]Archotech mnemocore[/b] - re-architects android memory onto self-organizing archotech substrate, removing the memory need entirely.
+[*][b]Neutrosynthesizer[/b] - an android kidney that actively synthesizes fresh neutroamine, rapidly restoring neutro loss.
+[/list]
+
+[hr][/hr]
+[h1]Requirements[/h1]
+[list]
+[*]RimWorld 1.6
+[*]Biotech DLC
+[*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2975771801]Vanilla Races Expanded - Android[/url]
+[/list]
+Optional, each gating a single part's crafting recipe only; the rest of the mod loads fine without them:
+[list]
+[*]Odyssey DLC, to craft the grav reactor
+[*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2062943477]Vanilla Expanded - Power[/url], to craft the thanatic reactor
+[/list]
+
+[hr][/hr]
+[h1]Compatibility[/h1]
+[list]
+[*]Safe to add to existing saves
+[*]Safe to remove (surgically remove any installed parts first to avoid orphaned hediffs)
+[*]Compatible with other VREA addons
+[/list]
+
+[hr][/hr]
+[h2]Credits[/h2]
+Built for [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2975771801]Vanilla Races Expanded - Android[/url] by Oskar Potocki and the Vanilla Expanded team.

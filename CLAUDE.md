@@ -204,6 +204,7 @@ English is the source of truth: Keyed strings in `1.6/Languages/English/Keyed/AA
 - `python3 Scripts/check-translations.py [--strict]` — deterministic validator; CI release gate. This repo's copy carries three fixes the siblings should back-port: literal-`\n` normalization, `DEF_TYPE_ALIASES` (subclass-declared defs like VREA's `AndroidGeneDef` dump under their base type), and an Anomaly-inclusive `REQUIRED_DLCS`.
 - `Scripts/expected-injections.json` — checked-in sidecar of every DefInjected key the live game expects; regenerate with `python3 Scripts/refresh-translation-expectations.py` (boots RimWorld via `../L10nProbe`; game must be closed). **`CANONICAL_ACTIVE_MODS` ids must stay lowercase** — MayRequire's active-check is case-exact even though mod loading isn't.
 - The `translate` skill holds the family per-language grammar/glossary knowledge (VREA's English strings are a grounding source); `CONTRIBUTING.md` carries the public roster (English only so far). No non-English translations exist yet.
+- **Workshop title coupling:** each language's `AAH_SettingsCategory` Keyed value is the localized Steam Workshop title and must equal the title line (line 1) of `.steamworkshop/Description/<Language>.txt` — always change the two together (English keeps `Archotech Android Hardware` in both).
 
 ## Linting
 

@@ -34,6 +34,11 @@ is the source of truth; every other language derives from it.
   value templates and status tags (`Source/1.6/Core/Settings/*.cs` and
   `Source/1.6/Core/ArchotechAndroidHardwareSettings.cs`, all reached via
   `"AAH_...".Translate(...)`).
+- `AAH_SettingsCategory` is that language's localized Steam Workshop title
+  and must stay in sync with the title line (line 1) of
+  `.steamworkshop/Description/<Language>.txt` — always translate and update
+  the two together (see the CLAUDE.md localization note and
+  `.steamworkshop/README.md`'s title convention).
 - **Unlike some sibling repos, this mod ships a substantial DefInjected
   surface of its own**, not just XML patches on vanilla defs: labels and
   descriptions on its own `HediffDef`s, `GeneDef`s, `ThingDef`s, `RecipeDef`s,

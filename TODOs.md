@@ -44,6 +44,16 @@
 
 ## Localization
 
+- Run the initial Steam Workshop description translation pass: create
+  `.steamworkshop/Description/<Language>.txt` per target language (roster
+  in CONTRIBUTING.md), localize each title per `.steamworkshop/README.md`'s
+  convention (that language's vanilla "archotech" term plus its android
+  vocabulary, no English brand appended), and sync each language's
+  `AAH_SettingsCategory` Keyed value to its title line. The
+  `.steamworkshop/` structure and process landed 2026-08-18 with only
+  `English.txt` so far, and in-game Keyed/DefInjected strings are also
+  still English-only (see the Localization section in CLAUDE.md).
+
 - When translations are eventually added, MayRequire-gated defs' DefInjected
   entries must ship from their own LoadFolders-gated compat root, not the
   main `1.6` tree — DefInjected ignores MayRequire, so the folder is the only
