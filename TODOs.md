@@ -41,3 +41,25 @@
 - Keyed language strings everywhere
 - Check patches for upstream issues and file reports/PRs
 - Neutro infusion operation upstream feature PR?
+
+## Localization
+
+- When translations are eventually added, MayRequire-gated defs' DefInjected
+  entries must ship from their own LoadFolders-gated compat root, not the
+  main `1.6` tree — DefInjected ignores MayRequire, so the folder is the only
+  gate, and a main-tree entry is a found-no-def startup error whenever the
+  gate is inactive (see BetterTradersGuild's Biotech ScenPartDef move,
+  commits d9af1f0/7de4368/4be8e8b, for the pattern). Per gate:
+  - Odyssey (`1.6/Mods/Odyssey/Languages/<Language>/...`): `AAH_GravReactor`
+    (`GeneDef` via the `VREAndroids.AndroidGeneDef` alias, `HediffDef`,
+    `ThingDef`), `AAH_GravOvercharge` (`HediffDef`), `AAH_GravChargeAura`
+    (`ThingDef`, a mote), `AAH_MakeGravReactor` (`RecipeDef`),
+    `AAH_InstallGravReactor` (`RecipeDef`)
+  - Anomaly (`1.6/Mods/Anomaly/Languages/<Language>/...`):
+    `AAH_MakeThanaticReactor` (`RecipeDef`)
+  - VFEPower (`1.6/Mods/VFEPower/Languages/<Language>/...`, a workshop mod
+    not a DLC): `AAH_SalvageThanaticReactor` (`RecipeDef`)
+  - `AAH_InstallThanaticReactor` (`RecipeDef`) is NOT gated and stays in the
+    main tree.
+  - Scanned for commented-out/excluded DefInjected entries as part of this
+    same pass: none exist today (no DefInjected content ships yet at all).

@@ -196,25 +196,30 @@ def load_language_xml(path, report):
     return entries
 
 
-def collect_keyed(lang_dir, report):
-    # key -> (text, en_comment, path)
+def collect_keyed(lang_dirs, report):
+    # key -> (text, en_comment, path). Takes every root a language occupies (the
+    # main 1.6/Languages/<Lang> plus any LoadFolders-gated compat root under
+    # 1.6/Mods/<Mod Name>/Languages/<Lang>); the game merges them into one
+    # LoadedLanguage, so duplicate keys collide across roots too.
     keyed = {}
-    for path in sorted((lang_dir / "Keyed").glob("**/*.xml")) if (lang_dir / "Keyed").is_dir() else []:
-        entries = load_language_xml(path, report)
-        for key, elem, en in entries or []:
-            if key in keyed:
-                report.error(path, f"duplicate key <{key}> (also in {keyed[key][2].name})")
-            keyed[key] = (flatten_entry(elem), en, path)
+    for lang_dir in lang_dirs:
+        keyed_dir = lang_dir / "Keyed"
+        for path in sorted(keyed_dir.glob("**/*.xml")) if keyed_dir.is_dir() else []:
+            entries = load_language_xml(path, report)
+            for key, elem, en in entries or []:
+                if key in keyed:
+                    report.error(path, f"duplicate key <{key}> (also in {keyed[key][2]})")
+                keyed[key] = (flatten_entry(elem), en, path)
     return keyed
 
 
 def def_is_active(elem, active_packages):
     # A def whose root node is MayRequire-gated on a package that was not
     # active during the probe boot never loaded there, so it is legitimately
-    # absent from the sidecar and outside the l10n surface (e.g.
-    # BetterTradersGuild's Biotech-gated ScenPartDef, where this fix
-    # originated). MayRequire = ALL listed packages must be active;
-    # MayRequireAnyOf = any.
+    # absent from the sidecar and outside the l10n surface (e.g. the
+    # Anomaly-gated AAH_MakeThanaticReactor RecipeDef, or the VFEPower-gated
+    # AAH_SalvageThanaticReactor RecipeDef, if ever probed without them).
+    # MayRequire = ALL listed packages must be active; MayRequireAnyOf = any.
     may_require = elem.get("MayRequire")
     if may_require:
         ids = {p.strip().lower() for p in may_require.split(",") if p.strip()}
@@ -229,11 +234,19 @@ def def_is_active(elem, active_packages):
 
 
 def collect_defs(defs_dirs, active_packages):
-    # tag -> {defName -> element}. Abstract parents (Name=, no defName) are
-    # not collected: they are not injection targets themselves. Defs gated on
+    # Returns (defs, def_roots): defs is tag -> {defName -> element};
+    # def_roots is tag -> {defName -> load root that declares the def} (the
+    # dir holding its Defs/, i.e. the main version folder or a gated compat
+    # root). A def's DefInjected entries must ship from the SAME load root —
+    # the game gates entries by the folder that contains them, not by the
+    # def they target — so def_roots is what lets the language checks catch
+    # wrong-root placement. Abstract parents (Name=, no defName) are not
+    # collected: they are not injection targets themselves. Defs gated on
     # packages inactive during the probe boot are skipped (see def_is_active).
     defs = {}
+    def_roots = {}
     for defs_dir in defs_dirs:
+        load_root = defs_dir.parent
         for path in sorted(defs_dir.glob("**/*.xml")):
             try:
                 root = ET.parse(path).getroot()
@@ -248,7 +261,27 @@ def collect_defs(defs_dirs, active_packages):
                 if def_name and def_is_active(elem, active_packages):
                     def_type = DEF_TYPE_ALIASES.get(elem.tag, elem.tag)
                     defs.setdefault(def_type, {})[def_name] = elem
-    return defs
+                    def_roots.setdefault(def_type, {})[def_name] = load_root
+    return defs, def_roots
+
+
+def check_entry_root(def_roots, def_type, canonical, entry_root, path, report):
+    # An injection entry loads (or not) with the load root that CONTAINS it —
+    # the game never looks at which root declares the def it targets. So an
+    # entry for a gated def placed in the main tree loads unconditionally and
+    # is a found-no-def startup error whenever the gate is inactive, and an
+    # entry for a main-tree def placed in a compat root silently vanishes
+    # whenever the gate IS inactive. Both directions reduce to one rule:
+    # entries live in the same load root as their def. Defs the local scan
+    # never saw (nothing in this repo's Defs/) can't be checked and pass.
+    owner = def_roots.get(def_type, {}).get(canonical.split(".")[0])
+    if owner is not None and owner != entry_root:
+        report.error(path, f"<{canonical.split('.')[0]}> is declared under "
+                           f"{owner}, so its injections must live under "
+                           f"{owner / 'Languages'} — entries gate by the "
+                           f"folder that contains them, not by their def")
+        return False
+    return True
 
 
 class Sidecar:
@@ -349,7 +382,8 @@ def check_sidecar_freshness(defs, sidecar, report):
                                         f"description but its def type has no "
                                         f"sidecar entries; {stale}")
             continue
-        # English drift: a label/description edited in XML without a regen.
+        # English drift: a label/description added or edited in XML without a
+        # regen. (Literal-\n unescaping lives in norm().)
         for def_name, elem in sorted(by_name.items()):
             for field in ("label", "description"):
                 node = elem.find(field)
@@ -366,14 +400,92 @@ def check_sidecar_freshness(defs, sidecar, report):
                                         f"sidecar; {stale}")
 
 
-def check_language(lang_dir, english_keyed, sidecar, report):
+def check_english_definjected(lang_dir, sidecar, def_roots, seen, report):
+    # English DefInjected files inject into defs at runtime exactly like any
+    # other language's, so an unknown key here is a live "found no def named
+    # ..." startup error, not just translator noise — historically these files
+    # were only read as reference material and never validated themselves.
+    # Every entry must be a legal injection point per the sidecar, its text
+    # must match the sidecar's English (drift means the file or the def was
+    # edited without a regen), and a key may only be injected once across all
+    # English roots (the game dedups by normalizedPath and warns). `seen` is
+    # shared across roots: def_type -> key -> first path.
+    inj_dir = lang_dir / "DefInjected"
+    if not inj_dir.is_dir():
+        return
+    for type_dir in sorted(p for p in inj_dir.iterdir() if p.is_dir()):
+        def_type = type_dir.name
+        if def_type not in sidecar.def_types:
+            report.error(f"[English/DefInjected/{def_type}]",
+                         f"unknown def type folder (no legal injection "
+                         f"points in the sidecar)")
+            continue
+        for path in sorted(type_dir.glob("**/*.xml")):
+            for key, elem, _ in load_language_xml(path, report) or []:
+                by_key = seen.setdefault(def_type, {})
+                if key in by_key:
+                    report.error(path, f"duplicate key <{key}> (also in "
+                                       f"{by_key[key]})")
+                    continue
+                by_key[key] = path
+                hit = sidecar.lookup(def_type, key)
+                if hit is None:
+                    report.error(path, f"unknown key <{key}> (not a legal "
+                                       f"injection point per the sidecar)")
+                    continue
+                canonical, idx = hit
+                check_entry_root(def_roots, def_type, canonical,
+                                 lang_dir.parent.parent, path, report)
+                entry = sidecar.entries[def_type][canonical]
+                text = flatten_entry(elem)
+                if idx is not None:
+                    expected = entry["english"][idx]
+                elif entry.get("isCollection"):
+                    if not isinstance(text, list):
+                        report.error(path, f"<{key}> is a collection entry; "
+                                           f"expected a <li> list or "
+                                           f"element-wise {key}.N keys")
+                        continue
+                    if len(text) != len(entry["english"]):
+                        report.error(path, f"<{key}> has {len(text)} "
+                                           f"elements, sidecar English has "
+                                           f"{len(entry['english'])}")
+                        continue
+                    for i, (got, exp) in enumerate(zip(text, entry["english"])):
+                        if norm(got) != norm(exp):
+                            report.error(path, f"<{key}.{i}> drifted from "
+                                               f"sidecar English {exp!r} — "
+                                               f"rerun the refresh script or "
+                                               f"fix the entry")
+                    continue
+                else:
+                    expected = entry["english"]
+                if isinstance(text, list):
+                    report.error(path, f"<{key}> is scalar per the sidecar "
+                                       f"but holds a <li> list")
+                elif norm(text) != norm(expected):
+                    report.error(path, f"<{key}> drifted from sidecar "
+                                       f"English {expected!r} — rerun the "
+                                       f"refresh script or fix the entry")
+
+
+def check_language(lang_dirs, english_keyed, sidecar, def_roots, report):
     # Returns {def_type: set(canonical keys/elements)} actually translated in
     # this language, for the cross-language parity check in main(). Element
     # translations are recorded as "<canonical collection key>.<index>".
-    lang = lang_dir.name
+    #
+    # lang_dirs is EVERY root this language occupies, checked as one unit the
+    # way English already is (and the way the game loads them). A gated compat
+    # root is not a language of its own — its injections can only live under
+    # that root's own Languages/<Language>/ (MayRequire is ignored on
+    # DefInjected, so the LoadFolders gate has to be the folder), yet the
+    # sidecar may still mark them required — checking that root standalone
+    # would demand the whole Keyed set and every other def's injections
+    # from it.
+    lang = lang_dirs[0].name
 
     # --- Keyed ---
-    keyed = collect_keyed(lang_dir, report)
+    keyed = collect_keyed(lang_dirs, report)
     label = f"[{lang}/Keyed]"
     for key in sorted(set(english_keyed) - set(keyed)):
         report.error(label, f"missing key <{key}>")
@@ -396,10 +508,14 @@ def check_language(lang_dir, english_keyed, sidecar, report):
     # --- DefInjected ---
     found = {}       # def_type -> canonical keys / "<key>.<idx>" elements
     full_lists = {}  # def_type -> canonical collection keys translated as full lists
-    inj_root = lang_dir / "DefInjected"
-    folders = sorted(p for p in inj_root.iterdir() if p.is_dir()) \
-        if inj_root.is_dir() else []
-    for folder in folders:
+    seen = {}        # def_type -> key -> first path (dedup across every root)
+    folders = []
+    for lang_dir in lang_dirs:
+        inj_root = lang_dir / "DefInjected"
+        if inj_root.is_dir():
+            folders.extend((p, lang_dir.parent.parent)
+                           for p in sorted(inj_root.iterdir()) if p.is_dir())
+    for folder, entry_root in folders:
         def_type = folder.name
         if def_type not in sidecar.def_types:
             report.error(folder, f"folder does not match any def type in the "
@@ -409,6 +525,12 @@ def check_language(lang_dir, english_keyed, sidecar, report):
         for path in sorted(folder.glob("**/*.xml")):
             entries = load_language_xml(path, report)
             for key, elem, en in entries or []:
+                by_key = seen.setdefault(def_type, {})
+                if key in by_key:
+                    report.error(path, f"duplicate key <{key}> (also in "
+                                       f"{by_key[key]})")
+                    continue
+                by_key[key] = path
                 resolved = sidecar.lookup(def_type, key)
                 if resolved is None:
                     report.error(path, f"<{key}>: not a legal injection point "
@@ -418,6 +540,8 @@ def check_language(lang_dir, english_keyed, sidecar, report):
                                        f"expectations.py)")
                     continue
                 canonical, idx = resolved
+                check_entry_root(def_roots, def_type, canonical,
+                                 entry_root, path, report)
                 entry = sidecar.entries[def_type][canonical]
                 text = flatten_entry(elem)
                 if idx is not None:
@@ -456,15 +580,24 @@ def check_language(lang_dir, english_keyed, sidecar, report):
     for def_type in sorted(sidecar.def_types):
         got = found.get(def_type, set())
         for key, entry in sorted(sidecar.required(def_type).items()):
+            # Defs declared in a gated compat root take their translations
+            # there too — say so, or the obvious fix for the error (add the
+            # key to the main tree) ships a wrong-root bug the game catches
+            # only when the gate is inactive.
+            owner = def_roots.get(def_type, {}).get(key.split(".")[0])
+            where = f" — belongs under {owner / 'Languages' / lang}" \
+                if owner is not None and owner.parent.name == "Mods" else ""
             if not entry.get("isCollection"):
                 if key not in got:
                     report.error(f"[{lang}/DefInjected/{def_type}]",
-                                 f"missing <{key}> (EN: {entry['english']!r})")
+                                 f"missing <{key}> (EN: "
+                                 f"{entry['english']!r}){where}")
             elif key not in full_lists.get(def_type, set()):
                 for i, en_text in enumerate(entry["english"]):
                     if f"{key}.{i}" not in got:
                         report.error(f"[{lang}/DefInjected/{def_type}]",
-                                     f"missing <{key}.{i}> (EN: {en_text!r})")
+                                     f"missing <{key}.{i}> (EN: "
+                                     f"{en_text!r}){where}")
     return found
 
 
@@ -475,9 +608,13 @@ def main():
     ap.add_argument("--strict", action="store_true", help="treat warnings as errors")
     args = ap.parse_args()
 
+    # */Mods/*/Languages picks up gated compat load roots, which nest inside the
+    # version folder as <version>/Mods/<Mod Name>/ (see LoadFolders.xml).
     lang_roots = sorted(args.root.glob("*/Languages")) + \
+                 sorted(args.root.glob("*/Mods/*/Languages")) + \
                  ([args.root / "Languages"] if (args.root / "Languages").is_dir() else [])
     defs_dirs = sorted(args.root.glob("*/Defs")) + \
+                sorted(args.root.glob("*/Mods/*/Defs")) + \
                 ([args.root / "Defs"] if (args.root / "Defs").is_dir() else [])
     if not lang_roots:
         print(f"No Languages/ directory found under {args.root}", file=sys.stderr)
@@ -487,26 +624,34 @@ def main():
     sidecar = load_sidecar(args.root, report)
     if sidecar is None:
         return 2
+    defs, def_roots = collect_defs(defs_dirs, sidecar.active_packages)
+    check_sidecar_freshness(defs, sidecar, report)
 
-    english_keyed = {}
-    languages = []
+    # A language is the union of its dirs across every root, not one dir per
+    # root — see check_language. English already worked this way; the rest now
+    # do too, so a gated compat root can hold the injections that may only live
+    # there without being mistaken for a half-empty language of its own.
+    english_dirs = []
+    languages = {}   # language name -> [dirs], in load order
+    english_injected_seen = {}
     for lang_root in lang_roots:
         for lang_dir in sorted(p for p in lang_root.iterdir() if p.is_dir()):
             if lang_dir.name == "English":
-                english_keyed.update(collect_keyed(lang_dir, report))
+                english_dirs.append(lang_dir)
+                check_english_definjected(lang_dir, sidecar, def_roots,
+                                          english_injected_seen, report)
             else:
-                languages.append(lang_dir)
+                languages.setdefault(lang_dir.name, []).append(lang_dir)
+    english_keyed = collect_keyed(english_dirs, report)
 
     if not english_keyed:
         print("No English Keyed strings found; nothing to check against.", file=sys.stderr)
         return 2
 
-    defs = collect_defs(defs_dirs, sidecar.active_packages)
-    check_sidecar_freshness(defs, sidecar, report)
     found_by_lang = {}
-    for lang_dir in languages:
-        found_by_lang[lang_dir.name] = check_language(
-            lang_dir, english_keyed, sidecar, report)
+    for lang, lang_dirs in sorted(languages.items()):
+        found_by_lang[lang] = check_language(
+            lang_dirs, english_keyed, sidecar, def_roots, report)
 
     # Cross-language parity: any DefInjected key one language translates
     # beyond the required set (secondary fields, extra collection elements)
@@ -541,7 +686,7 @@ def main():
         print(f"ERROR   {line}")
     for line in report.warnings:
         print(f"WARNING {line}")
-    checked = ", ".join(sorted({l.name for l in languages})) or "none"
+    checked = ", ".join(sorted(languages)) or "none"
     print(f"\n{len(english_keyed)} English keys; languages checked: {checked}")
     print(f"{len(report.errors)} error(s), {len(report.warnings)} warning(s)")
     return 1 if report.errors or (args.strict and report.warnings) else 0

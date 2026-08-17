@@ -137,11 +137,14 @@
 
       <!-- Code + content (matched at root and under any version / Common folder) -->
       <_ModFiles Include="$(RepoRoot)/Assemblies/**/*.dll;$(RepoRoot)/*/Assemblies/**/*.dll" />
-      <_ModFiles Include="$(RepoRoot)/Defs/**/*.xml;$(RepoRoot)/*/Defs/**/*.xml" />
+      <_ModFiles Include="$(RepoRoot)/Defs/**/*.xml;$(RepoRoot)/*/Defs/**/*.xml;$(RepoRoot)/*/Mods/*/Defs/**/*.xml" />
       <_ModFiles Include="$(RepoRoot)/Patches/**/*.xml;$(RepoRoot)/*/Patches/**/*.xml" />
       <_ModFiles Include="$(RepoRoot)/Textures/**/*.png;$(RepoRoot)/Textures/**/*.jpg;$(RepoRoot)/Textures/**/*.jpeg;$(RepoRoot)/*/Textures/**/*.png;$(RepoRoot)/*/Textures/**/*.jpg;$(RepoRoot)/*/Textures/**/*.jpeg" />
       <_ModFiles Include="$(RepoRoot)/Sounds/**/*.wav;$(RepoRoot)/Sounds/**/*.mp3;$(RepoRoot)/Sounds/**/*.ogg;$(RepoRoot)/*/Sounds/**/*.wav;$(RepoRoot)/*/Sounds/**/*.mp3;$(RepoRoot)/*/Sounds/**/*.ogg" />
-      <_ModFiles Include="$(RepoRoot)/Languages/**/*.xml;$(RepoRoot)/Languages/**/*.txt;$(RepoRoot)/*/Languages/**/*.xml;$(RepoRoot)/*/Languages/**/*.txt" />
+      <!-- */Mods/*/Languages picks up gated compat load roots, which nest
+           inside the version folder as <version>/Mods/<Mod Name>/ (see
+           LoadFolders.xml). -->
+      <_ModFiles Include="$(RepoRoot)/Languages/**/*.xml;$(RepoRoot)/Languages/**/*.txt;$(RepoRoot)/*/Languages/**/*.xml;$(RepoRoot)/*/Languages/**/*.txt;$(RepoRoot)/*/Mods/*/Languages/**/*.xml;$(RepoRoot)/*/Mods/*/Languages/**/*.txt" />
     </ItemGroup>
     <!-- Mirror each file's path relative to the repo root into $(StageDir). Computed as
          per-item metadata (MakeRelative inside a transform string evaluates only once,

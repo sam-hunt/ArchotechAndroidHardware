@@ -48,6 +48,18 @@ is the source of truth; every other language derives from it.
   *any* shape forces a regen rather than a manifest edit.
 - Target layout: `1.6/Languages/<Language>/Keyed/*.xml` and
   `1.6/Languages/<Language>/DefInjected/<DefTypeFolder>/*.xml`.
+- **No gated compat load root exists yet, but this mod will need one the
+  day any of its MayRequire-gated defs get translations.** The grav
+  reactor's `GeneDef`/`HediffDef`/`ThingDef`/`RecipeDef`s and its mote are
+  Odyssey-gated, `AAH_MakeThanaticReactor` (`RecipeDef`) is Anomaly-gated,
+  and `AAH_SalvageThanaticReactor` (`RecipeDef`) is VFEPower-gated (a
+  workshop mod, not a DLC). MayRequire is ignored on DefInjected entries, so
+  each gate must become a LoadFolders-gated folder — e.g.
+  `1.6/Mods/Odyssey/Languages/<Language>/...` — the moment translations for
+  that content are added, mirroring `BetterTradersGuild`'s
+  `1.6/Mods/Biotech` pattern. Never add those entries to the main `1.6`
+  tree: that loads unconditionally and is a found-no-def startup error
+  whenever the gate is inactive. See TODOs.md for the tracked follow-up.
 - `<DefTypeFolder>` must be the def's resolvable type name: bare for vanilla
   types (`HediffDef`, `GeneDef`, `ThingDef`, `RecipeDef`, `ThoughtDef`,
   `ScenarioDef`, `ScenPartDef`, `RulePackDef`, ...). This mod defines no
@@ -717,9 +729,19 @@ name-grammar generation.
 ### Initial generation (`/translate <Language>`)
 
 1. Run the checker; confirm English itself is clean.
-2. Enumerate the English Keyed keys in `AAH_UI.xml` and the DefInjected
-   labels/descriptions across `1.6/Defs/` (cross-check against the sidecar's
-   `required` subset rather than assuming completeness).
+2. Enumerate the target key set: every Keyed key in `AAH_UI.xml`, plus every
+   `required` DefInjected entry in the `Scripts/expected-injections.json`
+   sidecar, taking the English source text from each entry's `english`
+   field — NOT from scanning `1.6/Defs/` yourself, which the file-map bullet
+   above already warns can miss inherited/comp-default text the sidecar
+   sees and a hand scan doesn't. If a future gated def type (Odyssey's grav
+   reactor, Anomaly's Thanatic recipe, VFEPower's salvage recipe) ever ships
+   translations, route its entries to its own compat load root under
+   `1.6/Mods/<Gate>/Languages/<Language>/...` (see the compat-root bullet
+   above); everything else goes in the main `1.6/Languages/<Language>/`
+   tree. The checker enforces this both ways once such a root exists — an
+   entry must live in the load root that declares its def — and its
+   missing-entry errors name the root a translation belongs under.
 3. Extract the vanilla tar for the target language into the scratchpad;
    build a term list for the grounded terms above (Core + Biotech), plus
    VREA's own English strings for android/reactor vocabulary.
