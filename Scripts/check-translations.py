@@ -45,4 +45,9 @@ engine.DEF_TYPE_ALIASES = {
 # hard config error, not a legal state.
 engine.ALLOW_NO_KEYED_SURFACE = False
 
+# The localized Steam Workshop title lives in this Keyed key (the
+# settings-window header); the checker enforces the title-coupling rule
+# against each .steamworkshop/Description/<Language>.txt title line.
+engine.WORKSHOP_TITLE_KEY = "AAH_SettingsCategory"
+
 raise SystemExit(engine.main())
