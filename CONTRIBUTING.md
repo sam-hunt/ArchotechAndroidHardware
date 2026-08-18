@@ -41,7 +41,9 @@ contributions welcome).
   ```
 
   It checks key coverage, placeholders, DefInjected paths, staleness, and
-  file hygiene.
+  file hygiene. The checker's engine lives in the `l10n/` git submodule, so
+  clone with `git clone --recurse-submodules` (or run
+  `git submodule update --init` in an existing clone) before validating.
 
 - Improving a machine-assisted language? Corrections from native speakers
   are gladly merged, no matter how small.
