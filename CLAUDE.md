@@ -163,7 +163,7 @@ Drain rate is not a runtime setting — it's the `AAH_ThanaticReactor` gene's bi
 
 ### Harmony Patches (reflection-based, no VREA DLL dependency)
 
-All patches target VREA (or vanilla / Odyssey) classes via `AccessTools.TypeByName()` — pure reflection, no compile-time coupling to VREAndroids.dll. The list is **unordered and referenced by name** — there's no ordering dependency between patches, so don't number them. Each entry is the high-level role plus any footgun; read the patch's own source in `Source/1.6/Patches/` for the full mechanism.
+All patches target VREA (or vanilla / Odyssey) classes via `AccessTools.TypeByName()` — pure reflection, no compile-time coupling to VREAndroids.dll. Patching runs from `ArchotechAndroidHardwareHarmony`'s `[StaticConstructorOnStartup]` ctor, and that placement is load-bearing TWICE over: the documented thread-affinity reason (VREA's cctor loads textures via `ContentFinder`), and the patch-timing hazard — applying a detour JIT-compiles the target, running its declaring type's static ctor, which before defs load permanently breaks a target cctor that resolves defs (the BetterTradersGuild v1.1.0 CWTL incident). Never move `PatchAll()` onto the `Mod` constructor path. The list is **unordered and referenced by name** — there's no ordering dependency between patches, so don't number them. Each entry is the high-level role plus any footgun; read the patch's own source in `Source/1.6/Patches/` for the full mechanism.
 
 - **`AlertAndroidsLowOnPower_Culprits`** — Prefix on VREA's `Alert_AndroidsLowOnPower.get_Culprits`, null-safe: Vanometric disables the power need, so VREA's original NREs on a null need's `.CurLevelPercentage`.
 
