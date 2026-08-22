@@ -195,6 +195,8 @@ Use the `rimworld-logs` skill — it covers Player.log locations (Windows/WSL), 
 
 ## Testing
 
+**Startup smoke test (pre-release):** `python3 Scripts/integration-smoke-test.py` (game closed) boots AAH with VREA, VEF and VFE Power on a pinned list, then classifies Player.log errors by origin and fails on anything attributed to AAH or the VREA/VEF seam. Run before every release (wired into the release skill); thin shim over the shared engine in `l10n/smoke/` (born from the BetterTradersGuild v1.1.0 CWTL incident).
+
 `Tests/1.6/` holds an xUnit (net472) suite for the pure logic: settings field-initializer/`ResetToDefaults` coherence, overcharge-cap sentinel guards, `SurgeryState`, and `ReactorGlow.AttachmentsEnabledFor`'s headless-safe branches. Tests are headless — anything needing `DefDatabase`, a live `Pawn`, or a `[DefOf]` static constructor is out of scope (documented per-test). Run natively from WSL with `dotnet test Tests/1.6/ArchotechAndroidHardware.Tests.csproj` (vstest hosts the net472 suite via mono; if a run fails with `BadImageFormatException`/`TypeLoadException`, a DLL is missing from the test csproj copy target — see the Assembly-CSharp-firstpass comment there: mono resolves field types eagerly where the Windows CLR is lazy). `dotnet test` builds Debug by default, so `DeployToModFolder` is Release-gated — test runs never swap the deployed mod DLL for a Debug build. CI builds the Tests project but does not run it.
 
 ## Localization
