@@ -16,6 +16,38 @@ jobs:
         with:
           submodules: true
 
+      - name: Extract release notes from CHANGELOG
+        # Notes are authored, not generated: CHANGELOG.md is the curated record,
+        # so the release body IS this tag's CHANGELOG section, lifted verbatim.
+        # Hand-pasting it after the fact was skipped often enough across the
+        # mod family that several releases shipped with auto-generated bodies
+        # only - hence the extraction, and hence the hard failure below rather
+        # than a warning. First step after checkout: it needs nothing from the
+        # build, so a missing section fails in seconds, not after minutes of
+        # compiling.
+        #
+        # Terminates the section on the next '## [' heading OR the first
+        # link-reference definition ('[x]: url' at line start - the block at
+        # the bottom of the file, which is what follows the oldest entry;
+        # a bare line-start '[' is NOT a terminator, so a body line wrapping
+        # onto a markdown link cannot silently truncate the notes), then trims
+        # blank lines off both ends.
+        run: |
+          set -euo pipefail
+          version="${GITHUB_REF_NAME#v}"
+          awk -v v="$version" '
+            index($0, "## [" v "]") == 1 { p = 1; next }
+            p && (index($0, "## [") == 1 || $0 ~ /^\[[^]]+\]:/) { exit }
+            p { print }
+          ' CHANGELOG.md | sed -e '/./,$!d' -e :a -e '/^[[:space:]]*$/{$d;N;ba' -e '}' \
+            > RELEASE_NOTES.md
+          if [ ! -s RELEASE_NOTES.md ]; then
+            echo "::error::No '## [$version]' section with content found in CHANGELOG.md - add one before tagging v$version."
+            exit 1
+          fi
+          echo "Release notes for $version:"
+          cat RELEASE_NOTES.md
+
       - name: Check translations
         run: python3 Scripts/check-translations.py
 
@@ -44,5 +76,9 @@ jobs:
         uses: softprops/action-gh-release@v3
         with:
           files: ArchotechAndroidHardware-${{ github.ref_name }}.zip
+          # body_path is pre-pended to the auto-generated notes by the GitHub API,
+          # so the curated CHANGELOG prose leads and the compare link (plus any
+          # contributor PRs) follows it - not the other way round.
+          body_path: RELEASE_NOTES.md
           generate_release_notes: true
           prerelease: ${{ contains(github.ref_name, 'beta') || contains(github.ref_name, 'alpha') || contains(github.ref_name, '-rc') }}

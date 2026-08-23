@@ -162,8 +162,12 @@ No further questions unless something is unexpected:
 - Tag with: `vX.Y.Z`
 - Push: `git push && git push --tags`
 - Show `git log --oneline -3` and `git tag -l 'v*' --sort=-v:refname | head -5`,
-  plus the changelog notes for the user to copy into Steam Workshop / GitHub
-  release notes. If step 3 updated any Workshop description files, list the
-  affected languages and remind the user to paste each updated title and
-  description into the Workshop page's per-language edit UI (Steam's own
-  language names differ: schinese, koreana, brazilian, latam, ...).
+  plus the changelog notes for the user to copy into the **Steam Workshop**
+  description. The **GitHub** release notes need no paste: the tag-triggered
+  workflow lifts this version's `CHANGELOG.md` section into the release body
+  itself (and hard-fails the release if the section is missing), so the
+  changelog entry written at step 6 is the release body. If step 3 updated any
+  Workshop description files, list the affected languages and remind the user
+  to paste each updated title and description into the Workshop page's
+  per-language edit UI (Steam's own language names differ: schinese, koreana,
+  brazilian, latam, ...).
