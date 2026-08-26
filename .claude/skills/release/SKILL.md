@@ -37,10 +37,17 @@ this is orientation, not a decision.
 
 Run, in order:
 ```bash
+l10n/tools/bump-consumer.sh   # pin l10n to its latest release tag (commits; no-op when current)
 python3 Scripts/refresh-translation-expectations.py
 python3 Scripts/check-translations.py --strict
 ```
 
+- The first command is one of the three moments the l10n pin moves (release,
+  translation-pass start, new upstream major); the checker's `--strict`
+  engine-pin check fails until the pin is on the latest tag. It commits the
+  pointer directly; report its one-line result. If it reports a **MAJOR**
+  bump, stop: upstream changed the shim/flow contract and this repo owes the
+  accompanying edit before the release continues.
 - The refresh script refuses to start while RimWorld is already open (it
   needs an exclusive boot for the mod-list swap). If it reports that, **stop
   and ask the user** to close the client, and rerun only after they confirm

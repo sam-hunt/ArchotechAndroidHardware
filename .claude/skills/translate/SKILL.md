@@ -28,9 +28,16 @@ and only these** (progressive disclosure; if `l10n/` is empty, run
 
 **Where learnings land:** mod-independent findings (engine mechanics, a
 language's grammar rule, corpus style facts) go in the `l10n/` submodule —
-edit the canonical checkout at `~/dev/rimworld-l10n`, commit there, then bump
-the pin here. Mod-specific findings (coined terms, phrasing decisions) go in
+edit the canonical checkout at `~/dev/rimworld-l10n`, commit and tag there.
+Mod-specific findings (coined terms, phrasing decisions) go in
 `glossary/<Language>.md`.
+
+**Before any pass, bump the pin:** run `l10n/tools/bump-consumer.sh` (fetches
+upstream's release tags, checks out the latest, commits the pointer as `chore:
+Bump l10n submodule vOLD -> vNEW`; no-op when already current). This is one of
+the three moments a pin moves (release, pass start, new upstream major), never
+per upstream commit. If it reports a MAJOR bump, read the upstream release
+notes for the shim or flow edit this repo owes before continuing.
 
 ## This mod's translation surface
 
