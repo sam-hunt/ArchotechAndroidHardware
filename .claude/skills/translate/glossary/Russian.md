@@ -29,4 +29,4 @@ packs — no name-grammar composition of its own. The weapon-mod family's
 `RulePackDef`-specific glossary rows (weapon/tool/damage vocabulary,
 trait-adjective case, trader/market-value phrasing) belong to a different
 domain and don't apply here; see `../UniqueMeleeWeapons` or
-`../TradersStockXenogerms`'s skill if that ever changes.
+`../XenogermTraderStock`'s skill if that ever changes.
