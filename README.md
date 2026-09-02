@@ -1,7 +1,7 @@
 # Archotech Android Hardware
 
 ![RimWorld 1.6](https://img.shields.io/badge/RimWorld-1.6-blue)
-![Version 1.0.0](https://img.shields.io/badge/version-1.0.0-green)
+![Version 0.1.0](https://img.shields.io/badge/version-0.1.0-green)
 
 A RimWorld mod that adds a range of archotech-tier body parts for androids from [Vanilla Races Expanded - Android](https://steamcommunity.com/sharedfiles/filedetails/?id=2975771801).
 

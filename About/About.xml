@@ -3,7 +3,7 @@
   <name>Archotech Android Hardware</name>
   <author>Sam Hunt</author>
   <packageId>shunter.archotechandroidhardware</packageId>
-  <modVersion>1.0.0</modVersion>
+  <modVersion>0.1.0</modVersion>
   <description>Adds a range of archotech-tier body parts for androids from Vanilla Races Expanded - Android. True archotechnology can't be built by human hands, but a salvaged vanometric power cell, psychic emanator, or violence generator can be dismantled, re-housed, and wired into an android chassis.
 
     Every part is crafted at the Android Part Workbench (Archotech Androidtech research), installed via surgery, and recovered intact if removed.
