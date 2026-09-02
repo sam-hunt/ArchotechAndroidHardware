@@ -55,12 +55,6 @@ call before implementation; see RELEASE_READINESS_AUDIT.md for the open question
 
 ## Localization
 
-- **Refresh the sidecar** (`python3 Scripts/refresh-translation-expectations.py`,
-  game closed). Blocked on 2026-09-02 because RimWorld was open. Until then
-  `check-translations.py` reports 5 stale-description errors from this
-  session's def copy edits, and the sidecar still lists the now-`[NoTranslate]`
-  `bodyPartLabel` as required.
-
 - Run the initial Steam Workshop description translation pass: create
   `.steamworkshop/Description/<Language>.txt` per target language (roster
   in CONTRIBUTING.md), localize each title per `.steamworkshop/README.md`'s
