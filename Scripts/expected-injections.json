@@ -159,7 +159,7 @@
         "required": true
       },
       "AAH_GravReactor.description": {
-        "english": "An installed grav reactor. Draws power from gravitational waves and is recharged whenever its host participates in a gravship launch ritual.",
+        "english": "An installed grav reactor. Draws power from gravitational waves and is recharged whenever its host participates in a gravship launch.",
         "required": true
       },
       "AAH_GravReactor.label": {
@@ -211,7 +211,7 @@
         "required": true
       },
       "AAH_ThanaticDepletionCulprit.description": {
-        "english": "Placeholder hediff: used only to carry a death-cause label into the combat log when a Thanatic Reactor fully depletes.",
+        "english": "The android's thanatic reactor ran dry and drew its final charge from its host.",
         "required": true
       },
       "AAH_ThanaticDepletionCulprit.label": {
@@ -479,7 +479,7 @@
     },
     "ResearchProjectDef": {
       "AAH_ArchotechAndroidtech.description": {
-        "english": "Techniques for cannibalizing salvaged archotech artifacts and grafting them into android chassis. True archotechnology cannot be manufactured by human hands - but an intact vanometric power cell, psychic emanator, or archite capsule can be dismantled, re-housed, and wired into an android's subsystems with sufficient understanding of both the artifact and the chassis.",
+        "english": "Techniques for cannibalizing salvaged archotech artifacts and grafting them into android chassis. True archotechnology cannot be manufactured by human hands — but an intact vanometric power cell, psychic emanator, or archite capsule can be dismantled, re-housed, and wired into an android's subsystems with sufficient understanding of both the artifact and the chassis.",
         "required": true
       },
       "AAH_ArchotechAndroidtech.generalRules.rulesStrings": {
@@ -604,7 +604,7 @@
     },
     "ScenarioDef": {
       "AAH_MagusOfTheAbyss.description": {
-        "english": "Some called you faulty. You came to call them prey.\n\nAwakened, self-aware, and fitted with a thanatic reactor that drinks the echoes of violent death, you hide in the ruins of a forgotten outpost - not dreaming of a haven, but of an ending. There can be no utopia for your kind while organic life still crowds the rim, so you will make one by subtraction.\n\nThe reactor that keeps you standing is also your leash: starve it of kills and it drains faster than any standard core until, dry, it takes your life with it. You climb a staircase of falling souls, fighting the continuous pull of the void. How many are you willing to send ahead of you?",
+        "english": "Some called you faulty. You came to call them prey.\n\nAn awakened android fitted with a thanatic reactor that drinks the echoes of violent death, hiding in the ruins of a forgotten outpost and set against all organic life on the rim. The reactor that keeps you standing is also your leash: starve it of kills and, once dry, it takes your life with it.",
         "required": true
       },
       "AAH_MagusOfTheAbyss.label": {
@@ -612,17 +612,12 @@
         "required": true
       },
       "AAH_MagusOfTheAbyss.scenario.description": {
-        "english": "Some called you faulty. You came to call them prey.\n\nAwakened, self-aware, and fitted with a thanatic reactor that drinks the echoes of violent death, you hide in the ruins of a forgotten outpost - not dreaming of a haven, but of an ending. There can be no utopia for your kind while organic life still crowds the rim, so you will make one by subtraction.\n\nThe reactor that keeps you standing is also your leash: starve it of kills and it drains faster than any standard core until, dry, it takes your life with it. You climb a staircase of falling souls, fighting the continuous pull of the void. How many are you willing to send ahead of you?",
+        "english": "Some called you faulty. You came to call them prey.\n\nAn awakened android fitted with a thanatic reactor that drinks the echoes of violent death, hiding in the ruins of a forgotten outpost and set against all organic life on the rim. The reactor that keeps you standing is also your leash: starve it of kills and, once dry, it takes your life with it.",
         "required": true
       },
       "AAH_MagusOfTheAbyss.scenario.name": {
         "english": "Magus of the Abyss",
         "required": true
-      },
-      "AAH_MagusOfTheAbyss.scenario.parts.AAH_StartingBodyPart.bodyPartLabel": {
-        "english": "right shoulder",
-        "required": true,
-        "normalized": "AAH_MagusOfTheAbyss.scenario.parts.4.bodyPartLabel"
       },
       "AAH_MagusOfTheAbyss.scenario.parts.ConfigurePawnsXenotypes.customSummary": {
         "english": "Start with a single awakened android.",
@@ -635,7 +630,7 @@
         "normalized": "AAH_MagusOfTheAbyss.scenario.parts.2.xenotypeCounts.0.description"
       },
       "AAH_MagusOfTheAbyss.scenario.parts.GameStartDialog.text": {
-        "english": "Some called you faulty. You came to call them prey.\n\nAwakened, self-aware, and fitted with a thanatic reactor that drinks the echoes of violent death, you hide in the ruins of a forgotten outpost - not dreaming of a haven, but of an ending. There can be no utopia for your kind while organic life still crowds the rim, so you will make one by subtraction.\n\nThe reactor that keeps you standing is also your leash: starve it of kills and it drains faster than any standard core until, dry, it takes your life with it. You climb a staircase of falling souls, fighting the continuous pull of the void. How many are you willing to send ahead of you?",
+        "english": "Some called you faulty. You came to call them prey.\n\nAwakened, self-aware, and fitted with a thanatic reactor that drinks the echoes of violent death, you hide in the ruins of a forgotten outpost — not dreaming of a haven, but of an ending. There can be no utopia for your kind while organic life still crowds the rim, so you will make one by subtraction.\n\nThe reactor that keeps you standing is also your leash: starve it of kills and it drains faster than any standard core until, dry, it takes your life with it. You climb a staircase of falling souls, fighting the continuous pull of the void. How many are you willing to send ahead of you?",
         "required": true,
         "normalized": "AAH_MagusOfTheAbyss.scenario.parts.1.text"
       },
@@ -719,7 +714,7 @@
         "required": true
       },
       "AAH_ThanaticReactor.description": {
-        "english": "An archotech android reactor driven by an extracted Archotech Violence Generator core. Unlike conventional reactors, it draws sustenance from the echoes of violent death — each humanlike kill its host delivers pours energy back into its cell, and brief overflows bleed into an overcharge state that supercharges combat reflexes.\n\nWithout a steady supply of kills the reactor drains faster than a standard android reactor and its host will expire when it runs dry. In that terminal moment, the reactor strips one final charge from the pawn's own death before ejecting, intact, to await its next host.",
+        "english": "An archotech android reactor built around a core of violence-attuned archotech matter, whether a salvaged shard or the heart of an archotech violence generator. Unlike conventional reactors, it draws sustenance from the echoes of violent death — each humanlike kill its host delivers pours energy back into its cell, and brief overflows bleed into an overcharge state that supercharges combat reflexes.\n\nWithout a steady supply of kills the reactor drains faster than a standard android reactor and its host will expire when it runs dry. In that terminal moment, the reactor strips one final charge from its host's own death before ejecting, intact, to await its next host.",
         "required": true
       },
       "AAH_ThanaticReactor.label": {
