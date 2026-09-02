@@ -46,6 +46,7 @@
     <li>ludeon.rimworld.biotech</li>
     <li>ludeon.rimworld.anomaly</li>
     <li>ludeon.rimworld.odyssey</li>
+    <li>OskarPotocki.VanillaFactionsExpanded.Core</li>
     <li>vanillaracesexpanded.android</li>
     <li>VanillaExpanded.VFEPower</li>
   </loadAfter>
