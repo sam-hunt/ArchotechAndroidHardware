@@ -38,7 +38,7 @@ public class ScenPart_StartingApparelWorn : ScenPart_PawnModifier
     public override string Summary(Scenario scen)
     {
         if (apparelDef == null) return null;
-        return "Each starting android begins wearing " + apparelDef.label + ".";
+        return "AAH_ScenSummaryStartingApparel".Translate(apparelDef.label);
     }
 
     public override bool HasNullDefs() => base.HasNullDefs() || apparelDef == null;
@@ -46,7 +46,7 @@ public class ScenPart_StartingApparelWorn : ScenPart_PawnModifier
     public override void DoEditInterface(Listing_ScenEdit listing)
     {
         Rect rect = listing.GetScenPartRect(this, RowHeight * 3f);
-        if (Widgets.ButtonText(rect.TopPartPixels(RowHeight), apparelDef?.LabelCap ?? "(select apparel)"))
+        if (Widgets.ButtonText(rect.TopPartPixels(RowHeight), apparelDef?.LabelCap ?? "AAH_ScenEditSelectApparel".Translate()))
         {
             FloatMenuUtility.MakeMenu(PossibleApparel(),
                 d => d.LabelCap.ToString(),

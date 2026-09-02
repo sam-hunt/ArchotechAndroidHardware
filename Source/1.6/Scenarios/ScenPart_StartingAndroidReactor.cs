@@ -35,7 +35,7 @@ public class ScenPart_StartingAndroidReactor : ScenPart_PawnModifier
     public override string Summary(Scenario scen)
     {
         if (hediffDef == null) return null;
-        return "Each starting android begins with " + hediffDef.label + " installed in its reactor slot.";
+        return "AAH_ScenSummaryStartingReactor".Translate(hediffDef.label);
     }
 
     public override bool HasNullDefs() => base.HasNullDefs() || hediffDef == null;
@@ -47,7 +47,7 @@ public class ScenPart_StartingAndroidReactor : ScenPart_PawnModifier
     public override void DoEditInterface(Listing_ScenEdit listing)
     {
         Rect rect = listing.GetScenPartRect(this, RowHeight * 3f);
-        if (Widgets.ButtonText(rect.TopPartPixels(RowHeight), hediffDef?.LabelCap ?? "(select reactor)"))
+        if (Widgets.ButtonText(rect.TopPartPixels(RowHeight), hediffDef?.LabelCap ?? "AAH_ScenEditSelectReactor".Translate()))
         {
             FloatMenuUtility.MakeMenu(AAHReactorDefs.All,
                 d => d.LabelCap.ToString(),

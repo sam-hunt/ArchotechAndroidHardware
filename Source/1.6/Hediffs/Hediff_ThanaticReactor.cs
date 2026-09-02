@@ -225,8 +225,8 @@ public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection, IAAH
         {
             yield return new Command_Action
             {
-                defaultLabel = "Extract thanatic reactor",
-                defaultDesc = "Mark this android corpse to have its thanatic reactor extracted. The reactor item will be recovered with its current charge intact.",
+                defaultLabel = "AAH_ExtractThanaticReactorLabel".Translate(),
+                defaultDesc = "AAH_ExtractThanaticReactorDesc".Translate(),
                 icon = ContentFinder<Texture2D>.Get("UI/Commands/AAH_ExtractThanaticReactor"),
                 action = delegate
                 {
@@ -239,8 +239,8 @@ public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection, IAAH
         {
             yield return new Command_Action
             {
-                defaultLabel = "Cancel reactor extraction",
-                defaultDesc = "Remove the thanatic reactor extraction designation from this corpse.",
+                defaultLabel = "AAH_CancelThanaticExtractionLabel".Translate(),
+                defaultDesc = "AAH_CancelThanaticExtractionDesc".Translate(),
                 icon = ContentFinder<Texture2D>.Get("UI/Designators/Cancel"),
                 action = delegate
                 {

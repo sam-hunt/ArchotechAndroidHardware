@@ -38,8 +38,7 @@ public class ScenPart_StartingGene : ScenPart_PawnModifier
     public override string Summary(Scenario scen)
     {
         if (geneDef == null) return null;
-        return "Each starting android has a " + chance.ToStringPercent() + " chance of the "
-            + geneDef.label + " gene.";
+        return "AAH_ScenSummaryStartingGene".Translate(chance.ToStringPercent(), geneDef.label);
     }
 
     public override bool HasNullDefs() => base.HasNullDefs() || geneDef == null;
@@ -47,7 +46,7 @@ public class ScenPart_StartingGene : ScenPart_PawnModifier
     public override void DoEditInterface(Listing_ScenEdit listing)
     {
         Rect rect = listing.GetScenPartRect(this, RowHeight * 3f);
-        if (Widgets.ButtonText(rect.TopPartPixels(RowHeight), geneDef?.LabelCap ?? "(select gene)"))
+        if (Widgets.ButtonText(rect.TopPartPixels(RowHeight), geneDef?.LabelCap ?? "AAH_ScenEditSelectGene".Translate()))
         {
             FloatMenuUtility.MakeMenu(DefDatabase<GeneDef>.AllDefsListForReading,
                 d => d.LabelCap.ToString(),

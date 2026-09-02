@@ -63,4 +63,25 @@
   <AAH_TagMajorPassion>major passion</AAH_TagMajorPassion>
   <AAH_TagRecommended>recommended</AAH_TagRecommended>
 
+  <!-- Thanatic reactor extraction -->
+  <AAH_ExtractThanaticReactorLabel>Extract thanatic reactor</AAH_ExtractThanaticReactorLabel>
+  <AAH_ExtractThanaticReactorDesc>Mark this android corpse to have its thanatic reactor extracted. The reactor item will be recovered with its current charge intact.</AAH_ExtractThanaticReactorDesc>
+  <AAH_CancelThanaticExtractionLabel>Cancel reactor extraction</AAH_CancelThanaticExtractionLabel>
+  <AAH_CancelThanaticExtractionDesc>Remove the thanatic reactor extraction designation from this corpse.</AAH_CancelThanaticExtractionDesc>
+  <AAH_ExtractThanaticReactorOption>Extract thanatic reactor ({0})</AAH_ExtractThanaticReactorOption>
+
+  <!-- Reactor items -->
+  <AAH_StoredEnergy>Stored energy: {0}%</AAH_StoredEnergy>
+
+  <!-- Magus of the Abyss scenario parts -->
+  <AAH_ScenSummaryAllFactionsHostile>All other factions begin hostile.</AAH_ScenSummaryAllFactionsHostile>
+  <AAH_ScenSummaryStartingReactor>Each starting android begins with {0} installed in its reactor slot.</AAH_ScenSummaryStartingReactor>
+  <AAH_ScenSummaryStartingApparel>Each starting android begins wearing {0}.</AAH_ScenSummaryStartingApparel>
+  <AAH_ScenSummaryStartingBodyPart>Each starting android begins with {0} replacing its {1}.</AAH_ScenSummaryStartingBodyPart>
+  <AAH_ScenSummaryStartingGene>Each starting android has a {0} chance of the {1} gene.</AAH_ScenSummaryStartingGene>
+  <AAH_ScenEditSelectReactor>(select reactor)</AAH_ScenEditSelectReactor>
+  <AAH_ScenEditSelectApparel>(select apparel)</AAH_ScenEditSelectApparel>
+  <AAH_ScenEditSelectPart>(select part)</AAH_ScenEditSelectPart>
+  <AAH_ScenEditSelectGene>(select gene)</AAH_ScenEditSelectGene>
+
 </LanguageData>

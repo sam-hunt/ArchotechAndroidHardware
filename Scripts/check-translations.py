@@ -14,7 +14,11 @@ import check_translations as engine  # noqa: E402  (import after sys.path edit)
 
 engine.REPO_ROOT = Path(__file__).resolve().parent.parent
 
-# No [TranslationCanChangeCount]-style matching-token fields in this repo.
+# PARITY_EXEMPT_FIELDS stays empty. The one matching-token field here (ScenPart_StartingBodyPart.bodyPartLabel,
+# compared against BodyPartRecord.untranslatedCustomLabel) is handled at the
+# source with [NoTranslate], which drops it from the sidecar and makes the game
+# refuse a DefInjected override for it. PARITY_EXEMPT_FIELDS only excuses a
+# secondary field from cross-language parity, the opposite semantics.
 engine.PARITY_EXEMPT_FIELDS = set()
 
 # RATIONALE: Biotech is a hard dependency (About.xml's modDependencies) —

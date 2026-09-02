@@ -26,6 +26,12 @@ public class ScenPart_StartingBodyPart : ScenPart_PawnModifier
 {
     private HediffDef hediffDef;
     private BodyPartDef bodyPart;
+
+    // Matching token, not display text: compared against
+    // BodyPartRecord.untranslatedCustomLabel (raw English "right shoulder") in
+    // FindTargetPart. [NoTranslate] keeps it out of the DefInjected surface and
+    // makes the game refuse an injected override even if one shipped.
+    [NoTranslate]
     private string bodyPartLabel;
 
     public override void ExposeData()
@@ -39,8 +45,8 @@ public class ScenPart_StartingBodyPart : ScenPart_PawnModifier
     public override string Summary(Scenario scen)
     {
         if (hediffDef == null || bodyPart == null) return null;
-        return "Each starting android begins with " + hediffDef.label + " replacing its "
-            + (bodyPartLabel.NullOrEmpty() ? bodyPart.label : bodyPartLabel) + ".";
+        return "AAH_ScenSummaryStartingBodyPart".Translate(hediffDef.label,
+            bodyPartLabel.NullOrEmpty() ? bodyPart.label : bodyPartLabel);
     }
 
     public override bool HasNullDefs() => base.HasNullDefs() || hediffDef == null || bodyPart == null;
@@ -48,7 +54,7 @@ public class ScenPart_StartingBodyPart : ScenPart_PawnModifier
     public override void DoEditInterface(Listing_ScenEdit listing)
     {
         Rect rect = listing.GetScenPartRect(this, RowHeight * 3f);
-        if (Widgets.ButtonText(rect.TopPartPixels(RowHeight), hediffDef?.LabelCap ?? "(select body part)"))
+        if (Widgets.ButtonText(rect.TopPartPixels(RowHeight), hediffDef?.LabelCap ?? "AAH_ScenEditSelectPart".Translate()))
         {
             FloatMenuUtility.MakeMenu(PossibleHediffs(),
                 d => d.LabelCap.ToString(),

@@ -106,6 +106,10 @@ public partial class ArchotechAndroidHardwareSettings
         if (Mathf.Approximately(value, recommendedValue) && !Mathf.Approximately(recommendedValue, defaultValue))
             tags.Add("AAH_TagRecommended".Translate());
 
+        // The "(a, b, c)" tag-list wrapper is list-formatting glue, not composed
+        // English prose (see the matching note in Settings_PsychicTransceiver's
+        // SensitivityOffsetLabel) — left as a literal; only the tag words
+        // themselves are localized, via AAH_Tag* above.
         string suffix = tags.Count > 0 ? $" ({string.Join(", ", tags)})" : "";
         string titleKey = withPart ? "AAH_CommonalityWithPart" : "AAH_CommonalityWithoutPart";
         return titleKey.Translate(value.ToString("F1")) + suffix;

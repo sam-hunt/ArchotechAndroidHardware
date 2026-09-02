@@ -19,7 +19,7 @@ public class ScenPart_AllFactionsHostile : ScenPart
 {
     public override string Summary(Scenario scen)
     {
-        return "All other factions begin hostile.";
+        return "AAH_ScenSummaryAllFactionsHostile".Translate();
     }
 
     public override void PostGameStart()

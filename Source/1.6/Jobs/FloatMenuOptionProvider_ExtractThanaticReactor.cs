@@ -51,7 +51,7 @@ public class FloatMenuOptionProvider_ExtractThanaticReactor : FloatMenuOptionPro
         if (hediff is not Hediff_ThanaticReactor) yield break;
 
         var option = new FloatMenuOption(
-            "Extract thanatic reactor (" + corpse.LabelShortCap + ")",
+            "AAH_ExtractThanaticReactorOption".Translate(corpse.LabelShortCap),
             delegate
             {
                 if (corpse.Destroyed) return;

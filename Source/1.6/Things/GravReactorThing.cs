@@ -32,7 +32,8 @@ public class GravReactorThing : ThingWithComps
         var baseStr = base.GetInspectString();
         if (!baseStr.NullOrEmpty())
             sb.AppendLine(baseStr);
-        sb.Append("Stored energy: ").Append((storedEnergy * 100f).ToString("F0")).Append('%');
+        string storedEnergyLine = "AAH_StoredEnergy".Translate((storedEnergy * 100f).ToString("F0"));
+        sb.Append(storedEnergyLine);
         return sb.ToString().TrimEndNewlines();
     }
 }

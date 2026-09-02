@@ -95,6 +95,12 @@ public partial class ArchotechAndroidHardwareSettings
         else if (Mathf.Approximately(value, 0.8f)) tags.Add("AAH_TagPsychicallyHypersensitive".Translate());
         if (Mathf.Approximately(value, DefaultTransceiverSensitivityOffset)) tags.Add("AAH_TagDefault".Translate());
 
+        // The leading "+" and the "(a, b, c)" tag-list wrapper are numeric/list
+        // formatting glue, not composed English prose — mirrors vanilla's own
+        // untranslated stat-offset sign and parenthetical trait/passion suffixes
+        // (e.g. Traits_Spectrum tooltips), so they're left as literals rather
+        // than routed through Keyed strings. Only the words inside (the tags
+        // themselves) are localized, via AAH_Tag* above.
         string sign = value > 0f ? "+" : "";
         string suffix = tags.Count > 0 ? $" ({string.Join(", ", tags)})" : "";
         return "AAH_TransceiverSensitivity".Translate($"{sign}{value:F2}") + suffix;
