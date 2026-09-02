@@ -4,47 +4,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Archotech Android Hardware** is a RimWorld 1.6 mod that adds archotech-tier android body parts for Vanilla Races Expanded - Android (VREA). Requires Harmony, Biotech DLC, and VREA.
+**Archotech Android Hardware** (AAH) is a RimWorld 1.6 mod adding archotech-tier body parts for Vanilla Races Expanded - Android (VREA). Requires Harmony, Biotech and VREA; Vanilla Expanded Framework (VEF) is a real transitive dependency (via VREA) that we use directly. Player-facing feature copy lives in `README.md` / `About/About.xml`; this file covers mechanics and footguns only.
 
-**Current content:**
+Content, by mechanism:
 
-_Reactors_ (all replace VREA's reactor in the reactor body-part slot; each stores its current energy on the item so it's transferrable between androids):
-
-- Vanometric reactor — a permanent, unlimited-power reactor replacement. Disables the power need entirely (no drain, never depletes).
-- Thanatic reactor — an alternative reactor that drains faster than baseline (acceleration comes from the companion gene's biostatMet -4 feeding VREA's `PowerEfficiencyToPowerDrainFactorCurve`, so the realised rate is whatever VREA's curve evaluates to at that point — not a constant we ship) and is refilled by humanlike kills. Overflow bleeds into a combat-buff "Thanatic Overcharge" hediff (mirrors go-juice). Kills also dessicate the victim's corpse. If the reactor runs dry the android dies (not downed) and ejects the reactor partially recharged.
-- Grav reactor — drains slower than baseline (the companion gene's biostatMet +4 feeds VREA's `PowerEfficiencyToPowerDrainFactorCurve`; the mirror of Thanatic's -4) and is refilled by the `gravRefillAmount` fraction (default 0.5) whenever its host participates in a gravship launch. The refill fires on _landing_, via a postfix on Odyssey's `WorldComponent_GravshipController.InitiateLanding` that scans the gravship manifest for grav reactors (see the `WorldComponentGravshipController_InitiateLanding` patch). Refill overflow (energy already present at launch) bleeds into the "Grav Overcharge" buff — the grav-themed counterpart to Thanatic Overcharge (cold tolerance + move/work speed, no psyfocus bump), applied/extended in `Hediff_GravOvercharge.ApplyOrExtend` from `Notify_RechargedByLaunch`. On depletion the android is forced _downed_ (not killed, unlike Thanatic); a later launch or a reactor swap revives them. Crafting requires the Odyssey DLC (gravcore power cell ingredient); the part still functions without it via save-transfer / dev-spawn.
-
-_Implants:_
-
-- Psychic transceiver — an archotech brain implant that grants psychic sensitivity to androids (suppressing VREA's ×0 deafness factor restores the 100% base, on which a configurable offset stacks — net = 100% + the offset). That offset is the `transceiverSensitivityOffset` setting (range −1.0…2.0, slider tagged at the vanilla psychic-trait degree offsets) — pushed into the hediff stage's `statOffset` by `ApplyTransceiverSensitivityOffset` at startup / on settings write (the XML value is just the load-time default), since a hediff stat offset isn't read live like the reactor knobs. It also permanently reopens an _awakened_ android to behavior-station reprogramming — the reliable, prerequisite-gated counterpart to the Self-Determination inspiration (same `CanAcceptPawn` override, see the `BehavioristStation_AllowSelfDetermination` patch). Lore: the psychic bridge leaves the android open to outside/archotech (i.e. player) influence — the inverse of the inspiration's own-will framing. Gated by the `enableTransceiverReprogramming` setting (default on); transceiver-driven reprogramming grants the decaying `AAH_SelfDeterminationOverridden` thought (−5→−1 mood stepping down as it ages out over 30 days; the `BehavioristStation_ConsumeSelfDetermination` patch).
-- Archotech mnemocore — an archotech brain implant that removes the android's memory need entirely. The companion gene overrides VREA's memory genes so they no longer `enablesNeeds`, and the hediff stage's `disablesNeeds` clears any residual `VREA_MemorySpace` instance. Ends memory degradation and makes RAM subroutines unnecessary.
-- Neutrosynthesizer — an archotech android kidney (replaces the kidney slot). The companion gene shares an exclusion tag with `VREA_NeutroSynthesis` to suppress it, and the hediff actively reduces `VREA_NeutroLoss` severity by 0.3/day per kidney (vs VREA's 0.05/day subroutine). Two installed give 0.6/day, exceeding human blood-loss recovery (0.5/day).
-
-_Inspirations:_
-
-- Self-Determination (`AAH_SelfDetermination`) — a mood-driven inspiration that lets an _awakened_ android temporarily reprogram its subroutines at VREA's behavior station (which normally permanently "refuses reprogramming" for awakened colonist androids). Pure enabler (no stat offsets): while active, the `BehavioristStation_AllowSelfDetermination` patch overrides the station's awakening refusal; finishing the reprogramming consumes the inspiration and grants the `AAH_SelfDeterminationFulfilled` mood memory (via the `BehavioristStation_ConsumeSelfDetermination` patch). Eligibility is gated to awakened androids carrying an AAH part by default, broadenable to all awakened androids via a setting. This works cleanly because VREA subroutine genes are _not_ `removeWhenAwakened` (only the "disabled-needs" hardware genes are), so re-selecting subroutines neither un-awakens the pawn nor is filtered by the dialog's `GeneValidator` — the station's `CanAcceptPawn` refusal is the only blocker. Worker + shared reflection helper live in `Source/1.6/Inspirations/`. The psychic transceiver is the permanent/reliable counterpart to this temporary inspiration (see its bullet above); both feed the same `BehavioristStation_AllowSelfDetermination` override.
-
-_Scenarios:_
-
-- Magus of the Abyss (`AAH_MagusOfTheAbyss`, `1.6/Defs/ScenarioDefs/`) — a dark inversion of VREA's New Utopia: one awakened android starting with a thanatic reactor pre-installed, framed around exterminating organic life rather than building a haven. Keeps New Utopia's research/derelict outpost/resources; drops the chased-android arrivals and wood, swaps 3 stock reactors for 2 thanatic reactors, adds a charge rifle, and starts all factions hostile. The starter is also fitted with an archotech arm (right shoulder), dark-grey marine armor (worn), and a 25% chance of red eyes.
-
-  Bespoke `ScenPart` classes live in `Source/1.6/Scenarios/`; their `ScenPartDef`s in `1.6/Defs/ScenPartDefs/` (one def per file). The four `ScenPart_PawnModifier` subclasses are generic/reusable (def-parameterised + editor-configurable via `DoEditInterface`) and all apply from `ModifyPawnPostGenerate` (`Notify_PawnGenerated`, the late hook) so changes show on the starting-pawn config screen and the hediffs' own PostAdd wiring (e.g. reactor companion genes) fires; all are idempotent across redress/re-roll:
-  - `ScenPart_StartingAndroidReactor` — fits a reactor hediff into the slot held by `VREA_Reactor` (post-`Gene_SyntheticBody.PostAdd`); our `Hediff_AddedPart` auto-evicts the stock reactor via vanilla `RestorePart`. Editor picker is driven by `AAHReactorDefs.All`.
-  - `ScenPart_StartingBodyPart` — installs an added-part hediff (e.g. vanilla `ArchotechArm`, Core) into a named part; `bodyPart` def + optional `bodyPartLabel` matched against `BodyPartRecord.untranslatedCustomLabel` (raw English "right shoulder", language-independent) to pick a side.
-  - `ScenPart_StartingApparelWorn` — wears (not stockpiles) an apparel def, optional stuff + `overrideColor`/`color` via `CompColorable`. Runs after vanilla gear gen, so it wears on top and drops layer conflicts.
-  - `ScenPart_StartingGene` — adds a gene using the inherited `chance` roll for partial odds. **Magus uses `VREA_Eyes_Red`, not vanilla `Eyes_Red`:** VREA's `GeneDefGenerator.ImpliedGeneDefs` postfix clones every convertable cosmetic gene into a `VREA_`-prefixed implied counterpart with the hardware-gene background + `allAndroidGenes` membership — that clone is what the creation/behaviorist station dialogs and the gene inspector show. Implied defs register before cross-refs resolve, so XML can reference `VREA_Eyes_Red` directly.
-  - `ScenPart_AllFactionsHostile` (`Rule` category, not a pawn modifier) — `PostGameStart` drives every goodwill faction to the −100 floor.
-
-**Key Technologies:** C# (.NET Framework 4.7.2), Harmony library (reflection-only, no VREA compile-time dependency), RimWorld modding API, XML definitions
+- **Reactors** (each replaces VREA's reactor in the reactor slot; energy is stored on the item, so it transfers between androids):
+  - _Vanometric_ — `disablesNeeds` removes the power need outright.
+  - _Thanatic_ — companion gene biostatMet −4 feeds VREA's `PowerEfficiencyToPowerDrainFactorCurve` (the drain rate is whatever that curve yields, not a constant we ship); refilled by humanlike kills; overflow → `AAH_ThanaticOvercharge` buff (go-juice envelope); kills dessicate the corpse; at 0 energy the host **dies** and the reactor ejects partially recharged. A corpse-side extraction job recovers it (`Source/1.6/Jobs/`).
+  - _Grav_ — biostatMet +4 (mirror of Thanatic); refilled by the `gravRefillAmount` fraction on gravship **landing** (Odyssey); overflow → `AAH_GravOvercharge`; at 0 energy the host is **downed**, not killed. Crafting is Odyssey-gated; the part still works without it.
+- **Implants:** _Psychic transceiver_ (suppresses VREA's ×0 psychic-deafness factor; `transceiverSensitivityOffset` is pushed into the hediff stage's `statOffset` by `ApplyTransceiverSensitivityOffset` since stat offsets aren't read live; also reopens awakened androids to behavior-station reprogramming, setting-gated), _Archotech mnemocore_ (removes the memory need), _Neutrosynthesizer_ (kidney; actively reduces `VREA_NeutroLoss`).
+- **Self-Determination inspiration** (`Source/1.6/Inspirations/`) — lets an awakened android reprogram at VREA's behavior station, which otherwise refuses awakened colonists. Works because VREA subroutine genes are not `removeWhenAwakened`; the station's `CanAcceptPawn` refusal is the only blocker. The transceiver is the permanent counterpart; both feed the same patch.
+- **Magus of the Abyss scenario** (`1.6/Defs/ScenarioDefs/`, `Source/1.6/Scenarios/`) — New Utopia inverted: one awakened android with a thanatic reactor pre-installed, all factions hostile. The four `ScenPart_PawnModifier` subclasses are def-parameterised and reusable; all apply from `ModifyPawnPostGenerate` (late hook, so hediff `PostAdd` wiring fires) and are idempotent across re-rolls. The red-eyes part references `VREA_Eyes_Red`, a VREA-**implied** clone of the vanilla gene (that clone is what VREA's dialogs show; implied defs register before cross-refs resolve, so XML may name it).
 
 ## Build Commands
 
 ```bash
 # Build the mod (outputs to 1.6/Assemblies/ AND atomically redeploys to the RimWorld Mods folder)
 dotnet build ArchotechAndroidHardware.sln -c Release
-
-# Build only the main project (also triggers the deploy)
-dotnet build Source/1.6/ArchotechAndroidHardware.csproj
 
 # Stage the mod into an arbitrary folder (used by CI; same manifest as the local deploy)
 dotnet build Source/1.6/ArchotechAndroidHardware.csproj -c Release \
@@ -54,163 +30,112 @@ dotnet build Source/1.6/ArchotechAndroidHardware.csproj -c Release \
 dotnet test Tests/1.6/ArchotechAndroidHardware.Tests.csproj
 ```
 
-The build system auto-detects the RimWorld installation path on Windows/Linux/Mac (including WSL targeting a Windows install). For CI builds without RimWorld installed, it falls back to the `Krafs.Rimworld.Ref` NuGet package.
+The build auto-detects the RimWorld install (Windows/Linux/Mac, incl. WSL → Windows) and falls back to `Krafs.Rimworld.Ref` in CI. **WSL:** set `RIMWORLD_PATH` in `~/.bashrc` (e.g. `/mnt/c/Program Files (x86)/Steam/steamapps/common/RimWorld`).
 
 ### Deployment
 
-The repo lives in `~/dev/ArchotechAndroidHardware`, separate from the RimWorld Mods folder. Every local build redeploys automatically and atomically — there is no separate clean step to remember.
+The `StageMod` target in `Source/1.6/ArchotechAndroidHardware.csproj` is the **single source of truth** for what ships: its `_ModFiles` ItemGroup matches the well-known RimWorld content folders at the mod root and under any version/`Common` folder, whitelisted by runtime extension (`.dll`, `.xml`, `.png/.jpg`, `.wav/.mp3/.ogg`, `.txt`; no `.pdb`/`.psd`/`.dds`), and wipes the target before recopying so renames never linger. Every Release build calls it with `StageDir = $RIMWORLD_PATH/Mods/ArchotechAndroidHardware`; CI's `release.yml` calls the same target for the zip. Only a brand-new file _type_ needs a manifest edit.
 
-- **Single source of truth:** the file manifest lives in **one** place — the `_ModFiles` ItemGroup in the `StageMod` target of `Source/1.6/ArchotechAndroidHardware.csproj`. It's generic over the well-known RimWorld content folders — `About`, `Assemblies`, `Defs`, `Patches`, `Textures`, `Sounds`, `Languages`, plus root `LoadFolders.xml` — each matched at the mod root **and** under any version/`Common` folder (the `$(RepoRoot)/*/<Folder>` patterns), so a new version folder (a future `1.7/`) needs no change. Source layout is mirrored verbatim into `$(StageDir)` (via per-item `MakeRelative` metadata — note an inline `MakeRelative` inside an item transform evaluates only once, not per item). Dropping in e.g. a `Sounds/` folder deploys automatically; only a brand-new _file type_ needs a new line here.
-- **Lean by extension whitelist:** only the formats RimWorld loads at runtime ship — `.dll` (no `.pdb`); `.xml` (Defs/Patches/Languages/About); `.png`/`.jpg`/`.jpeg` (Textures); `.wav`/`.mp3`/`.ogg` (Sounds); `.txt` (Languages/About, e.g. `PublishedFileId.txt`). `Verse.ModContentLoader` _lists_ `.psd`/`.dds` among acceptable texture extensions, but its runtime decode path (`Texture2D.LoadImage`) only handles PNG/JPEG — a shipped `.psd`/`.dds` would fail to render and just bloat the download, so they're **excluded**. OS junk, editor backups (incl. `.kra` art sources), dev notes, and `Source/` can never leak into a release.
-- **Self-cleaning:** `StageMod` wipes `$(StageDir)` and recopies from source, so renamed/deleted Defs/Patches/Textures never linger. The post-build `DeployToModFolder` target calls `StageMod` with `StageDir = $RIMWORLD_PATH/Mods/ArchotechAndroidHardware` (only when a local RimWorld install is detected).
-- **CI reuses the same target:** `.github/workflows/release.yml` invokes `StageMod` with `-p:StageDir=<release dir>` rather than its own `cp` list, so the release zip can never drift from the local deploy.
-- **Stop hook (`.claude/hooks/sync-mod.sh`):** runs after each conversation turn. It rebuilds+redeploys _only when mod-relevant source/content changed since the last deploy_ (skips doc/discussion turns), logs to `$TMPDIR/aah-build.log`, and prints a warning on build failure instead of silently leaving a stale DLL in the game folder. Change-detection uses a stamp at `Source/1.6/obj/.aah-deploy-stamp`. Both the hook config (`.claude/settings.local.json`) and the helper script stay machine-local: `.gitignore` tracks only `.claude/skills/` (shared: `release`, `translate`, `rimworld-logs`); everything else under `.claude/` is untracked. If the hook is ever promoted to a committed config, move the helper somewhere version-controlled. The script finds the repo root via `git rev-parse`, so it works regardless of where it's relocated.
-
-**WSL Setup:** Requires `RIMWORLD_PATH` env var in `~/.bashrc` pointing to the Windows RimWorld install (e.g., `/mnt/c/Program Files (x86)/Steam/steamapps/common/RimWorld`).
+A machine-local Stop hook (`.claude/hooks/sync-mod.sh`, untracked) rebuilds + redeploys after any turn that touched mod source/content and warns on build failure. `.gitignore` tracks only `.claude/skills/`.
 
 ## Architecture
 
 ### Directory Structure
 
 ```
-About/              # Mod metadata (About.xml, ModIcon.png)
+About/                      # About.xml, ModIcon.png, Preview.png
 1.6/
-├── Assemblies/     # Compiled DLL (build output)
-├── Defs/
-│   ├── ThingDefs/         # Body part items (vanometric reactor, psychic transceiver)
-│   ├── HediffDefs/        # Installed hediffs (power suppression, psychic sensitivity)
-│   ├── GeneDefs/          # Companion genes
-│   ├── GeneCategoryDefs/  # AAH_Hardware category (priority 10000, see below)
-│   └── RecipeDefs/        # Crafting recipes + surgery installation recipes
-├── Patches/        # XPath patches (VREA gene exclusion tags)
-└── Languages/English/Keyed/AAH_UI.xml   # All player-facing settings strings (AAH_ prefix)
-Textures/
-└── Items/          # Custom body part textures
-Scripts/
-├── check-translations.py                # Deterministic localization validator (CI release gate)
-├── refresh-translation-expectations.py  # Regenerates the sidecar via ../L10nProbe game boot
-└── expected-injections.json             # Checked-in DefInjected expectations sidecar
-Tests/1.6/          # Headless xUnit suite (settings, ReactorGlow guards, SurgeryState)
+├── Defs/                   # DamageDefs, GeneCategoryDefs, GeneDefs, HediffDefs, InspirationDefs,
+│                           # JobDefs, RecipeDefs, ResearchProjectDefs, RulePackDefs, ScenPartDefs,
+│                           # ScenarioDefs, ThingCategoryDefs, ThingDefs, ThoughtDefs
+├── Patches/                # XPath patches (VREA gene exclusion tags, stock-reactor visuals, DLC/VFE recipe tweaks)
+└── Languages/English/Keyed/AAH_UI.xml   # All Keyed strings (AAH_ prefix)
+Textures/                   # Items, body attachments, gene icons, designation/command icons, motes
+Scripts/                    # check-translations.py, refresh-translation-expectations.py,
+                            # integration-smoke-test.py, expected-injections.json (sidecar)
+Tests/1.6/                  # Headless xUnit suite
 Source/1.6/
-├── Core/           # Mod subclass (Harmony setup + settings window), SurgeryState, ArchotechAndroidHardwareSettings, AAH_DefOf
-├── Hediffs/        # Hediff classes (gene lifecycle; Thanatic reactor drain/kill/death logic)
-├── Inspirations/   # Self-Determination InspirationWorker + shared SelfDeterminationUtility
-├── Motes/          # Reactor-glow / charge-aura mote classes
-├── Patches/        # Harmony patches (VREA compatibility fixes) + AAHPartEjector helper
-├── Rendering/      # Reactor-glow render-node worker + shared ReactorGlow opacity helper
-├── Scenarios/      # Bespoke ScenParts (Magus of the Abyss: reactor/body-part/apparel/gene swaps, all-factions-hostile)
-├── Things/         # ThingWithComps subclasses (ThanaticReactorThing — stored energy)
-└── Properties/     # AssemblyInfo
+├── Core/                   # Mod + settings (Settings/ partials), AAH_DefOf, AAHReactorDefs, SurgeryState
+├── Hediffs/                # Hediff classes (gene lifecycle; Thanatic/Grav drain, refill, death/down)
+├── Inspirations/           # Self-Determination worker + SelfDeterminationUtility
+├── Jobs/                   # Thanatic corpse extraction: WorkGiver, JobDriver, FloatMenuOptionProvider
+├── Motes/                  # Reactor glow mote, Thanatic drain particle + silhouette aura
+├── Patches/                # Harmony patches + AAHPartEjector helper
+├── Rendering/              # Reactor chassis/glow render-node workers + ReactorGlow opacity helper
+├── Scenarios/              # Magus ScenParts
+├── Things/                 # Reactor item classes (stored energy), Thanatic FX controllers
+└── Thoughts/               # Decaying Self-Determination-overridden thought
+l10n/                       # rimworld-l10n submodule (shared translation toolkit)
+.steamworkshop/             # Workshop title/description per language (not shipped)
 ```
 
-### Def Naming Convention
+### Conventions
 
-All defs use the `AAH_` prefix (Archotech Android Hardware).
-
-**Def references go through `AAH_DefOf`** (`Core/AAH_DefOf.cs`), mirroring vanilla's `*DefOf` / VREA's `VREA_DefOf` — bound at load (errors surface at startup, not as a runtime null) and a cheap static field read. It's **split into type-scoped classes** (`AAH_HediffDefOf`, `AAH_GeneDefOf`, `AAH_ThingDefOf`, `AAH_DesignationDefOf`, `AAH_JobDefOf`, plus the catch-all `AAH_DefOf`) because `[DefOf]` binds by field-name == defName, and the companion-part convention reuses one defName across types (e.g. `AAH_ThanaticReactor` is a Hediff, Gene _and_ Thing; `AAH_ExtractThanaticReactor` is a Designation _and_ Job). Optional-content defs (Odyssey grav parts, VFEPower violence generator) carry `[MayRequire(...)]` so they stay null instead of erroring when that content is absent; VREA defs are plain fields (hard dependency → fail loud). Don't add new `DefDatabase.GetNamed` calls — add a DefOf field. (The only legitimate runtime lookups left are the genuinely dynamic ones in `RecipeInstallAndroidPart_ApplyOnPawn`, keyed off a hediff/gene's own defName.)
+- **`AAH_` prefix** on every def. Companion-part convention: hediff defName = gene defName (= item defName for parts).
+- **Def references go through `AAH_DefOf`** (`Core/AAH_DefOf.cs`), split into type-scoped classes (`AAH_HediffDefOf`, `AAH_GeneDefOf`, `AAH_ThingDefOf`, …) because `[DefOf]` binds by field name and the convention above reuses one defName across types. Optional-content defs carry `[MayRequire]`; VREA defs are plain (fail loud). Don't add `DefDatabase.GetNamed` calls.
+- **`AAHReactorDefs.All`** (`Core/`) is the canonical reactor-hediff list (downing patch, scenpart picker). **A new reactor hediff must be added there.**
+- **Namespaces:** `*Patches` suffix for patch namespaces (avoids RimWorld type clashes). **Comments:** plain `//` only, no XML doc comments. **Logs:** prefix `[Archotech Android Hardware]`.
+- **No `?.`/`??` on `UnityEngine.Object` receivers** (Texture2D, Material, …): Unity's overloaded `==` treats destroyed objects as null and `?.` bypasses it. Verse types are plain classes and fine. Enforced by UNT0007/UNT0008; see `.editorconfig` before bulk-applying RCS1146.
+- **VREA is reflection-only.** No compile-time reference to `VREAndroids.dll`; patches target it via `AccessTools.TypeByName`. XML may still name VREA classes (`VREAndroids.AndroidGeneDef`) and parents (`VREA_BodyPartAndroidBase`, `VREA_AndroidBodyPartBase`, `VREA_SurgeryInstallBodyPartAndroidBase`). Our own abstract item base is `AAH_BodyPartAndroidArchotechBase` (archotech tier); the grav reactor is ultratech and parents VREA's base directly.
 
 ### Key Patterns
 
-**VREA Parent Defs (runtime inheritance, no compile-time dependency):**
+**Companion gene override (load-bearing).** Each part's hediff adds its companion gene as a xenogene; the gene shares an exclusion tag with the VREA gene it suppresses (tags added by `1.6/Patches/VREA_GenePatches.xml`). VREA's genes are xenogenes too, so conflicts resolve by `GeneCategoryDef.displayPriorityInXenotype` — VREA's `VREA_Subroutine` is `9999`, so `AAH_Hardware` is **`10000`**. **Any new AAH gene must live in `AAH_Hardware`** or it silently loses. Companion genes are `VREAndroids.AndroidGeneDef` with `isCoreComponent=true` so VREA's dialogs treat them as locked hardware; the `AndroidDialog_AllowArchotechOverrides` / `BehavioristStation_PreserveArchotechGenes` patches stop the tag overlap from reading as a blocking conflict or duplicating the gene on reprogram.
 
-- `VREA_BodyPartAndroidBase` (ThingDef) — android category, Ultra tech level, android body part graphic
-- `VREA_AndroidBodyPartBase` (HediffDef) — isBad: false, blue label color, countsAsAddedPartOrImplant
-- `VREA_SurgeryInstallBodyPartAndroidBase` (RecipeDef) — Recipe_InstallAndroidPart worker, ButcherMechanoid effect, Crafting 5
+**Need removal** uses `disablesNeeds` in the hediff stage (vanometric: `VREA_ReactorPower`; mnemocore: `VREA_MemorySpace`, plus the gene overriding VREA's memory genes' `enablesNeeds`). Cache-based, zero per-tick cost.
 
-**AAH ThingDef base (`AAH_BodyPartAndroidArchotechBase`):** abstract ThingDef in `ThingDefs/ThingDefs_BodyPartAndroidArchotechBase.xml` parenting `VREA_BodyPartAndroidBase`, hoisting the fields most archotech parts share — Archotech techLevel, `AAH_BodyPartsAndroidArchotech` category, the archotech icon, and `recipeMaker Inherit="False"`. New archotech parts should parent it (Thanatic does, re-overriding only its dark `graphicData`). The grav reactor is the exception — it's ultratech, so it parents `VREA_BodyPartAndroidBase` directly. Only the _item_ ThingDefs share this base; the hediffs/recipes still parent VREA's bases directly (they carry no AAH-specific shared boilerplate).
+**Explicit crafting recipes, `allowMixingIngredients=true`.** ThingDefs set `<recipeMaker Inherit="False" />`. The NoMix ingredient path checks `ThingFilter.Allows(ThingDef)` and never unwraps `MinifiedThing`, so minified buildings (vanometric cell, psychic emanator, violence generator) only match via the AllowMix path. The costList that remains on each ThingDef exists only to satisfy the validator (or, for vanometric/implants, to drive market value); Thanatic and Grav carry explicit `MarketValue`.
 
-**Companion Gene Override System:**
-Each body part has a companion gene managed by its hediff class. The hediff adds its gene as a **xenogene** (`pawn.genes.AddGene(def, xenogene: true)`). The gene shares an exclusion tag with the VREA gene it overrides; XPath patches in `1.6/Patches/VREA_GenePatches.xml` add those exclusion tags to the VREA genes. Convention: hediff defName = gene defName (e.g., `AAH_VanometricReactor` hediff manages `AAH_VanometricReactor` gene).
+**Optional dependency scoping.** Only _crafting_ recipes may depend on non-baseline content; hediffs, items and surgery recipes always load. Thanatic has two: `AAH_MakeThanaticReactor` (`MayRequire` Anomaly, from a shard) and `AAH_SalvageThanaticReactor` (`MayRequire` VFE Power, three reactors from a violence generator; deliberately research-ungated, see the recipe comment). Grav's recipe needs Odyssey.
 
-_Override priority (load-bearing):_ VREA also adds its genes as xenogenes, so Biotech's xenogene-beats-endogene shortcut doesn't apply — conflicts are resolved by `GeneCategoryDef.displayPriorityInXenotype` (higher wins via `GenesInOrder` descending sort in `Pawn_GeneTracker.CheckForOverrides`). VREA sets `VREA_Subroutine` to `9999` as a sentinel to beat every vanilla category (vanilla `Archite` is `1000`). Our `AAH_Hardware` category is set to **`10000`** to clear that threshold. **Any new AAH gene must live in `AAH_Hardware` (or another category with priority > 9999)** or it will silently lose the override to VREA.
+**Ejection and energy transfer.** `RecipeInstallAndroidPart_ApplyOnPawn` routes every `AAH_` hediff eviction through `AAHPartEjector.Eject` → `ICustomAAHEjection` if implemented (reactors write their `Energy` onto the spawned item), else `spawnThingOnRemoved`. The `*InstallEnergyTransfer` patches carry the ingredient item's `storedEnergy` onto the fresh hediff (VREA creates it at `Energy=1`). New reactor types plug in via the interface, not by editing the patch.
 
-_Behavior-station dialog (load-bearing):_ companion genes are declared as `VREAndroids.AndroidGeneDef` with `isCoreComponent=true` (not plain `GeneDef`), so VREA's modify dialog treats them as locked hardware — non-removable by clicking (`Utils.CanBeRemovedFromAndroid` → false), like VREA's own core genes. They stay out of the dialog's selectable list / `allAndroidGenes` regardless of type — that membership is gated on `displayCategory` + `biostatArc>0`, not the class — so this is pure data, no patch. The exclusion-tag overlap that drives the override would otherwise trip VREA's strict "conflicting components" accept-gate; the `AndroidDialog_AllowArchotechOverrides` and `BehavioristStation_PreserveArchotechGenes` patches reconcile that (let the override confirm, keep the suppressed VREA gene visibly dimmed, and avoid duplicating the companion gene on reprogram).
+**Power need wiring.** VREA's `Need_ReactorPower.CurLevel` looks the reactor up by def (`VREA_Reactor`), so our reactors would read 0; the `NeedReactorPower_CurLevel` getter/setter postfix falls through to the AAH reactor's `Energy`. VREA also force-downs any android without `VREA_Reactor`; `PawnHealthTracker_ShouldBeDowned` restores capacity-based downing for AAH reactors.
 
-**Need Removal via `disablesNeeds` (vanometric reactor):**
-The hediff uses `<disablesNeeds><li>VREA_ReactorPower</li></disablesNeeds>` in its stage definition. Same built-in mechanism as the Circadian Half-cycler (Royalty DLC). Cache-based via `HediffSet.CacheNeeds()`, zero per-tick cost.
+**Thanatic death path.** `TickInterval` checks `Energy == 0`, spawns the item with `storedEnergy = thanaticRefillAmount`, sets a re-entry guard, then `pawn.Kill`. The death-log label comes from `AAH_ThanaticDepletion` (DamageDef) + `AAH_Event_ThanaticDrain` (RulePackDef) + the culprit hediff `AAH_ThanaticDepletionCulprit` (a floating hediff passed to `pawn.Kill` as `exactCulprit`, never added to the pawn). Corpse dessication: `Notify_KilledPawn` fires before the victim's corpse exists, so victims are queued and polled for `.Corpse` (gives up after 300 ticks). Corpse extraction: `AAH_ExtractThanaticReactor` is a Designation + Job + WorkGiver; gizmos live on the hediff, the float-menu provider adds the designation and prioritises the job.
 
-**Psychic Sensitivity (psychic transceiver):**
-Androids are naturally psychically inert. VREA encodes this as the VREA_PsychicallyDeaf gene (PsychicSensitivity factor of zero). The companion gene (AAH_PsychicTransceiver) overrides it via the AAH_AndroidPsychic exclusion tag, removing the zero factor. Because that was a ×0 factor (not a base change), PsychicSensitivity returns to its 100% StatDef base, on which the hediff's statOffset stacks (net = 100% + the offset, not the offset alone). The offset value is the `transceiverSensitivityOffset` setting (see `ApplyTransceiverSensitivityOffset`). Uses `Recipe_InstallImplant` (not `Recipe_InstallAndroidPart`) because it's a brain implant, not a body part replacement. Removal surgery uses `VREA_SurgeryAndroid` parent (Crafting skill, no medicine, since androids are non-biological).
+**Reactor visuals.** Chassis + additive core glow are body-parented render nodes (`Rendering/`), gated per source by `renderAahReactorAttachments` / `renderVreaReactorAttachment` via `ReactorGlow.AttachmentsEnabledFor` (checked in `CanDrawNow`, so toggles apply live). `reactorGlowMoteOverlay` layers an optional mote that punches through unnatural darkness; `scaleReactorGlowByPower` scales alpha per-draw in `GetMaterialPropertyBlock` (no rebake). VREA's stock reactor gets the same treatment via `VREA_BasicReactor_AddVisuals.xml` **plus** the `DynamicPawnRenderNodeSetup_Hediffs_GetDynamicNodes` patch (see below).
 
-**Explicit Crafting Recipe (not auto-generated):**
-ThingDefs suppress the parent's `recipeMaker` via `<recipeMaker Inherit="False" />` and define explicit crafting RecipeDefs with `<allowMixingIngredients>true</allowMixingIngredients>`. This is required because the default NoMix ingredient search groups things by `thing.def` and checks `ThingFilter.Allows(ThingDef)`, which does NOT unwrap MinifiedThings. The AllowMix path uses `ThingFilter.Allows(Thing)` which calls `GetInnerIfMinified()` and correctly matches minified buildings (VanometricPowerCell, PsychicEmanator, VPE_ArchotechViolenceGenerator).
+**Balance knobs** live in `Core/Settings/` partials, one per section; the class docblock in `ArchotechAndroidHardwareSettings.cs` carries the rationale. Drain rates are _not_ settings (they're the genes' biostatMet through VREA's curve).
 
-**Optional dependency scoping (Thanatic reactor ↔ Anomaly / Vanilla Expanded Power):**
-Only the _crafting_ recipes of a part may depend on non-baseline content — the hediffs, ThingDef, and surgery recipes must always load. The Thanatic reactor has two: `AAH_MakeThanaticReactor` (`MayRequire="Ludeon.RimWorld.Anomaly"`, built from a shard) and `AAH_SalvageThanaticReactor` (`MayRequire="VanillaExpanded.VFEPower"`, three reactors from an archotech violence generator, deliberately research-ungated — see the recipe's comment). With neither present the reactor still functions from save-transfer / dev-spawn / another mod's dispensing.
+### Harmony Patches
 
-**Polymorphic hediff ejection (AAHPartEjector + `ICustomAAHEjection`):**
-`RecipeInstallAndroidPart_ApplyOnPawn_Patch` delegates all AAH\_ hediff ejection through `AAHPartEjector.Eject(Hediff, Pawn)`. Hediffs implementing `ICustomAAHEjection` handle their own spawn (used by Thanatic reactor to transfer current Energy onto the ejected item); others fall through to the default `HediffDef.spawnThingOnRemoved` path. The patch is deliberately type-agnostic — new reactor-type parts plug in via the interface, not by editing the patch.
+All patches run from `ArchotechAndroidHardwareHarmony`'s `[StaticConstructorOnStartup]` ctor. That placement is load-bearing twice: RimWorld 1.6 runs the `Mod` ctor off the main thread (VREA's cctor loads textures), and applying a detour JIT-compiles the target and runs its declaring type's cctor — before defs load, a target cctor that resolves defs breaks permanently (the BetterTradersGuild v1.1.0 incident). **Never move `PatchAll()` onto the `Mod` constructor path.** Unordered list; read each patch's source for the mechanism.
 
-**Reactor stateful transfer (Thanatic reactor):**
-`ThanaticReactorThing : ThingWithComps` stores a `storedEnergy` float. On install, the `ThanaticReactorInstallEnergyTransfer` patch reads the ingredient Thing's `storedEnergy` in its Prefix, lets VREA's `Recipe_InstallAndroidPart.ApplyOnPawn` run (which creates the hediff at `Energy=1f`), then overwrites the hediff's Energy from the stash in its Postfix. On eject (via `ICustomAAHEjection.EjectCustom`), the current hediff Energy is written back onto a fresh Thing.
-
-**Power need wiring without hediff-type inheritance (Thanatic reactor):**
-VREA's `Need_ReactorPower.CurLevel` looks up the reactor hediff by def (`VREA_Reactor`), not by type. Since Thanatic replaces VREA_Reactor rather than inheriting from `Hediff_AndroidReactor` (kept reflection-only), the need bar would otherwise read 0 permanently. The `NeedReactorPower_CurLevel` postfix falls through to `AAH_ThanaticReactor.Energy` when VREA_Reactor is absent. The `VREA_Power` gene's `enablesNeeds` keeps the need itself in the pawn's needs list, so only the backing lookup needed patching.
-
-**Reactor core glow (chassis + always-on glow render node + optional mote overlay):**
-Every reactor (Vanometric / Thanatic / Grav and VREA's stock reactor) shows a chest chassis sprite plus an additive core glow. Both are body-parented render nodes (`Source/1.6/Rendering/`, perfectly tracked but occluded by unnatural darkness; also show in the colonist bar / inspect-pane portrait). The whole visual is gated per source by two master settings — `renderAahReactorAttachments` (this mod's reactors) and `renderVreaReactorAttachment` (the patched-in stock reactor) — via `ReactorGlow.AttachmentsEnabledFor`, which the chassis worker (`PawnRenderNodeWorker_ReactorAttachment`) gates in `CanDrawNow` and the glow worker (`PawnRenderNodeWorker_ReactorGlow`, a subclass) inherits, so flipping a setting hides/shows live with no tree rebuild; `ReactorGlowMote.Maintain` honours the same gate. The `reactorGlowMoteOverlay` setting (default on) additionally layers a mote overlay on top (`Source/1.6/Motes/`, punches through unnatural darkness) — `Maintain` creates/keeps the mote only while both that setting and the master gate are on, tearing it down otherwise. Opacity is scaled by the android's power-need percentage (`VREA_ReactorPower.CurLevelPercentage`, routed per reactor by the `NeedReactorPower_CurLevel` patch) when the `scaleReactorGlowByPower` setting is on; the `ReactorGlow` helper is the shared opacity source for both paths. Note the render-node path scales alpha **per-draw** in `GetMaterialPropertyBlock` — RimWorld's own per-draw tint mechanism — so there is no graphic rebake to throttle.
-
-**Death-on-depletion (Thanatic reactor):**
-Unlike Vanometric (runs indefinitely) or VREA's native reactor (forces the pawn downed at 0 energy via Severity=1 capMods), Thanatic ticks a death check in its own `TickInterval`: when Energy hits 0, it spawns the reactor item (with `storedEnergy = ThanaticRefillAmount` — lore: the pawn's death recharges the reactor once more), sets a re-entry guard flag, then calls `pawn.Kill(null, null)`. The `PawnHealthTracker_ShouldBeDowned` postfix (generalised to all AAH\_ reactor types) keeps the pawn upright while Energy > 0 so VREA's "no reactor hediff → force downed" prefix doesn't pre-empt the death transition.
-
-**Corpse dessication on humanlike kill (Thanatic reactor):**
-`Hediff.Notify_KilledPawn` fires inside `Pawn.Kill` _before_ the victim's Corpse is spawned, so the hediff cannot touch it synchronously. Thanatic enqueues the victim pawn and polls `victim.Corpse` each `TickInterval`; when the corpse is spawned the hediff pushes `CompRottable.RotProgress` past the dessicated threshold. Gives up after 300 ticks if the corpse never appears (despawn / destroy races).
-
-**Balance settings (Thanatic reactor):**
-Drain rate is not a runtime setting — it's the `AAH_ThanaticReactor` gene's biostatMet feeding VREA's `PowerEfficiencyToPowerDrainFactorCurve`. Refill amount and overcharge duration parameters live in `ArchotechAndroidHardwareSettings`; see that class's docblock for the balance rationale and the full tuning surface.
-
-**Namespace Convention:** Use `*Patches` suffix for patch namespaces to avoid RimWorld type conflicts (e.g., `VREAPatches`).
-
-### Harmony Patches (reflection-based, no VREA DLL dependency)
-
-All patches target VREA (or vanilla / Odyssey) classes via `AccessTools.TypeByName()` — pure reflection, no compile-time coupling to VREAndroids.dll. Patching runs from `ArchotechAndroidHardwareHarmony`'s `[StaticConstructorOnStartup]` ctor, and that placement is load-bearing TWICE over: the documented thread-affinity reason (VREA's cctor loads textures via `ContentFinder`), and the patch-timing hazard — applying a detour JIT-compiles the target, running its declaring type's static ctor, which before defs load permanently breaks a target cctor that resolves defs (the BetterTradersGuild v1.1.0 CWTL incident). Never move `PatchAll()` onto the `Mod` constructor path. The list is **unordered and referenced by name** — there's no ordering dependency between patches, so don't number them. Each entry is the high-level role plus any footgun; read the patch's own source in `Source/1.6/Patches/` for the full mechanism.
-
-- **`AlertAndroidsLowOnPower_Culprits`** — Prefix on VREA's `Alert_AndroidsLowOnPower.get_Culprits`, null-safe: Vanometric disables the power need, so VREA's original NREs on a null need's `.CurLevelPercentage`.
-
-- **`PawnHealthTracker_ShouldBeDowned`** — Postfix on `Pawn_HealthTracker.ShouldBeDowned` restoring capacity-based downing for pawns with an `AAH_` reactor. VREA force-downs androids it sees as reactor-less, and our reactors use `Hediff_AddedPart` (not VREA's reactor type). Reads the canonical reactor list `AAHReactorDefs.All` (`Core/`) — the single source of truth for "all reactor hediffs", also used by the starting-reactor scenpart picker. **Footgun: a new reactor-type hediff must be added to `AAHReactorDefs.All`.** (The energy-bar patch keeps a separate, narrower `IAAHReactorEnergy`-only list.)
-
-- **`RecipeInstallAndroidPart_ApplyOnPawn`** — Prefix+Postfix on VREA's `Recipe_InstallAndroidPart.ApplyOnPawn`. Routes `AAH_` hediff ejection through `AAHPartEjector.Eject` (→ `ICustomAAHEjection`, else `spawnThingOnRemoved`) and strips/cleans companion genes; VREA's `RestorePart()` would otherwise destroy hediffs without their `spawnThingOnRemoved`. Generic over `AAH_` hediffs via the defName = geneName convention. **Three patches share this target method (the two `*InstallEnergyTransfer` below are the others) — any new install-time hook must coexist.**
-
-- **`ThanaticReactorInstallEnergyTransfer`** / **`GravReactorInstallEnergyTransfer`** — Prefix+Postfix on the same `Recipe_InstallAndroidPart.ApplyOnPawn`, one per reactor (kept as separate types for traceability). Carry the ingredient Thing's `storedEnergy` onto the freshly-added hediff's `Energy`, overriding `PostAdd`'s default.
-
-- **`Utils_IsAndroidGene`** — Postfix making `AAH_Hardware` genes test as android genes, so VREA's inspector shows them and folds their biostatMet into the "Power efficiency" total. **Deliberately does _not_ add them to `allAndroidGenes`** — that feeds `AndroidGenesGenesInOrder`, which would make our companion genes selectable in the creation / modify dialogs.
-
-- **`NeedReactorPower_CurLevel`** — Postfix on VREA's `Need_ReactorPower.CurLevel` getter + setter, falling through to `AAH_ThanaticReactor.Energy` when `VREA_Reactor` is absent (else the charge bar reads 0). The setter half exists only for dev-mode +/- round-tripping.
-
-- **`WorldComponentGravshipController_InitiateLanding`** — Postfix on Odyssey's gravship landing that refills grav reactors found in the manifest (recursing nested `IThingHolder`s) and on board pawns. Landing-time (not launch-time) so cancelled / interrupted launches don't refill. Never fires without Odyssey.
-
-- **`BehavioristStation_AllowSelfDetermination`** — Postfix on `Building_AndroidBehavioristStation.CanAcceptPawn` flipping the awakening-only `RefusesReprogramming` refusal to accepted when the `AAH_SelfDetermination` inspiration is active **or** a psychic transceiver is installed (setting-gated); re-checks the power / quest-lodger gates VREA evaluates _after_ the awakening line.
-
-- **`BehavioristStation_ConsumeSelfDetermination`** — Prefix on `FinishAndroidProject` granting the payoff by why the android was admitted (inspiration → consume + `AAH_SelfDeterminationFulfilled`; transceiver → decaying `AAH_SelfDeterminationOverridden`). Prefix because the method ejects the occupant before returning.
-
-- **`BehavioristStation_PreserveArchotechGenes`** — Prefix on `FinishAndroidProject` (coexists with `BehavioristStation_ConsumeSelfDetermination` on this target) stripping `AAH_Hardware` genes from `curAndroidProject.genes`, so the still-present companion gene isn't re-added — `Pawn_GeneTracker.AddGene` doesn't dedup xenogenes, so it would duplicate. Keeps the hediff the gene's sole lifecycle authority.
-
-- **`AndroidDialog_AllowArchotechOverrides`** — Prefix+Postfix on `Window_CreateAndroidBase.DoBottomButtons` (the create / modify dialog). The exclusion-tag overlap that drives our override otherwise reads as a blocking conflict in VREA's accept-gate + conflict footer; this hides the override-only `leftChosenGroups` from the gate + footer and restores them after — so the "suppressed" dim and the power-efficiency total stay correct — while genuine conflicts still block. **Read the source before changing: the borrow/restore frame-timing and the "genuine internal conflict" carve-out (which handles the mnemocore's shared `AndroidRAM` tag) are subtle.**
-
-- **`Corpse_GetInspectString_TrimTrailingNewline`** — Postfix after VREA (`[HarmonyAfter("VREAndroidsMod")]` + `Priority.Last`) re-applying `TrimEndNewlines()`; VREA's own postfix leaves a trailing newline that trips RimWorld's empty-line check on android corpses (e.g. after Thanatic death adds a missing part). Stopgap for an upstream VREA bug.
+- `AlertAndroidsLowOnPower_Culprits` — null-safe prefix; vanometric removes the need VREA dereferences.
+- `PawnHealthTracker_ShouldBeDowned` — capacity-based downing for `AAHReactorDefs.All` hosts.
+- `RecipeInstallAndroidPart_ApplyOnPawn`, `ThanaticReactorInstallEnergyTransfer`, `GravReactorInstallEnergyTransfer` — three patches on one VREA method (ejection + energy carry-over); a new install-time hook must coexist.
+- `Utils_IsAndroidGene` — `AAH_Hardware` genes count as android genes (inspector, power-efficiency total) **without** joining `allAndroidGenes` (which would make them selectable).
+- `NeedReactorPower_CurLevel` (getter + setter classes) — charge bar fallthrough; setter only for dev-mode ±.
+- `WorldComponentGravshipController_InitiateLanding` — grav refill on landing (not launch, so cancelled launches don't refill); recurses nested `IThingHolder`s. Odyssey only.
+- `BehavioristStation_AllowSelfDetermination` — flips the awakening refusal for inspiration / transceiver hosts, re-checking the gates VREA evaluates after that line.
+- `BehavioristStation_ConsumeSelfDetermination` — prefix on `FinishAndroidProject` (it ejects the occupant before returning) granting the inspiration or transceiver payoff thought.
+- `BehavioristStation_PreserveArchotechGenes` — same target; strips `AAH_Hardware` genes from the project so `AddGene` doesn't duplicate the xenogene.
+- `AndroidDialog_AllowArchotechOverrides` — hides override-only conflict groups from the create/modify dialog's accept gate and footer, then restores them. **Read the source first: the borrow/restore timing and the mnemocore `AndroidRAM` carve-out are subtle.**
+- `DynamicPawnRenderNodeSetup_Hediffs_GetDynamicNodes` — re-emits render nodes for `VREA_Reactor`, whose base class reports `Visible == false`; without it the XPath-added stock-reactor visuals never render.
+- `Graphic_PawnBodySilhouette_DrawWorker` — per-instance scroll vectors for the Thanatic silhouette aura (also works around Core's `_DetailScrollSpeed` case bug).
+- `Corpse_GetInspectString_TrimTrailingNewline` — runs after VREA's postfix, which leaves a trailing newline that trips RimWorld's empty-line check. Stopgap for an upstream VREA bug.
 
 ## Debugging
 
-Use the `rimworld-logs` skill — it covers Player.log locations (Windows/WSL), the `[Archotech Android Hardware]` log prefix, and API disassembly via `ilspycmd` against both vanilla's `Assembly-CSharp.dll` and VREA's `VREAndroids.dll`. VREA's XML defs live at `$RIMWORLD_PATH/../../workshop/content/294100/2975771801/1.6/Defs/`.
+Use the `rimworld-logs` skill (Player.log locations, `[Archotech Android Hardware]` prefix, `ilspycmd` against `Assembly-CSharp.dll` and `VREAndroids.dll`). VREA's XML lives at `$RIMWORLD_PATH/../../workshop/content/294100/2975771801/1.6/Defs/`; VEF is `2023507013`, VFE Power `2062943477`.
 
 ## Testing
 
-**Startup smoke test (pre-release):** `python3 Scripts/integration-smoke-test.py` (game closed) boots AAH with VREA, VEF and VFE Power on a pinned list, then classifies Player.log errors by origin and fails on anything attributed to AAH or the VREA/VEF seam. Run before every release (wired into the release skill); thin shim over the shared engine in `l10n/smoke/` (born from the BetterTradersGuild v1.1.0 CWTL incident).
+`Tests/1.6/` is a headless xUnit (net472) suite for pure logic: settings coherence, overcharge-cap guards, `SurgeryState`, `ReactorGlow.AttachmentsEnabledFor`. Anything needing `DefDatabase`, a live `Pawn` or a `[DefOf]` cctor is out of scope. `dotnet test` builds Debug and `DeployToModFolder` is Release-gated, so a test run never swaps the deployed DLL. If a run fails with `BadImageFormatException`/`TypeLoadException`, a DLL is missing from the test csproj copy target (mono resolves field types eagerly). CI builds the suite but does not run it.
 
-`Tests/1.6/` holds an xUnit (net472) suite for the pure logic: settings field-initializer/`ResetToDefaults` coherence, overcharge-cap sentinel guards, `SurgeryState`, and `ReactorGlow.AttachmentsEnabledFor`'s headless-safe branches. Tests are headless — anything needing `DefDatabase`, a live `Pawn`, or a `[DefOf]` static constructor is out of scope (documented per-test). Run natively from WSL with `dotnet test Tests/1.6/ArchotechAndroidHardware.Tests.csproj` (vstest hosts the net472 suite via mono; if a run fails with `BadImageFormatException`/`TypeLoadException`, a DLL is missing from the test csproj copy target — see the Assembly-CSharp-firstpass comment there: mono resolves field types eagerly where the Windows CLR is lazy). `dotnet test` builds Debug by default, so `DeployToModFolder` is Release-gated — test runs never swap the deployed mod DLL for a Debug build. CI builds the Tests project but does not run it.
+**Startup smoke test (pre-release):** `python3 Scripts/integration-smoke-test.py` (game closed) boots AAH with VREA, VEF and VFE Power on a pinned list and fails on any Player.log error attributed to AAH or the VREA/VEF seam. The only automated coverage the VREA patches get; wired into the release skill.
 
 ## Localization
 
-English is the source of truth: Keyed strings in `1.6/Languages/English/Keyed/AAH_UI.xml` (`AAH_` prefix), plus a real DefInjected surface (labels/descriptions across the defs under `1.6/Defs/`). This mod's own glossary lives in the `translate` skill (`glossary/<Language>.md` beside it); the contributor-facing rules and the language roster live in `CONTRIBUTING.md` (English only so far — no non-English translations exist yet).
+English is the source of truth: Keyed in `1.6/Languages/English/Keyed/AAH_UI.xml`, plus a real DefInjected surface across `1.6/Defs/`. No non-English translations exist yet. Contributor rules and the roster live in `CONTRIBUTING.md`; this mod's glossary in the `translate` skill.
 
-- **Shared l10n toolkit (`l10n/` submodule):** the family-wide translation process, per-language mechanics references, cross-language lessons, Workshop conventions, and the checker/refresh script engines live in the `rimworld-l10n` repo, consumed here as the `l10n/` git submodule (canonical working checkout: `~/dev/rimworld-l10n`). `Scripts/check-translations.py` and `Scripts/refresh-translation-expectations.py` are thin per-repo config shims over its engines. If `l10n/` is empty, run `git submodule update --init`. Never edit `l10n/` in place here: mod-independent learnings go upstream in the canonical checkout; mod-specific learnings go in this repo's skill/glossary. Upstream ships as semver release tags (`vMAJOR.MINOR.PATCH`; a major means this repo's shim or flow needs an edit), and the pin here moves only at release (release skill step 2), at the start of a translation pass, or when a new major lands, never per upstream commit, so `git submodule status` names the pinned tag and a stable repo's log stays free of pin bumps.
-- **No optional-mod compat root exists yet, but this mod will need one the day any of its MayRequire-gated defs get translations** — the grav reactor is Odyssey-gated, `AAH_MakeThanaticReactor` is Anomaly-gated, and `AAH_SalvageThanaticReactor` is VFEPower-gated (a workshop mod, not a DLC). MayRequire is ignored on DefInjected entries, so each gate must become its own LoadFolders-gated `1.6/Mods/<Gate>/Languages/<Language>/...` root the moment translations for that content are added. A compat root's language files must never reuse a main-tree file's language-relative path (the game dedups per mod by that path and silently skips one whole file); suffix compat-root filenames with the gate's name (`Reactors_Anomaly.xml`). See TODOs.md for the tracked follow-up.
-- **Workshop title coupling:** each language's `AAH_SettingsCategory` Keyed value is the localized Steam Workshop title and must equal the title line (line 1) of `.steamworkshop/Description/<Language>.txt` — always change the two together (English keeps `Archotech Android Hardware` in both).
-- **Checker:** `python3 Scripts/check-translations.py --strict` validates key parity, placeholders, DefInjected legality and load-root placement, staleness (EN comments), and file hygiene. CI's release gate runs it non-strict.
-- **Sidecar:** `Scripts/expected-injections.json` is the authority for legal DefInjected keys. Regenerate with `python3 Scripts/refresh-translation-expectations.py` — it boots RimWorld (game must be closed) with a pinned mod list via the L10nProbe dev mod (source lives at `l10n/probe/`; build/deploy it only from the canonical `~/dev/rimworld-l10n` checkout — a submodule copy refuses to deploy by design), then restores `ModsConfig.xml`.
-- **Probe DLC set:** the probe boots with Biotech, Anomaly and Odyssey active (`CANONICAL_ACTIVE_MODS` in the refresh script); the checker's `REQUIRED_DLCS` rejects a sidecar generated without all three, since MayRequire-gated defs (the grav reactor, the Thanatic reactor recipes) would drop out of the dump and their shipped translations would turn illegal.
-- **Policy:** translation generation passes run only on explicit request (they are token-expensive). Infra/tooling changes are always fine.
+- **`l10n/` submodule** holds the family toolkit; `Scripts/check-translations.py` and `refresh-translation-expectations.py` are thin shims over it. Never edit `l10n/` here (upstream lives at `~/dev/rimworld-l10n`). The pin moves only at release, at the start of a translation pass, or on a new upstream major.
+- **Sidecar:** `Scripts/expected-injections.json` is the authority for legal DefInjected keys; regenerate with the refresh script (boots RimWorld with Biotech, Anomaly and Odyssey active — the checker rejects a sidecar missing any of them, since MayRequire-gated defs would drop out).
+- **Compat roots (not yet needed):** DefInjected ignores `MayRequire`, so the moment any gated def gets a translation it must ship from its own LoadFolders-gated `1.6/Mods/<Gate>/Languages/…` root (Odyssey: grav parts; Anomaly: `AAH_MakeThanaticReactor`; VFEPower: `AAH_SalvageThanaticReactor`). Filenames there must not collide with main-tree paths (suffix with the gate). Tracked in TODOs.md.
+- **Workshop title coupling:** each language's `AAH_SettingsCategory` Keyed value must equal line 1 of `.steamworkshop/Description/<Language>.txt`.
+- Translation passes run only on explicit request (token-expensive); tooling changes are always fine.
 
 ## Linting
 
-Roslynator.Analyzers runs on every build (warnings only, never fails the build; `PrivateAssets=all` so nothing ships). Severities are pinned in `.editorconfig`, along with the no-XML-doc-comments convention (plain `//` only). Formatting-only sweeps are registered in `.git-blame-ignore-revs`.
+Roslynator + Microsoft.Unity.Analyzers run on every build (warnings only, `PrivateAssets=all`); severities are pinned in `.editorconfig`. Run the `roslynator` CLI against the csproj, never the `.sln`. Formatting-only sweeps go in `.git-blame-ignore-revs`.
