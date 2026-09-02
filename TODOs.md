@@ -1,35 +1,44 @@
 # TODOs
 
-## Features
+## Pre-release features
+
+All of these are in scope for 1.0.0. Items marked **(decision)** need a design
+call before implementation; see RELEASE_READINESS_AUDIT.md for the open questions.
+
+- Archotech android xenotype **(decision)**
+- Persona Core upgrade part (increase consciousness +10%, increase threshold to
+  awaken?) **(decision)** — gene icon `Gene_PersonaCore.png` already shipped;
+  `displayOrderInCategory` gaps at 1/6/8 are reserved for it
+- Magus of the Abyss
+  - Verify in the UI (scenpart defs, `VREA_Eyes_Red` implied-def reference)
+  - Set custom backstory **(decision)** — no vanilla backstory ScenPart exists;
+    options are a bespoke `ScenPart` or a dedicated `PawnKindDef` with
+    `backstoryFiltersOverride` (VREA ships `BackstoryDefs/Android_Awakened.xml`)
+- Magus of the Library scenario **(decision)**
+  - Vanometric reactor, green armor, archotech arm, 7 books, custom backstory
+- Reactor removal **(decision)** — VREA's generic `VREA_RemoveArtificialPart`
+  ("remove component") already applies to the reactor slot, and on that path
+  Thanatic/Grav spawn no item (no `spawnThingOnRemoved`; `EjectCustom` only
+  runs from the install patch), so the reactor is lost. Either give the
+  reactors `PostRemoved`-side ejection, or ship explicit `AAH_Remove*` recipes
+  and block VREA's generic one on our slot. Needs an in-game repro first.
+
+## Post-release features
 
 - Grav Reactor/installed-corpse destruction should respawn grav core
 - Scale grav refill fraction + Grav Overcharge hours by gravship trip distance
   (deferred from the Grav Overcharge build; straight-line tiles between the
   controller's takeoff/landing tiles, normalization curve + reference-distance knob)
-
-- Add Persona Core upgrade part (increase consciosness +10%, increase threshold to awaken?)
-
 - Add setting-gated workgiver to autoqueue reactor replacements on low-power androids?
 - Add setting sliders for low-power alert/auto-replacement thresholds? PR upstream?
-
 - Eject Thanatic reactor on corpse destruction?
-- Extract Thanatic reactor gizmo on corpse.
-  `claude --resume "thanatic-reactor-designation-ui"`
-
-- Magus of the Library scenario
-  - Vanometric reactor
-  - Green armor
-  - Archotech arm
-  - 7 books
-  - Custom backstory
-
-- Verify Magus of the Abyss in the UI (scenpart defs?)
-  - Set custom backstory
-
 - Only fire/scale thanatic drain on psychically sensitive targets
-- Add powerfocus chip to reactor recipes? Evaluate recipe costs
-- more exclusion tags for conflicting subroutines
-- When sleep mode is used by an android with a vanometric reactor installed, building acts as a 500w power emitter
+- Add setting for refill per non-humanlike kill (mechs, animals, entities)
+- Add powerfocus chip to reactor recipes? Evaluate recipe costs (Thanatic/Grav
+  craft at Crafting 8 vs Vanometric 14 and the implants at 12)
+- More exclusion tags for conflicting subroutines
+- When sleep mode is used by an android with a vanometric reactor installed,
+  building acts as a 500w power emitter
 
 ## Other?
 
@@ -37,12 +46,20 @@
 
 ## Cleanup
 
-- Review def descriptions copy
-- Keyed language strings everywhere
+- Gene label `super neutro synthesis` vs part label `neutrosynthesizer`: one
+  part, two names. Mirrors VREA's subroutine naming; confirm or unify **(decision)**
 - Check patches for upstream issues and file reports/PRs
+  (`Corpse_GetInspectString_TrimTrailingNewline`, `Graphic_PawnBodySilhouette`
+  `_DetailScrollSpeed` case bug)
 - Neutro infusion operation upstream feature PR?
 
 ## Localization
+
+- **Refresh the sidecar** (`python3 Scripts/refresh-translation-expectations.py`,
+  game closed). Blocked on 2026-09-02 because RimWorld was open. Until then
+  `check-translations.py` reports 5 stale-description errors from this
+  session's def copy edits, and the sidecar still lists the now-`[NoTranslate]`
+  `bodyPartLabel` as required.
 
 - Run the initial Steam Workshop description translation pass: create
   `.steamworkshop/Description/<Language>.txt` per target language (roster
