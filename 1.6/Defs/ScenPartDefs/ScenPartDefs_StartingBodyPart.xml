@@ -4,7 +4,7 @@
   <!--
     Installs an added-part hediff (bionic / archotech prosthetic) into a named body
     part of each starting colonist (see ScenPart_StartingBodyPart). Used by Magus of
-    the Abyss for an archotech arm on the right shoulder.
+    the Abyss for an archotech arm on a shoulder.
     canBeRandomlyAdded=false keeps it out of unrelated random scenarios.
   -->
   <ScenPartDef>

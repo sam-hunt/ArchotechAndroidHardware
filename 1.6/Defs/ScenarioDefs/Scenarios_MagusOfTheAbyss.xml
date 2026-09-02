@@ -14,8 +14,8 @@
 
     Differences from New Utopia:
       - 1 starting pawn (was 3), with a thanatic reactor guaranteed installed
-        (the AAH_StartingAndroidReactor part), an archotech arm in place of its
-        right shoulder (AAH_StartingBodyPart), dark-grey marine armor worn from
+        (the AAH_StartingAndroidReactor part), an archotech arm in place of a
+        shoulder (AAH_StartingBodyPart), dark-grey marine armor worn from
         the start (AAH_StartingApparelWorn), and a 25% chance of red eyes
         (AAH_StartingGene -> VREA_Eyes_Red).
       - The "hunted android every 10 days" arrival quests are dropped.
@@ -73,14 +73,13 @@
           <hediffDef>AAH_ThanaticReactor</hediffDef>
         </li>
 
-        <!-- An archotech arm in place of the right shoulder. -->
+        <!-- An archotech arm in place of a shoulder (first Shoulder record: left). -->
         <li Class="ArchotechAndroidHardware.ScenPart_StartingBodyPart">
           <def>AAH_StartingBodyPart</def>
           <context>PlayerStarter</context>
           <chance>1</chance>
           <hediffDef>ArchotechArm</hediffDef>
           <bodyPart>Shoulder</bodyPart>
-          <bodyPartLabel>right shoulder</bodyPartLabel>
         </li>
 
         <!-- Dark-grey marine (power) armor, worn from the start. -->
