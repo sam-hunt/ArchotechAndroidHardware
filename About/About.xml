@@ -6,12 +6,12 @@
   <modVersion>0.1.0</modVersion>
   <description>Adds a range of archotech-tier body parts for androids from Vanilla Races Expanded - Android. True archotechnology can't be built by human hands, but a salvaged vanometric power cell, psychic emanator, or violence generator can be dismantled, re-housed, and wired into an android chassis.
 
-    Every part is crafted at the Android Part Workbench (Archotech Androidtech research), installed via surgery, and recovered intact if removed.
+    Every part is crafted at the Android Part Workbench (Archotech Androidtech research) and installed via surgery. Implants can be removed and reactors swapped out, returning the intact item either way.
 
     Reactors:
     - Vanometric reactor — a permanent power cell that removes the android's power need entirely. No more drain, no more replacements.
-    - Thanatic reactor — fed by the echoes of violent death; each humanlike kill recharges it and brief overflows trigger a combat overcharge. Starved of kills it drains faster than a standard reactor, and its host dies when it runs dry.
-    - Grav reactor — drawn from gravship engine technology and recharged in full whenever its host takes part in a gravship launch. Indispensable to a colony that lives on the move.
+    - Thanatic reactor — fed by the echoes of violent death; each humanlike kill recharges it and brief overflows trigger a combat overcharge. Starved of kills it drains faster than a standard reactor, and its host dies when it runs dry. Crafting requires Anomaly or Vanilla Expanded - Power.
+    - Grav reactor — drawn from gravship engine technology and partially recharged whenever its host takes part in a gravship launch. Indispensable to a colony that lives on the move. Crafting requires Odyssey.
 
     Other hardware:
     - Psychic transceiver — bridges an android's natural psychic inertness, granting psychic sensitivity.

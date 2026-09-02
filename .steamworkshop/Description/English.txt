@@ -3,14 +3,14 @@ Archotech Android Hardware
 [h1]About[/h1]
 True archotechnology can't be built by human hands. But a salvaged vanometric power cell, psychic emanator, or violence generator can be dismantled, re-housed, and wired into an android chassis. This mod adds a family of such parts for androids from Vanilla Races Expanded - Android: alternative reactors with distinct power economies, plus archotech implants that lift limitations androids are normally born with.
 
-Every part is crafted at the Android Part Workbench (Archotech Androidtech research), installed via surgery, and recovered intact if removed.
+Every part is crafted at the Android Part Workbench (Archotech Androidtech research) and installed via surgery. Implants can be removed and reactors swapped out, returning the intact item either way.
 
 [hr][/hr]
 [h2]Reactors[/h2]
 [list]
 [*][b]Vanometric reactor[/b] - a permanent power cell that removes the android's power need entirely. No more drain, no more replacements.
-[*][b]Thanatic reactor[/b] - fed by the echoes of violent death. Each humanlike kill its host delivers recharges it, and brief overflows trigger a combat overcharge. Starved of kills it drains faster than a standard reactor, and its host dies when it runs dry. Requires [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2062943477]Vanilla Expanded - Power[/url] to craft.
-[*][b]Grav reactor[/b] - drawn from gravship engine technology and recharged in full whenever its host takes part in a gravship launch. Indispensable to a colony that lives on the move. Requires the Odyssey DLC to craft.
+[*][b]Thanatic reactor[/b] - fed by the echoes of violent death. Each humanlike kill its host delivers recharges it, and brief overflows trigger a combat overcharge. Starved of kills it drains faster than a standard reactor, and its host dies when it runs dry. Requires the Anomaly DLC (built from a shard) or [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2062943477]Vanilla Expanded - Power[/url] (salvaged from an archotech violence generator) to craft.
+[*][b]Grav reactor[/b] - drawn from gravship engine technology and partially recharged (half a tank by default, configurable) whenever its host takes part in a gravship launch. Indispensable to a colony that lives on the move. Requires the Odyssey DLC to craft.
 [/list]
 
 [h2]Other Hardware[/h2]
@@ -27,10 +27,11 @@ Every part is crafted at the Android Part Workbench (Archotech Androidtech resea
 [*]Biotech DLC
 [*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2975771801]Vanilla Races Expanded - Android[/url]
 [/list]
-Optional, each gating a single part's crafting recipe only; the rest of the mod loads fine without them:
+Optional, gating crafting recipes only; the rest of the mod loads fine without them:
 [list]
 [*]Odyssey DLC, to craft the grav reactor
-[*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2062943477]Vanilla Expanded - Power[/url], to craft the thanatic reactor
+[*]Anomaly DLC, to craft the thanatic reactor from a shard
+[*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2062943477]Vanilla Expanded - Power[/url], to salvage thanatic reactors from an archotech violence generator instead
 [/list]
 
 [hr][/hr]
@@ -42,5 +43,23 @@ Optional, each gating a single part's crafting recipe only; the rest of the mod 
 [/list]
 
 [hr][/hr]
-[h2]Credits[/h2]
+[h1]FAQ[/h1]
+[b]Q: Do I need Odyssey, Anomaly, or Vanilla Expanded - Power?[/b]
+A: No. They only gate crafting recipes (Odyssey for the grav reactor; Anomaly or Vanilla Expanded - Power for the thanatic reactor). Everything else works without them, and parts obtained another way still function.
+
+[b]Q: How do I get a reactor back out of an android?[/b]
+A: Install a different reactor; the old one is ejected as an intact item with its charge preserved. Implants have their own removal surgeries. A thanatic reactor can also be extracted from its dead host's corpse.
+
+[b]Q: My awakened android refuses reprogramming at the behaviorist station.[/b]
+A: That is Vanilla Races Expanded - Android's normal behaviour. This mod adds two ways around it: a psychic transceiver implant, or the Self-Determination inspiration that awakened androids can roll.
+
+[b]Q: Is the thanatic/grav reactor imbalanced?[/b]
+A: Refill amounts, overcharge durations, and psychic sensitivity are all configurable in mod settings.
+
+[b]Q: Was this made using LLMs!?[/b]
+A: Some of the grunt code, and most localizations. I'm a software engineer by trade, and have been writing code for 25 years. All code is manually reviewed and tested; all bug reports and mod-conflicts followed up personally as time and detail allows. All art is either commissioned from humans, hand-authored in Krita, or both.
+
+[hr][/hr]
+[h2]Links[/h2]
+[url=https://github.com/sam-hunt/ArchotechAndroidHardware]GitHub[/url] - Source code, bug reports, and feature requests
 Built for [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2975771801]Vanilla Races Expanded - Android[/url] by Oskar Potocki and the Vanilla Expanded team.
