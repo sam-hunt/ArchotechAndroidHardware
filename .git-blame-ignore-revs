@@ -4,3 +4,6 @@
 
 # style: Convert XML doc comments to plain // comments
 858bd7bd83cb945c8ebb08877b5341ee6421b4e1
+
+# style: Use conditional access (RCS1146 sweep)
+550cd7cb34b3afda725594bd40b29b2f83b370fb
