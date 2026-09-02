@@ -106,7 +106,7 @@ public class Hediff_GravReactor : Hediff_AddedPart, ICustomAAHEjection, IAAHReac
     public override void Tick()
     {
         base.Tick();
-        if (pawn == null || pawn.Dead) return;
+        if (pawn?.Dead != false) return;
         ReactorGlowMote.Maintain(pawn, def, ref glowMote, GlowTint);
         TickChargeAuraPending();
     }
@@ -114,7 +114,7 @@ public class Hediff_GravReactor : Hediff_AddedPart, ICustomAAHEjection, IAAHReac
     public override void TickInterval(int delta)
     {
         base.TickInterval(delta);
-        if (pawn == null || pawn.Dead) return;
+        if (pawn?.Dead != false) return;
         if (!Gen.IsHashIntervalTick(pawn, 60, delta)) return;
 
         DrainEnergy();
@@ -212,7 +212,7 @@ public class Hediff_GravReactor : Hediff_AddedPart, ICustomAAHEjection, IAAHReac
     private void TickChargeAuraPending()
     {
         if (chargeAuraPendingTicks < 0) return;
-        if (pawn != null && pawn.Spawned && pawn.MapHeld != null)
+        if (pawn?.Spawned == true && pawn.MapHeld != null)
         {
             SpawnChargeAura(pawn);
             chargeAuraPendingTicks = -1;

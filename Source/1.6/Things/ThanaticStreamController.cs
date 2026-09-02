@@ -67,7 +67,7 @@ public class ThanaticStreamController : Thing
     private void EmitParticle()
     {
         if (ParticleDef == null) return;
-        if (sourcePawn == null || !sourcePawn.Spawned || sourcePawn.Dead) return;
+        if (sourcePawn?.Spawned != true || sourcePawn.Dead) return;
 
         var spawnPos = ResolveSpawnPos() + Gen.RandomHorizontalVector(SpawnPositionJitter);
         var particle = (Mote_ThanaticDrainParticle)ThingMaker.MakeThing(ParticleDef);
@@ -103,9 +103,9 @@ public class ThanaticStreamController : Thing
         // swap primary anchor to the corpse once it exists, so the stream
         // origin matches the corpse's actual (possibly shifted) cell
         // rather than the pre-kill pawn position.
-        if (victim != null && victim.Spawned) return victim.DrawPos;
+        if (victim?.Spawned == true) return victim.DrawPos;
         var corpse = victim?.Corpse;
-        if (corpse != null && corpse.Spawned) return corpse.DrawPos;
+        if (corpse?.Spawned == true) return corpse.DrawPos;
         return DrawPos;
     }
 

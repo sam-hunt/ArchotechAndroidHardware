@@ -114,14 +114,14 @@ public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection, IAAH
     public override void Tick()
     {
         base.Tick();
-        if (pawn == null || pawn.Dead) return;
+        if (pawn?.Dead != false) return;
         ReactorGlowMote.Maintain(pawn, def, ref glowMote, GlowTint);
     }
 
     public override void TickInterval(int delta)
     {
         base.TickInterval(delta);
-        if (pawn == null || pawn.Dead) return;
+        if (pawn?.Dead != false) return;
 
         // FX timers respond to arbitrary delta granularity so the 1-second
         // source-aura offset isn't quantized to the 60-tick drain cadence.
@@ -149,7 +149,7 @@ public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection, IAAH
     public override void Notify_KilledPawn(Pawn victim, DamageInfo? dinfo)
     {
         base.Notify_KilledPawn(victim, dinfo);
-        if (pawn == null || pawn.Dead || dying) return;
+        if (pawn?.Dead != false || dying) return;
         if (victim == null || victim == pawn) return;
         if (victim.RaceProps?.Humanlike != true) return;
 
@@ -195,7 +195,7 @@ public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection, IAAH
     // JobDriver_ExtractThanaticReactor.
     public void ExtractFromCorpse(Corpse corpse)
     {
-        if (corpse == null || corpse.Destroyed) return;
+        if (corpse?.Destroyed != false) return;
         var innerPawn = corpse.InnerPawn;
         if (innerPawn == null) return;
         var map = corpse.MapHeld;
@@ -212,9 +212,9 @@ public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection, IAAH
         if (baseGizmos != null)
             foreach (var g in baseGizmos) yield return g;
 
-        if (pawn == null || !pawn.Dead) yield break;
+        if (pawn?.Dead != true) yield break;
         var corpse = pawn.Corpse;
-        if (corpse == null || !corpse.Spawned || corpse.Destroyed) yield break;
+        if (corpse?.Spawned != true || corpse.Destroyed) yield break;
         var map = corpse.Map;
         if (map == null) yield break;
         var designationDef = ExtractDesignationDef;
@@ -302,7 +302,7 @@ public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection, IAAH
         sourceAuraRemainingTicks -= delta;
         if (sourceAuraRemainingTicks > 0) return;
         sourceAuraRemainingTicks = -1;
-        if (pawn != null && !pawn.Dead && pawn.Spawned)
+        if (pawn?.Dead == false && pawn.Spawned)
             SpawnDirectionalSourceAura(pawn);
     }
 
@@ -561,7 +561,7 @@ public class Hediff_ThanaticReactor : Hediff_AddedPart, ICustomAAHEjection, IAAH
 
     private static void DessicateCorpse(Corpse corpse)
     {
-        if (corpse == null || corpse.Destroyed) return;
+        if (corpse?.Destroyed != false) return;
         var rottable = corpse.TryGetComp<CompRottable>();
         if (rottable == null) return;
         // Overshoot the dessicated threshold decisively — vanilla's thresholds

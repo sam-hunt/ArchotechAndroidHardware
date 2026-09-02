@@ -51,7 +51,7 @@ public static class BehavioristStation_AllowSelfDetermination_Patch
         // Re-validate the gates VREA checks after the awakening line.
         if (QuestUtility.IsQuestLodger(selPawn)) return;
         var power = (__instance as Thing)?.TryGetComp<CompPowerTrader>();
-        if (power != null && !power.PowerOn) return;
+        if (power?.PowerOn == false) return;
 
         __result = true;
     }

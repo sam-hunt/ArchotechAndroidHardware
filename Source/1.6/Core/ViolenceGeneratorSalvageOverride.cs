@@ -26,8 +26,7 @@ public static class ViolenceGeneratorSalvageOverride
 {
     static ViolenceGeneratorSalvageOverride()
     {
-        if (ArchotechAndroidHardwareMod.Settings == null
-            || !ArchotechAndroidHardwareMod.Settings.overrideViolenceGeneratorSalvage)
+        if (ArchotechAndroidHardwareMod.Settings?.overrideViolenceGeneratorSalvage != true)
             return;
 
         ThingDef generator = AAH_ThingDefOf.VPE_ArchotechViolenceGenerator;

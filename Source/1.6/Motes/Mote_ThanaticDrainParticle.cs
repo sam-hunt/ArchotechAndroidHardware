@@ -70,7 +70,7 @@ public class Mote_ThanaticDrainParticle : Mote
         // unlikely edge case. Follow the corpse if it exists rather than
         // leaving particles orbiting the last known position.
         var corpse = homingTarget.Corpse;
-        if (corpse != null && corpse.Spawned)
+        if (corpse?.Spawned == true)
             return corpse.DrawPos;
         return null;
     }

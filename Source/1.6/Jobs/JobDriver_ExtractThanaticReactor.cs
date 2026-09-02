@@ -30,7 +30,7 @@ public class JobDriver_ExtractThanaticReactor : JobDriver
 
     protected override IEnumerable<Toil> MakeNewToils()
     {
-        this.FailOn(() => Corpse == null || Corpse.Destroyed || !Corpse.Spawned);
+        this.FailOn(() => Corpse?.Destroyed != false || !Corpse.Spawned);
         this.FailOn(() => DesignationDef == null
             || Map.designationManager.DesignationOn(Corpse, DesignationDef) == null);
         // Bail if the reactor hediff is already gone — could happen if a sibling

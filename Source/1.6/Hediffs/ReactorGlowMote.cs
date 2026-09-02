@@ -63,7 +63,7 @@ public static class ReactorGlowMote
 
     public static void Maintain(Pawn pawn, HediffDef reactorDef, ref Mote mote, Color tint)
     {
-        if (pawn == null || !pawn.Spawned || MoteDef == null) return;
+        if (pawn?.Spawned != true || MoteDef == null) return;
 
         // Master gate: when this reactor's body attachment is turned off the whole
         // visual is hidden (chassis + glow node + this mote), so tear the mote down.
@@ -92,7 +92,7 @@ public static class ReactorGlowMote
             scale = (s.x + s.y) / 2f;
         }
 
-        if (mote == null || mote.Destroyed)
+        if (mote?.Destroyed != false)
         {
             if (!visible) return;
             // Pass Vector3.zero to the link offset — the chest offset is applied

@@ -67,7 +67,7 @@ public static class SelfDeterminationUtility
     public static bool HasReprogrammingImplant(Pawn pawn)
     {
         var settings = ArchotechAndroidHardwareMod.Settings;
-        if (settings == null || !settings.enableTransceiverReprogramming) return false;
+        if (settings?.enableTransceiverReprogramming != true) return false;
         if (pawn?.health?.hediffSet == null) return false;
 
         var transceiver = AAH_HediffDefOf.AAH_PsychicTransceiver;

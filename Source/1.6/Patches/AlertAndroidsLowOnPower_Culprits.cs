@@ -43,7 +43,7 @@ public static class AlertAndroidsLowOnPower_Culprits_Patch
             foreach (var pawn in PawnsFinder.AllMapsCaravansAndTravellingTransporters_Alive_FreeColonists_NoSuspended)
             {
                 var need = pawn.needs?.TryGetNeed(reactorPowerNeed);
-                if (need != null && need.CurLevelPercentage < 0.2f)
+                if (need?.CurLevelPercentage < 0.2f)
                     Result.Add(pawn);
             }
         }
