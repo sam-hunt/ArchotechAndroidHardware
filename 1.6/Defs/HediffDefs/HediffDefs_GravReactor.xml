@@ -35,7 +35,7 @@
     <defName>AAH_GravReactor</defName>
     <label>grav reactor</label>
     <labelNoun>a grav reactor</labelNoun>
-    <description>An installed grav reactor. Draws power from gravitational waves and is recharged whenever its host participates in a gravship launch ritual.</description>
+    <description>An installed grav reactor. Draws power from gravitational waves and is recharged whenever its host participates in a gravship launch.</description>
     <descriptionHyperlinks>
       <ThingDef>AAH_GravReactor</ThingDef>
     </descriptionHyperlinks>

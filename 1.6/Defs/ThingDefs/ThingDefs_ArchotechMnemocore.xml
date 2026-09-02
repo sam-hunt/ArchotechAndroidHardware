@@ -20,7 +20,7 @@
     <costList>
       <Plasteel>10</Plasteel>
       <ComponentSpacer>3</ComponentSpacer>
-      <ArchiteCapsule>2</ArchiteCapsule>
+      <ArchiteCapsule>1</ArchiteCapsule>
       <AIPersonaCore>1</AIPersonaCore>
     </costList>
     <statBases>

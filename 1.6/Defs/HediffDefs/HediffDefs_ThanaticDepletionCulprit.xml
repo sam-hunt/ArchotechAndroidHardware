@@ -17,7 +17,7 @@
     <defName>AAH_ThanaticDepletionCulprit</defName>
     <label>thanatic reactor depletion</label>
     <labelNoun>thanatic reactor depletion</labelNoun>
-    <description>Placeholder hediff: used only to carry a death-cause label into the combat log when a Thanatic Reactor fully depletes.</description>
+    <description>The android's thanatic reactor ran dry and drew its final charge from its host.</description>
     <hediffClass>HediffWithComps</hediffClass>
   </HediffDef>
 

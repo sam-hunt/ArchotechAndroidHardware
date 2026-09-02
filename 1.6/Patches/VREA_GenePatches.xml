@@ -27,7 +27,8 @@
     (AAH_PsychicTransceiver GeneDef) is added as a xenogene, Biotech sees both
     genes share the AAH_AndroidPsychic tag and suppresses VREA_PsychicallyDeaf.
     With the zero factor removed, PsychicSensitivity returns to its 100% base and
-    the hediff's +20% offset stacks on top (net 120%).
+    the hediff's offset stacks on top (default +25%, net 125%; the
+    transceiverSensitivityOffset setting drives it).
   -->
   <Operation Class="PatchOperationAdd">
     <xpath>/Defs/VREAndroids.AndroidGeneDef[defName="VREA_PsychicallyDeaf"]</xpath>

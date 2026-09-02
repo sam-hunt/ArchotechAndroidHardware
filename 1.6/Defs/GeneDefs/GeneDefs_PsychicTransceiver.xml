@@ -20,9 +20,6 @@
     the standard endogenes/xenogenes background path. VEF's transpiler in
     GeneUIUtility.DrawGene selects this archite background when biostatArc > 0.
 
-    Icon: References the vanilla Biotech psy-sensitive gene icon directly from the
-    game's asset bundle. No custom texture needed.
-
     Display: VREA's custom gene inspector only shows genes its Utils.IsAndroidGene
     check recognises. The Utils_IsAndroidGene patch extends that check to all
     AAH_Hardware-category genes, which also relabels biostatMet as "Power
@@ -38,7 +35,6 @@
     <label>psychic transceiver</label>
     <description>Androids with this hardware are sensitive to psychic energy and influence, despite their synthetic nature. Once awakened, the opened mind remains susceptible to outside direction — at a behavior station it will again accept reprogramming it would otherwise refuse.</description>
     <iconPath>UI/Icons/Genes/Hardware/Gene_PsychicTransceiver</iconPath>
-    <!-- <iconPath>UI/Icons/Genes/Gene_EnhancedPsychicAbility</iconPath> -->
     <displayCategory>AAH_Hardware</displayCategory>
     <displayOrderInCategory>5</displayOrderInCategory>
     <canGenerateInGeneSet>false</canGenerateInGeneSet>

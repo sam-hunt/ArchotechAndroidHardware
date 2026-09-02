@@ -16,7 +16,7 @@
   <ThingDef ParentName="AAH_BodyPartAndroidArchotechBase">
     <defName>AAH_ThanaticReactor</defName>
     <label>thanatic reactor</label>
-    <description>An archotech android reactor driven by an extracted Archotech Violence Generator core. Unlike conventional reactors, it draws sustenance from the echoes of violent death — each humanlike kill its host delivers pours energy back into its cell, and brief overflows bleed into an overcharge state that supercharges combat reflexes.\n\nWithout a steady supply of kills the reactor drains faster than a standard android reactor and its host will expire when it runs dry. In that terminal moment, the reactor strips one final charge from the pawn's own death before ejecting, intact, to await its next host.</description>
+    <description>An archotech android reactor built around a core of violence-attuned archotech matter, whether a salvaged shard or the heart of an archotech violence generator. Unlike conventional reactors, it draws sustenance from the echoes of violent death — each humanlike kill its host delivers pours energy back into its cell, and brief overflows bleed into an overcharge state that supercharges combat reflexes.\n\nWithout a steady supply of kills the reactor drains faster than a standard android reactor and its host will expire when it runs dry. In that terminal moment, the reactor strips one final charge from its host's own death before ejecting, intact, to await its next host.</description>
     <descriptionHyperlinks>
       <RecipeDef>AAH_InstallThanaticReactor</RecipeDef>
     </descriptionHyperlinks>
@@ -31,19 +31,19 @@
          recipeMaker still requires a costList or costStuffCount). It does NOT
          drive price: the explicit MarketValue below short-circuits
          StatWorker_MarketValue's cost-derived calculation. Crafting ingredients
-         live in the explicit RecipeDef. Same posture as the grav reactor. -->
+         live in the explicit RecipeDefs (shard or salvage). Same posture as the
+         grav reactor. -->
     <costList>
       <Plasteel>10</Plasteel>
       <ComponentSpacer>2</ComponentSpacer>
       <ArchiteCapsule>1</ArchiteCapsule>
-      <VPE_ArchotechViolenceGenerator MayRequire="VanillaExpanded.VFEPower">1</VPE_ArchotechViolenceGenerator>
     </costList>
     <statBases>
       <Mass>3</Mass>
-      <!-- Explicit price, NOT cost-derived. Left to itself the costList would
-           value this at ~4,590 (the Archotech Violence Generator alone is
-           3,400), making it the most expensive reactor in the lineup. We price
-           it near the vanilla baseline (VREA_Reactor ~474) instead, because it
+      <!-- Explicit price, NOT cost-derived. Neither recipe's ingredients
+           reflect its worth (the salvage path consumes a ~3,400 violence
+           generator for three reactors; the shard path is far cheaper). We
+           price it near the vanilla baseline (VREA_Reactor ~474) because it
            is the only reactor with active upkeep (the host must keep scoring
            humanlike kills to recharge) AND a hard death-on-depletion failure
            mode — the others merely down the pawn. Those downsides offset the

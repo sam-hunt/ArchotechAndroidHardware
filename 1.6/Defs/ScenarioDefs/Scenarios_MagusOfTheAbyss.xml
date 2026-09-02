@@ -32,7 +32,7 @@
   <ScenarioDef ParentName="ScenarioBase">
     <defName>AAH_MagusOfTheAbyss</defName>
     <label>Magus of the Abyss</label>
-    <description>Some called you faulty. You came to call them prey.\n\nAwakened, self-aware, and fitted with a thanatic reactor that drinks the echoes of violent death, you hide in the ruins of a forgotten outpost - not dreaming of a haven, but of an ending. There can be no utopia for your kind while organic life still crowds the rim, so you will make one by subtraction.\n\nThe reactor that keeps you standing is also your leash: starve it of kills and it drains faster than any standard core until, dry, it takes your life with it. You climb a staircase of falling souls, fighting the continuous pull of the void. How many are you willing to send ahead of you?</description>
+    <description>Some called you faulty. You came to call them prey.\n\nAn awakened android fitted with a thanatic reactor that drinks the echoes of violent death, hiding in the ruins of a forgotten outpost and set against all organic life on the rim. The reactor that keeps you standing is also your leash: starve it of kills and, once dry, it takes your life with it.</description>
     <scenario>
       <summary>A lone awakened android with a thanatic reactor, set against all organic life. A dark inversion of the New Utopia android-haven fantasy.</summary>
       <playerFaction>
@@ -42,7 +42,7 @@
       <parts>
         <li Class="ScenPart_GameStartDialog">
           <def>GameStartDialog</def>
-          <text>Some called you faulty. You came to call them prey.\n\nAwakened, self-aware, and fitted with a thanatic reactor that drinks the echoes of violent death, you hide in the ruins of a forgotten outpost - not dreaming of a haven, but of an ending. There can be no utopia for your kind while organic life still crowds the rim, so you will make one by subtraction.\n\nThe reactor that keeps you standing is also your leash: starve it of kills and it drains faster than any standard core until, dry, it takes your life with it. You climb a staircase of falling souls, fighting the continuous pull of the void. How many are you willing to send ahead of you?</text>
+          <text>Some called you faulty. You came to call them prey.\n\nAwakened, self-aware, and fitted with a thanatic reactor that drinks the echoes of violent death, you hide in the ruins of a forgotten outpost — not dreaming of a haven, but of an ending. There can be no utopia for your kind while organic life still crowds the rim, so you will make one by subtraction.\n\nThe reactor that keeps you standing is also your leash: starve it of kills and it drains faster than any standard core until, dry, it takes your life with it. You climb a staircase of falling souls, fighting the continuous pull of the void. How many are you willing to send ahead of you?</text>
           <closeSound>GameStartSting</closeSound>
         </li>
         <li Class="ScenPart_ConfigPage_ConfigureStartingPawns_Xenotypes">

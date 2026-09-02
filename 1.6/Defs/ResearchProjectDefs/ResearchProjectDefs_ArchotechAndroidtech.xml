@@ -4,7 +4,7 @@
   <ResearchProjectDef ParentName="VREA_ResearchBase">
     <defName>AAH_ArchotechAndroidtech</defName>
     <label>archotech androidtech</label>
-    <description>Techniques for cannibalizing salvaged archotech artifacts and grafting them into android chassis. True archotechnology cannot be manufactured by human hands - but an intact vanometric power cell, psychic emanator, or archite capsule can be dismantled, re-housed, and wired into an android's subsystems with sufficient understanding of both the artifact and the chassis.</description>
+    <description>Techniques for cannibalizing salvaged archotech artifacts and grafting them into android chassis. True archotechnology cannot be manufactured by human hands — but an intact vanometric power cell, psychic emanator, or archite capsule can be dismantled, re-housed, and wired into an android's subsystems with sufficient understanding of both the artifact and the chassis.</description>
     <baseCost>4000</baseCost>
     <techLevel>Ultra</techLevel>
     <prerequisites>
