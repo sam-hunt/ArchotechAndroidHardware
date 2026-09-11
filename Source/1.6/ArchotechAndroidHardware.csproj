@@ -147,12 +147,19 @@
       <!-- Code + content (matched at root and under any version / Common folder) -->
       <_ModFiles Include="$(RepoRoot)/Assemblies/**/*.dll;$(RepoRoot)/*/Assemblies/**/*.dll" />
       <_ModFiles Include="$(RepoRoot)/Defs/**/*.xml;$(RepoRoot)/*/Defs/**/*.xml;$(RepoRoot)/*/Mods/*/Defs/**/*.xml" />
-      <_ModFiles Include="$(RepoRoot)/Patches/**/*.xml;$(RepoRoot)/*/Patches/**/*.xml" />
-      <_ModFiles Include="$(RepoRoot)/Textures/**/*.png;$(RepoRoot)/Textures/**/*.jpg;$(RepoRoot)/Textures/**/*.jpeg;$(RepoRoot)/*/Textures/**/*.png;$(RepoRoot)/*/Textures/**/*.jpg;$(RepoRoot)/*/Textures/**/*.jpeg" />
+      <_ModFiles Include="$(RepoRoot)/Patches/**/*.xml;$(RepoRoot)/*/Patches/**/*.xml;$(RepoRoot)/*/Mods/*/Patches/**/*.xml" />
+      <_ModFiles Include="$(RepoRoot)/Textures/**/*.png;$(RepoRoot)/Textures/**/*.jpg;$(RepoRoot)/Textures/**/*.jpeg;$(RepoRoot)/*/Textures/**/*.png;$(RepoRoot)/*/Textures/**/*.jpg;$(RepoRoot)/*/Textures/**/*.jpeg;$(RepoRoot)/Mods/*/Textures/**/*.png;$(RepoRoot)/Mods/*/Textures/**/*.jpg;$(RepoRoot)/Mods/*/Textures/**/*.jpeg" />
       <_ModFiles Include="$(RepoRoot)/Sounds/**/*.wav;$(RepoRoot)/Sounds/**/*.mp3;$(RepoRoot)/Sounds/**/*.ogg;$(RepoRoot)/*/Sounds/**/*.wav;$(RepoRoot)/*/Sounds/**/*.mp3;$(RepoRoot)/*/Sounds/**/*.ogg" />
-      <!-- */Mods/*/Languages picks up gated compat load roots, which nest
-           inside the version folder as <version>/Mods/<Mod Name>/ (see
-           LoadFolders.xml). -->
+      <!-- The lines above also match under the gated compat load roots (see
+           LoadFolders.xml), which come in two flavours: version-specific ones nest
+           inside the version folder as <version>/Mods/<Mod Name>/ (Defs, Patches, Languages),
+           and version-independent ones sit at the mod root as Mods/<Mod Name>/ (art,
+           which is not version-scoped - same reason the main Textures/ tree is at the
+           root). Neither is reached by the "$(RepoRoot)/*/<Folder>" wildcard, since
+           both put <Folder> two levels deep, so each needs its own explicit pattern.
+           If a compat root ever ships another content type (Sounds, ...), extend that
+           type's line the same way - a miss deploys nothing and fails
+           silently in-game (missing textures render as pink boxes), not at build. -->
       <_ModFiles Include="$(RepoRoot)/Languages/**/*.xml;$(RepoRoot)/Languages/**/*.txt;$(RepoRoot)/*/Languages/**/*.xml;$(RepoRoot)/*/Languages/**/*.txt;$(RepoRoot)/*/Mods/*/Languages/**/*.xml;$(RepoRoot)/*/Mods/*/Languages/**/*.txt" />
     </ItemGroup>
     <!-- Mirror each file's path relative to the repo root into $(StageDir). Computed as
