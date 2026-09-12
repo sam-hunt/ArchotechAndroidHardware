@@ -133,6 +133,8 @@ final. Do all of the following, then present it as **one** confirmation:
 - Draft changelog notes from the full log since the last tag — including any
   commits steps 2-3 just created — grouped by category (Fixes, Features,
   Polish/Other), omitting chore/version-bump commits.
+- Each changelog entry is a short one-liner fit for Steam Workshop change
+  notes (see the note atop `CHANGELOG.md`).
 - Update `CHANGELOG.md`: new `## [X.Y.Z] - YYYY-MM-DD` section at the top of
   the version list, directly below the Keep a Changelog intro paragraph,
   using today's date, Keep a Changelog style (`### Added`, `### Fixed`,
