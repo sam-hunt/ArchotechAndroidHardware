@@ -64,9 +64,14 @@ python3 Scripts/check-translations.py --strict
   the checked-in sidecar; the stricter local run surfaces warnings while
   there is still time to act on them.
 - If the sidecar or any translations changed, commit them as their own
-  `fix(l10n)` commit (show the diff and **ask the user to confirm**) before
-  moving on — the release commit at step 7 stages only the version-bump
-  files.
+  l10n commit (show the diff and **ask the user to confirm**) before moving
+  on — the release commit at step 7 stages only the version-bump files.
+  Pick the prefix by what the change means to players: `fix(l10n)` for
+  drift in content a previous release already shipped (strings players
+  could see untranslated or stale), `feat(l10n)` for strings belonging to a
+  feature that has not shipped yet (nothing was broken, the feature's work
+  was just unfinished). Translations are player-facing, so never `chore`;
+  only a sidecar-only regen with no translation change is a `chore(l10n)`.
 
 ### 3. Refresh Steam Workshop page translations
 
