@@ -234,11 +234,14 @@ No further questions unless something is unexpected:
   the user at the release page for the zip, and remind them it's publicly
   downloadable but must not be uploaded to the Workshop.
 - **Stable:** also show the changelog notes for the user to copy into the
-  **Steam Workshop** description. The **GitHub** release notes need no paste: the tag-triggered
-  workflow lifts this version's `CHANGELOG.md` section into the release body
-  itself (and hard-fails the release if the section is missing), so the
-  changelog entry written at step 6 is the release body. If step 3 updated any
-  Workshop description files, list the affected languages and remind the user
-  to paste each updated title and description into the Workshop page's
-  per-language edit UI (Steam's own language names differ: schinese, koreana,
-  brazilian, latam, ...).
+  **Steam Workshop** description. The **GitHub** release notes need no paste:
+  the tag-triggered workflow lifts this version's `CHANGELOG.md` section into
+  the release body itself (and hard-fails the release if the section is
+  missing), so the changelog entry written at step 6 is the release body. List
+  every `.steamworkshop/Description/` file changed since the last stable tag
+  (`git diff --name-only <last-stable-tag> -- .steamworkshop/Description/`),
+  not only those step 3 just touched: an earlier RC may already have committed
+  them, and the Workshop page has seen none of it. Remind the user to paste
+  each listed title and description into the Workshop page's per-language edit
+  UI (Steam's own language names differ: schinese, koreana, brazilian, latam,
+  ...).
