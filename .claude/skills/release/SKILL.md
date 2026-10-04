@@ -199,8 +199,6 @@ final. Do all of the following, then present it as **one** confirmation:
     gets the same full version; `AssemblyVersion` and `AssemblyFileVersion`
     stay four-part numeric `X.Y.Z.0` with no suffix (they can't hold one), so
     they are identical across every candidate and the stable release.
-  - `README.md` version badge `Version-X.Y.Z`: stable releases only. The
-    badge advertises the Workshop version, so an RC leaves it alone.
 - Show the user, together: current version → new version (and bump type, or
   RC / promotion), the changelog notes (stable only), the full diff of the
   changed files, and exactly what step 7 will do (rebuild, commit
@@ -219,9 +217,9 @@ No further questions unless something is unexpected:
   ```
   so the deployed DLL carries the bumped `AssemblyVersion`. Stop on failure.
 - Stage only the release files: `About/About.xml`,
-  `Source/1.6/Properties/AssemblyInfo.cs`, and (stable only) `README.md` and
-  `CHANGELOG.md`. If other tracked files are modified, list them and ask
-  whether to include them (the one conditional exception).
+  `Source/1.6/Properties/AssemblyInfo.cs`, and (stable only) `CHANGELOG.md`.
+  If other tracked files are modified, list them and ask whether to include
+  them (the one conditional exception).
 - Commit with message: `chore: Bump version to <version>`
 - Tag with: `v<version>`
 - Push: `git push && git push --tags`
