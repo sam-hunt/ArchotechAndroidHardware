@@ -2,19 +2,38 @@
 name: release
 description: Prepare and publish a versioned release — version bumps, changelog, build, commit, tag, push
 disable-model-invocation: true
-argument-hint: "[major|minor|patch]"
+argument-hint: "[major|minor|patch] [rc] | [promote|rc]"
 ---
 
 # Release
 
-Prepare and publish a new release for Archotech Android Hardware.
+Prepare and publish a new release for Archotech Android Hardware — either a
+stable release or a release candidate.
 
-The user may pass a bump type as `$ARGUMENTS` (one of `major`, `minor`, or `patch`). If omitted, ask which bump type they want (at step 6, where the version is first needed).
+**Release candidates** (`X.Y.Z-rc.N`) are private test builds: a tagged GitHub
+prerelease whose zip can be tried on another machine without building from
+source. They never go to the Steam Workshop and get no `CHANGELOG.md` section.
+Otherwise an RC is held to the same bar as a stable release (it should be what
+would ship), so it runs every step below except the changelog and the
+Workshop paste. SemVer orders `1.3.0 < 1.4.0-rc.1 < 1.4.0-rc.2 < 1.4.0`, so
+candidates sit between stable versions without disturbing them.
+
+`$ARGUMENTS` is optional and resolved at step 6, where the version is first
+needed. From a stable version: a bump type (`major`, `minor`, `patch`),
+optionally followed by `rc`. From an RC version: `promote` (to the stable
+version) or `rc` (the next candidate). Ask for whatever is missing.
+
+"The last stable tag" below means the newest tag with no prerelease suffix —
+`git describe --tags --abbrev=0 --exclude '*-*'`. Every range in this skill
+measures from it, never from an RC tag, so a stable release's changelog and
+Workshop diff cover everything since the previous stable release.
 
 ## Current state
 
-!`git describe --tags --abbrev=0 2>/dev/null || echo "no tags found"`
-!`git log "$(git describe --tags --abbrev=0 2>/dev/null || echo 'HEAD~10')..HEAD" --oneline --no-merges`
+!`grep -o '<modVersion>[^<]*' About/About.xml | sed 's/<modVersion>/About.xml version: /'`
+!`git describe --tags --abbrev=0 --exclude '*-*' 2>/dev/null || echo "no stable tags found"`
+!`git -c versionsort.suffix=- tag -l 'v*-*' --sort=-v:refname | head -3`
+!`git log "$(git describe --tags --abbrev=0 --exclude '*-*' 2>/dev/null || echo 'HEAD~10')..HEAD" --oneline --no-merges`
 
 ## Steps
 
@@ -25,10 +44,19 @@ still can change the history. Confirmations: the conditional translation
 commits in steps 2-3 each get a diff review, and step 6 is the single
 release gate; nothing else asks.
 
+**Promoting an RC with nothing committed since its tag** (`git log
+<rc-tag>..HEAD` is empty): the candidate already validated this exact tree, but
+the world may have moved since (an upstream l10n release, a vanilla or VREA
+update changing inherited text), so step 2 always runs. If it commits nothing,
+skip steps 3-5 and go straight to step 6 — say so. If it does commit (a pin
+bump, a sidecar or translation change), the tree is no longer the one the
+candidate validated: run the full sequence. Any other commit since the RC tag
+means the full run.
+
 ### 1. Review changes
 
-The commit log since the last tag is shown above — read it now to understand
-what this release contains. If the repo has no tags yet this is the first
+The commit log since the last stable tag is shown above — read it now to
+understand what this release contains. If the repo has no tags yet this is the first
 release: use the full history (`git log --oneline --no-merges`) and think in
 terms of the mod's shipped feature set rather than a diff. No confirmation —
 this is orientation, not a decision.
@@ -81,10 +109,12 @@ blank line, then the BBCode description; one file per language folder in
 `1.6/Languages/`, English being the source of truth (see
 `.steamworkshop/README.md`).
 
-- Diff the English source against the last release:
+- Diff the English source against the last stable release:
   ```bash
-  git diff $(git describe --tags --abbrev=0) -- .steamworkshop/Description/English.txt
+  git diff $(git describe --tags --abbrev=0 --exclude '*-*') -- .steamworkshop/Description/English.txt
   ```
+  If an earlier RC of this version already translated the change, the
+  language files will already match — check before spawning anyone.
 - Also check for languages in `1.6/Languages/` with no description file yet.
 - If nothing changed and no file is missing, say so and move on.
 - Otherwise spawn one translation subagent per affected language (cheaper
@@ -134,27 +164,47 @@ Everything that can change history has now run, so the release contents are
 final. Do all of the following, then present it as **one** confirmation:
 
 - Read the current version from `About/About.xml` (`<modVersion>`) and
-  calculate the new version from the bump type (`$ARGUMENTS`, or ask now).
-- Draft changelog notes from the full log since the last tag — including any
-  commits steps 2-3 just created — grouped by category (Fixes, Features,
-  Polish/Other), omitting chore/version-bump commits.
-- Each changelog entry is a short one-liner fit for Steam Workshop change
-  notes (see the note atop `CHANGELOG.md`).
-- Update `CHANGELOG.md`: new `## [X.Y.Z] - YYYY-MM-DD` section at the top of
-  the version list, directly below the Keep a Changelog intro paragraph,
-  using today's date, Keep a Changelog style (`### Added`, `### Fixed`,
-  ...). This changelog carries no `[Unreleased]` heading; don't add one.
-  Also add a
-  `[X.Y.Z]: https://github.com/sam-hunt/ArchotechAndroidHardware/releases/tag/vX.Y.Z`
-  link reference at the bottom of the file, above any older ones.
-- Bump the version string in all three files: `About/About.xml`
-  (`<modVersion>`), `Source/1.6/Properties/AssemblyInfo.cs`
-  (`AssemblyVersion` and `AssemblyFileVersion`, four-part `X.Y.Z.0`),
-  `README.md` (version badge `Version-X.Y.Z`).
-- Show the user, together: current version → new version (and bump type),
-  the changelog notes, the full diff of all four files, and exactly what
-  step 7 will do (rebuild, commit `chore: Bump version to X.Y.Z`, tag
-  `vX.Y.Z`, push with tags).
+  resolve the new version (from `$ARGUMENTS`, or ask now):
+  - **Current is stable** (`1.3.0`): apply the bump type, then either stable
+    (`1.4.0`) or the first candidate (`1.4.0-rc.1`).
+  - **Current is an RC** (`1.4.0-rc.1`): either promote (`1.4.0`) or cut the
+    next candidate (`1.4.0-rc.2`). A bump type doesn't apply here; if the
+    user gives one anyway, ask what they mean (a different target version
+    abandons the current candidate line).
+  - Before an RC, confirm its tag doesn't already exist (`git tag -l`).
+  - With no tags yet, the current version is the never-released `modVersion`
+    (a stable release of it needs no bump; ask what the user intends).
+- **Stable releases only — the changelog.** An RC skips this bullet group
+  entirely: no section, no link reference.
+  - Draft changelog notes from the full log since the last stable tag —
+    including any commits steps 2-3 just created — grouped by category
+    (Fixes, Features, Polish/Other), omitting chore/version-bump commits.
+    When promoting, this spans every candidate: a fix for a bug that was
+    introduced and fixed within the candidate line never reached Workshop
+    users, so fold it into the entry it corrects or drop it.
+  - Each changelog entry is a short one-liner fit for Steam Workshop change
+    notes (see the note atop `CHANGELOG.md`).
+  - Update `CHANGELOG.md`: new `## [X.Y.Z] - YYYY-MM-DD` section at the top of
+    the version list, directly below the Keep a Changelog intro paragraph,
+    using today's date, Keep a Changelog style (`### Added`, `### Fixed`,
+    ...). This changelog carries no `[Unreleased]` heading; don't add one.
+    Also add a
+    `[X.Y.Z]: https://github.com/sam-hunt/ArchotechAndroidHardware/releases/tag/vX.Y.Z`
+    link reference at the bottom of the file, above any older ones.
+- Bump the version strings in the files below:
+  - `About/About.xml` `<modVersion>`: the full version, suffix included
+    (`1.4.0-rc.1`). The game treats it as a display-only string, so testers
+    with the Workshop copy also subscribed can tell the two apart.
+  - `Source/1.6/Properties/AssemblyInfo.cs`: `AssemblyInformationalVersion`
+    gets the same full version; `AssemblyVersion` and `AssemblyFileVersion`
+    stay four-part numeric `X.Y.Z.0` with no suffix (they can't hold one), so
+    they are identical across every candidate and the stable release.
+  - `README.md` version badge `Version-X.Y.Z`: stable releases only. The
+    badge advertises the Workshop version, so an RC leaves it alone.
+- Show the user, together: current version → new version (and bump type, or
+  RC / promotion), the changelog notes (stable only), the full diff of the
+  changed files, and exactly what step 7 will do (rebuild, commit
+  `chore: Bump version to <version>`, tag `v<version>`, push with tags).
 - **Ask the user to confirm — this is the only release confirmation.** On
   edits, apply them and re-show only what changed.
 
@@ -169,15 +219,22 @@ No further questions unless something is unexpected:
   ```
   so the deployed DLL carries the bumped `AssemblyVersion`. Stop on failure.
 - Stage only the release files: `About/About.xml`,
-  `Source/1.6/Properties/AssemblyInfo.cs`, `README.md`, `CHANGELOG.md`. If
-  other tracked files are modified, list them and ask whether to include
-  them (the one conditional exception).
-- Commit with message: `chore: Bump version to X.Y.Z`
-- Tag with: `vX.Y.Z`
+  `Source/1.6/Properties/AssemblyInfo.cs`, and (stable only) `README.md` and
+  `CHANGELOG.md`. If other tracked files are modified, list them and ask
+  whether to include them (the one conditional exception).
+- Commit with message: `chore: Bump version to <version>`
+- Tag with: `v<version>`
 - Push: `git push && git push --tags`
-- Show `git log --oneline -3` and `git tag -l 'v*' --sort=-v:refname | head -5`,
-  plus the changelog notes for the user to copy into the **Steam Workshop**
-  description. The **GitHub** release notes need no paste: the tag-triggered
+- Show `git log --oneline -3` and
+  `git -c versionsort.suffix=- tag -l 'v*' --sort=-v:refname | head -5` (the
+  config puts each candidate *below* its stable; git's default ranks it above).
+- **RC:** that's it. The tag-triggered workflow marks any suffixed tag as a
+  GitHub prerelease (never "Latest") with a stub body plus the auto-generated
+  commit list, and attaches `ArchotechAndroidHardware-v<version>.zip`. Point
+  the user at the release page for the zip, and remind them it's publicly
+  downloadable but must not be uploaded to the Workshop.
+- **Stable:** also show the changelog notes for the user to copy into the
+  **Steam Workshop** description. The **GitHub** release notes need no paste: the tag-triggered
   workflow lifts this version's `CHANGELOG.md` section into the release body
   itself (and hard-fails the release if the section is missing), so the
   changelog entry written at step 6 is the release body. If step 3 updated any

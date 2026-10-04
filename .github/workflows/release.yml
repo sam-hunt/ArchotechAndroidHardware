@@ -32,9 +32,19 @@ jobs:
         # a bare line-start '[' is NOT a terminator, so a body line wrapping
         # onto a markdown link cannot silently truncate the notes), then trims
         # blank lines off both ends.
+        #
+        # A prerelease tag (any SemVer suffix, e.g. v1.4.0-rc.1) carries no
+        # CHANGELOG section by design: candidates are private test builds that
+        # never reach the Workshop, and their changes land in the stable
+        # version's section at promotion. They get a fixed stub instead, with
+        # the auto-generated commit list appended by the release step.
         run: |
           set -euo pipefail
           version="${GITHUB_REF_NAME#v}"
+          if [[ "$version" == *-* ]]; then
+            echo "Release candidate for testing only. Not published to Steam Workshop." > RELEASE_NOTES.md
+            exit 0
+          fi
           awk -v v="$version" '
             index($0, "## [" v "]") == 1 { p = 1; next }
             p && (index($0, "## [") == 1 || $0 ~ /^\[[^]]+\]:/) { exit }
@@ -78,7 +88,13 @@ jobs:
           files: ArchotechAndroidHardware-${{ github.ref_name }}.zip
           # body_path is pre-pended to the auto-generated notes by the GitHub API,
           # so the curated CHANGELOG prose leads and the compare link (plus any
-          # contributor PRs) follows it - not the other way round.
+          # contributor PRs) follows it - not the other way round. GitHub picks
+          # the compare link's base itself (no previous_tag_name here), and it
+          # counts prereleases, so the first stable after a candidate line gets
+          # an rc.N...stable link; the CHANGELOG section above it still spans
+          # everything since the last stable, which is the record that matters.
           body_path: RELEASE_NOTES.md
           generate_release_notes: true
-          prerelease: ${{ contains(github.ref_name, 'beta') || contains(github.ref_name, 'alpha') || contains(github.ref_name, '-rc') }}
+          # Same test as the notes step: any SemVer suffix marks a prerelease,
+          # which also keeps it from becoming the repo's "Latest" release.
+          prerelease: ${{ contains(github.ref_name, '-') }}
