@@ -172,8 +172,6 @@ final. Do all of the following, then present it as **one** confirmation:
     user gives one anyway, ask what they mean (a different target version
     abandons the current candidate line).
   - Before an RC, confirm its tag doesn't already exist (`git tag -l`).
-  - With no tags yet, the current version is the never-released `modVersion`
-    (a stable release of it needs no bump; ask what the user intends).
 - **Stable releases only — the changelog.** An RC skips this bullet group
   entirely: no section, no link reference.
   - Draft changelog notes from the full log since the last stable tag —
