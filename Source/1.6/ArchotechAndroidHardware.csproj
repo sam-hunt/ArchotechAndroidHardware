@@ -98,7 +98,8 @@
          null checks into ?. on UnityEngine.Object-derived receivers, where the
          overloaded == (destroyed => "null") makes the rewrite change behavior.
          UNT0008 flags null propagation on Unity objects; UNT0007 the same for
-         null coalescing. See the RCS1146 note in .editorconfig. -->
+         null coalescing and UNT0023 for coalescing assignment (??=). See the
+         RCS1146 note in .editorconfig. -->
     <PackageReference Include="Microsoft.Unity.Analyzers" Version="1.*">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
