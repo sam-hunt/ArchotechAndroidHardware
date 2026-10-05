@@ -1,6 +1,8 @@
 # Claude Code (skills are shared/tracked; hooks and local settings stay machine-local)
 .claude/*
 !.claude/skills/
+!.claude/hooks/
+!.claude/settings.json
 
 # Visual Studio
 .vs/
