@@ -36,7 +36,7 @@ The build auto-detects the RimWorld install (Windows/Linux/Mac, incl. WSL → Wi
 
 The `StageMod` target in `Source/1.6/ArchotechAndroidHardware.csproj` is the **single source of truth** for what ships: its `_ModFiles` ItemGroup matches the well-known RimWorld content folders at the mod root and under any version/`Common` folder, whitelisted by runtime extension (`.dll`, `.xml`, `.png/.jpg`, `.wav/.mp3/.ogg`, `.txt`; no `.pdb`/`.psd`/`.dds`), and wipes the target before recopying so renames never linger. Every Release build calls it with `StageDir = $RIMWORLD_PATH/Mods/ArchotechAndroidHardware`; CI's `release.yml` calls the same target for the zip. Only a brand-new file _type_ needs a manifest edit.
 
-A machine-local Stop hook (`.claude/hooks/sync-mod.sh`, untracked) rebuilds + redeploys after any turn that touched mod source/content and warns on build failure. Its `find` watch list must cover every content root `StageMod` ships (root, any version folder, and the compat roots `Mods/` and `*/Mods/`), or edits under a missed root silently stop redeploying. `.gitignore` tracks only `.claude/skills/`. Release tags include `X.Y.Z-rc.N` candidates (CHANGELOG-less and Workshop-less, with the suffix only in `modVersion` and `AssemblyInformationalVersion`); `release.yml` treats any suffixed tag as a prerelease to match, so keep `/release` step 6 in step with that scheme.
+A machine-local Stop hook (`.claude/hooks/sync-mod.sh`, untracked) rebuilds + redeploys after any turn that touched mod source/content and on failure exits 2 with the errors on stderr, which Claude Code feeds back to the agent so the turn continues; a second failure in the same turn (`stop_hook_active`) only warns, so it cannot loop. Its `find` watch list must cover every content root `StageMod` ships (root, any version folder, and the compat roots `Mods/` and `*/Mods/`), or edits under a missed root silently stop redeploying. `.gitignore` tracks only `.claude/skills/`. Release tags include `X.Y.Z-rc.N` candidates (CHANGELOG-less and Workshop-less, with the suffix only in `modVersion` and `AssemblyInformationalVersion`); `release.yml` treats any suffixed tag as a prerelease to match, so keep `/release` step 7 in step with that scheme.
 
 ## Architecture
 
@@ -122,7 +122,7 @@ Use the `rimworld-logs` skill (Player.log locations, `[Archotech Android Hardwar
 
 ## Testing
 
-`Tests/1.6/` is a headless xUnit (net472) suite for pure logic: settings coherence, overcharge-cap guards, `SurgeryState`, `ReactorGlow.AttachmentsEnabledFor`. Anything needing `DefDatabase`, a live `Pawn` or a `[DefOf]` cctor is out of scope. `dotnet test` builds Debug and `DeployToModFolder` is Release-gated, so a test run never swaps the deployed DLL. If a run fails with `BadImageFormatException`/`TypeLoadException`, a DLL is missing from the test csproj copy target (mono resolves field types eagerly). CI builds the suite but does not run it.
+`Tests/1.6/` is a headless xUnit (net472) suite for pure logic: settings coherence, overcharge-cap guards, `SurgeryState`, `ReactorGlow.AttachmentsEnabledFor`. Anything needing `DefDatabase`, a live `Pawn` or a `[DefOf]` cctor is out of scope. `dotnet test` builds Debug and `DeployToModFolder` is Release-gated, so a test run never swaps the deployed DLL. The release skill runs the suite and a Release build as its first gate. If a run fails with `BadImageFormatException`/`TypeLoadException`, a DLL is missing from the test csproj copy target (mono resolves field types eagerly). CI builds the suite but does not run it.
 
 **Startup smoke test (pre-release):** `python3 Scripts/integration-smoke-test.py` (game closed) boots AAH with VREA, VEF and VFE Power on a pinned list and fails on any Player.log error attributed to AAH or the VREA/VEF seam. The only automated coverage the VREA patches get; wired into the release skill.
 
@@ -138,4 +138,4 @@ English is the source of truth: Keyed in `1.6/Languages/English/Keyed/AAH_UI.xml
 
 ## Linting
 
-Roslynator + Microsoft.Unity.Analyzers run on every build (warnings only, `PrivateAssets=all`); severities are pinned in `.editorconfig`. Run the `roslynator` CLI against the csproj, never the `.sln`. Formatting-only sweeps go in `.git-blame-ignore-revs`.
+Roslynator + Microsoft.Unity.Analyzers run on every build (`PrivateAssets=all`); every warning fails the build via `TreatWarningsAsErrors` in the csproj(s), so severities pinned in `.editorconfig` at `warning` block the build while `suggestion` is IDE-only. Run the `roslynator` CLI against the csproj, never the `.sln`. Formatting-only sweeps go in `.git-blame-ignore-revs`.

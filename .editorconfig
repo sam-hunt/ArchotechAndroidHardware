@@ -46,15 +46,18 @@ dotnet_style_explicit_tuple_names = true:warning
 dotnet_code_quality_unused_parameters = all:suggestion
 
 # Roslynator analyzer severities (only rules we've actually hit are pinned here;
-# everything else runs at package defaults. Style-only — nothing fails the build.)
+# everything else runs at package defaults). The csproj sets TreatWarningsAsErrors,
+# so `warning` here means "fails the build"; `suggestion` is IDE-only.
 #
 # RCS1146 FOOTGUN: its fixer rewrites `x != null && x.Foo` into `x?.Foo`. That is
 # WRONG for receivers deriving from UnityEngine.Object (Texture2D, Material, ...):
 # `!= null` calls Unity's overloaded ==, which treats destroyed objects as null,
 # while `?.` does a raw reference check and bypasses it. Verse.Thing/Pawn/Hediff
-# are plain classes and safe. Never bulk-apply RCS1146 to Unity-typed receivers;
-# UNT0007/UNT0008/UNT0023 below exist to catch it mechanically if it happens anyway.
-dotnet_diagnostic.RCS1146.severity = warning   # Use conditional access
+# are plain classes and safe. The analyzer fires on Unity receivers too, so at
+# `warning` it would deadlock against UNT0008 (the only compliant rewrite is the
+# one UNT0008 forbids); it stays a suggestion. Never bulk-apply RCS1146 to
+# Unity-typed receivers; UNT0007/UNT0008/UNT0023 below catch it mechanically.
+dotnet_diagnostic.RCS1146.severity = suggestion   # Use conditional access
 dotnet_diagnostic.RCS1139.severity = none      # Add summary element to doc comment
 dotnet_diagnostic.RCS1226.severity = none      # Add paragraph to doc comment
 

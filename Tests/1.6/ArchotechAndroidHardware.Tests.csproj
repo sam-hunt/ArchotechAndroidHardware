@@ -10,6 +10,7 @@
          writes, and deliberately no touching of any [DefOf] class (see
          ReactorGlowTests.cs / the docblock in this repo's Rendering code for
          why that's out of scope headless). -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <!-- Mirror the main csproj's RimWorld install detection. The post-build
